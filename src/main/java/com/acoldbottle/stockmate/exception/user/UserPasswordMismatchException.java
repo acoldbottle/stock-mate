@@ -1,4 +1,7 @@
-package com.acoldbottle.stockmate.exception;
+package com.acoldbottle.stockmate.exception.user;
+
+import com.acoldbottle.stockmate.exception.ErrorCode;
+import com.acoldbottle.stockmate.exception.StockMateException;
 
 public class UserPasswordMismatchException extends StockMateException {
 

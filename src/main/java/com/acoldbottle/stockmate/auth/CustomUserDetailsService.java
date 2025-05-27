@@ -2,7 +2,7 @@ package com.acoldbottle.stockmate.auth;
 
 import com.acoldbottle.stockmate.domain.user.User;
 import com.acoldbottle.stockmate.exception.ErrorCode;
-import com.acoldbottle.stockmate.exception.UserNotFoundException;
+import com.acoldbottle.stockmate.exception.user.UserNotFoundException;
 import com.acoldbottle.stockmate.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
