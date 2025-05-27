@@ -1,6 +1,6 @@
-package com.acoldbottle.stockmate.repository;
+package com.acoldbottle.stockmate.domain.user;
 
-import com.acoldbottle.stockmate.domain.User;
+import com.acoldbottle.stockmate.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

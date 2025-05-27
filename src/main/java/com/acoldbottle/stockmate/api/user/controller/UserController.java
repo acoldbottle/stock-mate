@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.controller;
+package com.acoldbottle.stockmate.api.user.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

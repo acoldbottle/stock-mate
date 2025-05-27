@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.domain;
+package com.acoldbottle.stockmate.domain.user;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

@@ -1,6 +1,6 @@
 package com.acoldbottle.stockmate.auth;
 
-import com.acoldbottle.stockmate.domain.User;
+import com.acoldbottle.stockmate.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

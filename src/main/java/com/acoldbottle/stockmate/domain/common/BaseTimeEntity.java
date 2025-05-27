@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.domain;
+package com.acoldbottle.stockmate.domain.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
