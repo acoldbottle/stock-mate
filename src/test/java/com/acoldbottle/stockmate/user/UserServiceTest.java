@@ -4,10 +4,8 @@ import com.acoldbottle.stockmate.api.user.dto.UserSignUpReq;
 import com.acoldbottle.stockmate.api.user.dto.UserSignUpRes;
 import com.acoldbottle.stockmate.api.user.service.UserService;
 import com.acoldbottle.stockmate.exception.user.UserAlreadyExistsException;
-import com.acoldbottle.stockmate.exception.user.UserNotFoundException;
 import com.acoldbottle.stockmate.exception.user.UserPasswordMismatchException;
 import jakarta.validation.Validator;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ActiveProfiles("test")
 @SpringBootTest
