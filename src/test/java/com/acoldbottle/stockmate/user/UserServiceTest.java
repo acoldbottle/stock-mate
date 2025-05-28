@@ -1,5 +1,7 @@
 package com.acoldbottle.stockmate.user;
 
+import com.acoldbottle.stockmate.api.user.dto.UserLoginReq;
+import com.acoldbottle.stockmate.api.user.dto.UserLoginRes;
 import com.acoldbottle.stockmate.api.user.dto.UserSignUpReq;
 import com.acoldbottle.stockmate.api.user.dto.UserSignUpRes;
 import com.acoldbottle.stockmate.api.user.service.UserService;
@@ -10,6 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,5 +96,43 @@ public class UserServiceTest {
                 .build();
 
         assertThat(validator.validate(userData).size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("사용자 로그인 성공")
+    void login_success() {
+
+        UserSignUpReq userData = UserSignUpReq.builder()
+                .username("user_test")
+                .password("12345678")
+                .passwordConfirm("12345678")
+                .build();
+
+        UserSignUpRes savedUser = userService.signUp(userData);
+
+        UserLoginRes loginUser = userService.login(UserLoginReq.builder()
+                .username(userData.getUsername())
+                .password(userData.getPassword())
+                .build());
+
+        assertThat(loginUser.getUsername()).isEqualTo(savedUser.getUsername());
+    }
+
+    @Test
+    @DisplayName("사용자 로그인 실패 -> 아이디, 패스워드 불일치")
+    void login_failed() {
+        UserSignUpReq userData = UserSignUpReq.builder()
+                .username("user_test")
+                .password("12345678")
+                .passwordConfirm("12345678")
+                .build();
+
+        UserSignUpRes savedUser = userService.signUp(userData);
+
+        assertThatThrownBy(() -> userService.login(UserLoginReq.builder()
+                .username("user_testtest")
+                .password("1234567800")
+                .build()))
+                .isInstanceOf(BadCredentialsException.class);
     }
 }
