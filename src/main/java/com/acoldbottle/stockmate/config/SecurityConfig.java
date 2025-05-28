@@ -26,9 +26,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/login", "/api/signup").permitAll()
                         .anyRequest().authenticated())
-                .formLogin((form) -> form
-                        .loginPage("/login")
-                        .permitAll())
+//                .formLogin((form) -> form
+//                        .loginPage("/login")
+//                        .permitAll())
                 .build();
     }
 }
