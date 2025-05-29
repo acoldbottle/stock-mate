@@ -5,6 +5,8 @@ import com.acoldbottle.stockmate.api.user.dto.UserLoginRes;
 import com.acoldbottle.stockmate.api.user.dto.UserSignUpReq;
 import com.acoldbottle.stockmate.api.user.dto.UserSignUpRes;
 import com.acoldbottle.stockmate.api.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,4 +37,10 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.OK).body(userLoginRes);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+
+        userService.logout(request, response);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
