@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> notValidException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<ErrorResponse> notValidException(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
         String errorMessage = bindingResult.getFieldError().getDefaultMessage();
         log.error("[MethodArgumentNotValidException] -> {}", errorMessage);
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})
-    public ResponseEntity<ErrorResponse> authException(Exception e) {
+    protected ResponseEntity<ErrorResponse> authException(Exception e) {
         String message = "아이디 또는 비밀번호가 잘못되었습니다.";
         log.error("[{}] -> {}", e.getClass().getSimpleName(), message);
         return ResponseEntity
@@ -34,10 +34,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(StockMateException.class)
-    public ResponseEntity<ErrorResponse> stockMateException(StockMateException e) {
+    protected ResponseEntity<ErrorResponse> stockMateException(StockMateException e) {
         log.error("[StockMateException] -> {}", e.getMessage());
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus())
                 .body(new ErrorResponse(e));
+    }
+
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<ErrorResponse> exception(Exception e) {
+        ErrorCode error = ErrorCode.INTERNAL_SERVER_ERROR;
+        log.error("[{}] -> {}", e.getClass().getSimpleName(), e.getMessage());
+        return ResponseEntity
+                .status(error.getHttpStatus())
+                .body(new ErrorResponse(error.getHttpStatus(), error.getMessage()));
     }
 }
