@@ -20,6 +20,15 @@ public class SecurityConfig {
 
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
+    private static final String[] WHITE_LIST = {
+            "/",
+            "/api/login",
+            "/api/signup",
+            "/api/logout",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
+    };
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -32,7 +41,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/api/login", "/api/signup", "/api/logout").permitAll()
+                        .requestMatchers(WHITE_LIST).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling((exception) -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
