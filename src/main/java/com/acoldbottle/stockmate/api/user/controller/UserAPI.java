@@ -95,7 +95,7 @@ public interface UserAPI {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.", content = @Content)
             }
     )
-    ResponseEntity<UserLoginRes> login(@RequestBody UserLoginReq userLoginReq);
+    ResponseEntity<UserLoginRes> login(@RequestBody UserLoginReq userLoginReq, HttpServletRequest request);
 
     @Operation(
             summary = "로그아웃",

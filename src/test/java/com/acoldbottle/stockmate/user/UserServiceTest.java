@@ -12,7 +12,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +30,10 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
-
     @Autowired
     Validator validator;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     @Test
     @Transactional
@@ -110,12 +115,14 @@ public class UserServiceTest {
 
         UserSignUpRes savedUser = userService.signUp(userData);
 
-        UserLoginRes loginUser = userService.login(UserLoginReq.builder()
+        UsernamePasswordAuthenticationToken token = userService.checkUserInfoForLogin(UserLoginReq.builder()
                 .username(userData.getUsername())
                 .password(userData.getPassword())
                 .build());
 
-        assertThat(loginUser.getUsername()).isEqualTo(savedUser.getUsername());
+        Authentication authentication = authenticationManager.authenticate(token);
+
+        assertThat(authentication.getName()).isEqualTo(savedUser.getUsername());
     }
 
     @Test
@@ -129,10 +136,13 @@ public class UserServiceTest {
 
         UserSignUpRes savedUser = userService.signUp(userData);
 
-        assertThatThrownBy(() -> userService.login(UserLoginReq.builder()
+        UsernamePasswordAuthenticationToken token = userService.checkUserInfoForLogin(UserLoginReq.builder()
                 .username("user_testtest")
                 .password("1234567800")
-                .build()))
+                .build());
+
+        assertThatThrownBy(() ->
+                authenticationManager.authenticate(token))
                 .isInstanceOf(BadCredentialsException.class);
     }
 }
