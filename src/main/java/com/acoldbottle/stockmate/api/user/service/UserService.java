@@ -46,7 +46,7 @@ public class UserService {
         return UserSignUpRes.from(savedUser);
     }
 
-    public UsernamePasswordAuthenticationToken checkUserInfoForLogin(UserLoginReq userLoginReq) {
+    public UsernamePasswordAuthenticationToken createLoginToken(UserLoginReq userLoginReq) {
         return new UsernamePasswordAuthenticationToken(userLoginReq.getUsername(), userLoginReq.getPassword());
     }
 }

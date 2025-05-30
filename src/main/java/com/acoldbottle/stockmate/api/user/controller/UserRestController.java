@@ -39,7 +39,7 @@ public class UserRestController implements UserAPI{
     @PostMapping("/login")
     public ResponseEntity<UserLoginRes> login(@RequestBody UserLoginReq userLoginReq,
                                               HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken token = userService.checkUserInfoForLogin(userLoginReq);
+        UsernamePasswordAuthenticationToken token = userService.createLoginToken(userLoginReq);
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(authentication);
