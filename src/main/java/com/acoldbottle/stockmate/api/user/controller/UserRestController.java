@@ -1,9 +1,9 @@
 package com.acoldbottle.stockmate.api.user.controller;
 
-import com.acoldbottle.stockmate.api.user.dto.UserLoginReq;
-import com.acoldbottle.stockmate.api.user.dto.UserLoginRes;
-import com.acoldbottle.stockmate.api.user.dto.UserSignUpReq;
-import com.acoldbottle.stockmate.api.user.dto.UserSignUpRes;
+import com.acoldbottle.stockmate.api.user.dto.req.UserLoginReq;
+import com.acoldbottle.stockmate.api.user.dto.res.UserLoginRes;
+import com.acoldbottle.stockmate.api.user.dto.req.UserSignUpReq;
+import com.acoldbottle.stockmate.api.user.dto.res.UserSignUpRes;
 import com.acoldbottle.stockmate.api.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

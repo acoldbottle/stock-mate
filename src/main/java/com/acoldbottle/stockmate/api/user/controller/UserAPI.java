@@ -1,9 +1,9 @@
 package com.acoldbottle.stockmate.api.user.controller;
 
-import com.acoldbottle.stockmate.api.user.dto.UserLoginReq;
-import com.acoldbottle.stockmate.api.user.dto.UserLoginRes;
-import com.acoldbottle.stockmate.api.user.dto.UserSignUpReq;
-import com.acoldbottle.stockmate.api.user.dto.UserSignUpRes;
+import com.acoldbottle.stockmate.api.user.dto.req.UserLoginReq;
+import com.acoldbottle.stockmate.api.user.dto.res.UserLoginRes;
+import com.acoldbottle.stockmate.api.user.dto.req.UserSignUpReq;
+import com.acoldbottle.stockmate.api.user.dto.res.UserSignUpRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;

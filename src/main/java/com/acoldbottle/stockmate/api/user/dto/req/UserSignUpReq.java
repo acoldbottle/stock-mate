@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.user.dto;
+package com.acoldbottle.stockmate.api.user.dto.req;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

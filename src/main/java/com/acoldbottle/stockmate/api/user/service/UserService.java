@@ -1,19 +1,15 @@
 package com.acoldbottle.stockmate.api.user.service;
 
-import com.acoldbottle.stockmate.api.user.dto.UserLoginReq;
-import com.acoldbottle.stockmate.api.user.dto.UserSignUpReq;
-import com.acoldbottle.stockmate.api.user.dto.UserSignUpRes;
+import com.acoldbottle.stockmate.api.user.dto.req.UserLoginReq;
+import com.acoldbottle.stockmate.api.user.dto.req.UserSignUpReq;
+import com.acoldbottle.stockmate.api.user.dto.res.UserSignUpRes;
 import com.acoldbottle.stockmate.domain.user.User;
 import com.acoldbottle.stockmate.domain.user.UserRepository;
 import com.acoldbottle.stockmate.exception.ErrorCode;
 import com.acoldbottle.stockmate.exception.user.UserAlreadyExistsException;
 import com.acoldbottle.stockmate.exception.user.UserPasswordMismatchException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

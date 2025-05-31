@@ -1,9 +1,9 @@
 package com.acoldbottle.stockmate.api.portfolio.controller;
 
 import com.acoldbottle.stockmate.annotation.UserId;
-import com.acoldbottle.stockmate.api.portfolio.dto.PortfolioCreateReq;
-import com.acoldbottle.stockmate.api.portfolio.dto.PortfolioCreateRes;
-import com.acoldbottle.stockmate.api.portfolio.dto.PortfolioGetRes;
+import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioCreateReq;
+import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
+import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
 import com.acoldbottle.stockmate.api.portfolio.service.PortfolioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +20,12 @@ public class PortfolioRestController {
 
     private final PortfolioService portfolioService;
 
+    @GetMapping("/portfolio")
+    public ResponseEntity<List<PortfolioGetRes>> getPortfolioList(@UserId Long userId) {
+        List<PortfolioGetRes> list = portfolioService.getPortfolioList(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
     @PostMapping("/portfolio")
     public ResponseEntity<PortfolioCreateRes> createPortfolio(@UserId Long userId,
                                                               @RequestBody @Valid PortfolioCreateReq portfolioCreateReq) {
@@ -27,10 +33,11 @@ public class PortfolioRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(portfolioCreateRes);
     }
 
-    @GetMapping("/portfolio")
-    public ResponseEntity<List<PortfolioGetRes>> getPortfolioList(@UserId Long userId) {
-        List<PortfolioGetRes> list = portfolioService.getPortfolioList(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(list);
-    }
+//    @PatchMapping("/portfilio/{portfolio_id}")
+//    public ResponseEntity<PortfolioUpdateRes> updatePortfolioTitle(@UserId Long userId,
+//                                                                   @RequestBody @Valid PortfolioUpdateReq portfolioUpdateReq) {
+//
+//    }
+
 
 }

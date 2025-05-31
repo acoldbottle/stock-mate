@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.user.dto;
+package com.acoldbottle.stockmate.api.user.dto.res;
 
 import com.acoldbottle.stockmate.domain.user.User;
 import lombok.Builder;

@@ -1,9 +1,8 @@
 package com.acoldbottle.stockmate.user;
 
-import com.acoldbottle.stockmate.api.user.dto.UserLoginReq;
-import com.acoldbottle.stockmate.api.user.dto.UserLoginRes;
-import com.acoldbottle.stockmate.api.user.dto.UserSignUpReq;
-import com.acoldbottle.stockmate.api.user.dto.UserSignUpRes;
+import com.acoldbottle.stockmate.api.user.dto.req.UserLoginReq;
+import com.acoldbottle.stockmate.api.user.dto.req.UserSignUpReq;
+import com.acoldbottle.stockmate.api.user.dto.res.UserSignUpRes;
 import com.acoldbottle.stockmate.api.user.service.UserService;
 import com.acoldbottle.stockmate.exception.user.UserAlreadyExistsException;
 import com.acoldbottle.stockmate.exception.user.UserPasswordMismatchException;
@@ -16,8 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.portfolio.dto;
+package com.acoldbottle.stockmate.api.portfolio.dto.res;
 
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import lombok.Builder;

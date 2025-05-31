@@ -1,8 +1,8 @@
 package com.acoldbottle.stockmate.api.portfolio.service;
 
-import com.acoldbottle.stockmate.api.portfolio.dto.PortfolioCreateReq;
-import com.acoldbottle.stockmate.api.portfolio.dto.PortfolioCreateRes;
-import com.acoldbottle.stockmate.api.portfolio.dto.PortfolioGetRes;
+import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioCreateReq;
+import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
+import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import com.acoldbottle.stockmate.domain.portfolio.PortfolioRepository;
 import com.acoldbottle.stockmate.domain.user.User;

@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.portfolio.dto;
+package com.acoldbottle.stockmate.api.portfolio.dto.req;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
