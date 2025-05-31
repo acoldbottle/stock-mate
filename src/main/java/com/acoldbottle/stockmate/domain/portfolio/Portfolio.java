@@ -30,4 +30,8 @@ public class Portfolio {
         this.title = title;
         this.user = user;
     }
+
+    public void updatePortfolio(String title) {
+        this.title = title;
+    }
 }

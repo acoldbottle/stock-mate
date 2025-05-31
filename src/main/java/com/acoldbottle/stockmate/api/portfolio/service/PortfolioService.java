@@ -1,13 +1,16 @@
 package com.acoldbottle.stockmate.api.portfolio.service;
 
 import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioCreateReq;
+import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioUpdateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
+import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import com.acoldbottle.stockmate.domain.portfolio.PortfolioRepository;
 import com.acoldbottle.stockmate.domain.user.User;
 import com.acoldbottle.stockmate.domain.user.UserRepository;
 import com.acoldbottle.stockmate.exception.ErrorCode;
+import com.acoldbottle.stockmate.exception.portfolio.PortfolioNotFoundException;
 import com.acoldbottle.stockmate.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,15 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
 
+    public List<PortfolioGetRes> getPortfolioList(Long userId) {
+        User user = getUser(userId);
+        List<Portfolio> portfolioList = portfolioRepository.findAllByUser(user);
+
+        return portfolioList.stream()
+                .map(PortfolioGetRes::from)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public PortfolioCreateRes createPortfolio(Long userId, PortfolioCreateReq portfolioCreateReq) {
         User user = getUser(userId);
@@ -36,18 +48,17 @@ public class PortfolioService {
         return PortfolioCreateRes.from(savedPortfolio);
     }
 
-    public List<PortfolioGetRes> getPortfolioList(Long userId) {
+    @Transactional
+    public PortfolioUpdateRes updatePortfolio(Long userId, Long portfolioId, PortfolioUpdateReq portfolioUpdateReq) {
         User user = getUser(userId);
-        List<Portfolio> portfolioList = portfolioRepository.findAllByUser(user);
-
-        return portfolioList.stream()
-                .map(PortfolioGetRes::from)
-                .collect(Collectors.toList());
+        Portfolio findPortfolio = portfolioRepository.findByIdAndUser(portfolioId, user)
+                .orElseThrow(() -> new PortfolioNotFoundException(ErrorCode.PORTFOLIO_NOT_FOUND));
+        findPortfolio.updatePortfolio(portfolioUpdateReq.getTitle());
+        return PortfolioUpdateRes.from(portfolioId, portfolioUpdateReq.getTitle());
     }
 
     private User getUser(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
     }
-
 }
