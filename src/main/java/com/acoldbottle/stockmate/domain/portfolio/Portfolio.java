@@ -3,12 +3,13 @@ package com.acoldbottle.stockmate.domain.portfolio;
 import com.acoldbottle.stockmate.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "portfolio")
+@Table(name = "portfolios")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Portfolio {
 
@@ -24,4 +25,9 @@ public class Portfolio {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Builder
+    public Portfolio(String title, User user) {
+        this.title = title;
+        this.user = user;
+    }
 }

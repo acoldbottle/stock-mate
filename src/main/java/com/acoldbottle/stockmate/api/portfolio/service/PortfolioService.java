@@ -1,0 +1,53 @@
+package com.acoldbottle.stockmate.api.portfolio.service;
+
+import com.acoldbottle.stockmate.api.portfolio.dto.PortfolioCreateReq;
+import com.acoldbottle.stockmate.api.portfolio.dto.PortfolioCreateRes;
+import com.acoldbottle.stockmate.api.portfolio.dto.PortfolioGetRes;
+import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
+import com.acoldbottle.stockmate.domain.portfolio.PortfolioRepository;
+import com.acoldbottle.stockmate.domain.user.User;
+import com.acoldbottle.stockmate.domain.user.UserRepository;
+import com.acoldbottle.stockmate.exception.ErrorCode;
+import com.acoldbottle.stockmate.exception.user.UserNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class PortfolioService {
+
+    private final PortfolioRepository portfolioRepository;
+    private final UserRepository userRepository;
+
+    @Transactional
+    public PortfolioCreateRes createPortfolio(Long userId, PortfolioCreateReq portfolioCreateReq) {
+        User user = getUser(userId);
+        String title = portfolioCreateReq.getTitle();
+        Portfolio portfolio = Portfolio.builder()
+                .user(user)
+                .title(title)
+                .build();
+        Portfolio savedPortfolio = portfolioRepository.save(portfolio);
+        return PortfolioCreateRes.from(savedPortfolio);
+    }
+
+    public List<PortfolioGetRes> getPortfolioList(Long userId) {
+        User user = getUser(userId);
+        List<Portfolio> portfolioList = portfolioRepository.findAllByUser(user);
+
+        return portfolioList.stream()
+                .map(PortfolioGetRes::from)
+                .collect(Collectors.toList());
+    }
+
+    private User getUser(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+}
