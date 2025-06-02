@@ -8,6 +8,7 @@ import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
 import com.acoldbottle.stockmate.api.portfolio.service.PortfolioService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,13 @@ public class PortfolioRestController {
                                                                    @RequestBody @Valid PortfolioUpdateReq portfolioUpdateReq) {
         PortfolioUpdateRes portfolioUpdateRes = portfolioService.updatePortfolio(userId, portfolioId, portfolioUpdateReq);
         return ResponseEntity.status(HttpStatus.OK).body(portfolioUpdateRes);
+    }
+
+    @DeleteMapping("/portfolio/{portfolioId}")
+    public ResponseEntity<Void> deletePortfolio(@UserId Long userId,
+                                                @PathVariable @NotNull Long portfolioId) {
+        portfolioService.deletePortfolio(userId, portfolioId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 

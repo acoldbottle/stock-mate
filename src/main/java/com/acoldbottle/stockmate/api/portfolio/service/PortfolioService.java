@@ -51,14 +51,26 @@ public class PortfolioService {
     @Transactional
     public PortfolioUpdateRes updatePortfolio(Long userId, Long portfolioId, PortfolioUpdateReq portfolioUpdateReq) {
         User user = getUser(userId);
-        Portfolio findPortfolio = portfolioRepository.findByIdAndUser(portfolioId, user)
-                .orElseThrow(() -> new PortfolioNotFoundException(ErrorCode.PORTFOLIO_NOT_FOUND));
+        Portfolio findPortfolio = getPortfolio(portfolioId, user);
         findPortfolio.updatePortfolio(portfolioUpdateReq.getTitle());
         return PortfolioUpdateRes.from(portfolioId, portfolioUpdateReq.getTitle());
+    }
+
+    @Transactional
+    public void deletePortfolio(Long userId, Long portfolioId) {
+        User user = getUser(userId);
+        Portfolio findPortfolio = getPortfolio(portfolioId, user);
+        portfolioRepository.delete(findPortfolio);
     }
 
     private User getUser(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
     }
+
+    private Portfolio getPortfolio(Long portfolioId, User user) {
+        return portfolioRepository.findByIdAndUser(portfolioId, user)
+                .orElseThrow(() -> new PortfolioNotFoundException(ErrorCode.PORTFOLIO_NOT_FOUND));
+    }
+
 }
