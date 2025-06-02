@@ -3,6 +3,7 @@ package com.acoldbottle.stockmate.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
@@ -27,11 +28,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ErrorResponse> typeMismatchException(MethodArgumentTypeMismatchException e) {
-        String message = ErrorCode.INVALID_TYPE_MISMATCH.getMessage();
-        log.error("[MethodArgumentTypeMismatchException] -> {}", message);
+        ErrorCode errorCode = ErrorCode.INVALID_TYPE_MISMATCH;
+        log.error("[MethodArgumentTypeMismatchException] -> {}", errorCode.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(HttpStatus.BAD_REQUEST, message));
+                .body(new ErrorResponse(errorCode.getHttpStatus(), errorCode.getMessage()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException e) {
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST_BODY;
+        log.error("[HttpMessageNotReadableException] -> {}", errorCode.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(errorCode.getHttpStatus(), errorCode.getMessage()));
     }
 
     @ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})

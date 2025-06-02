@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class PortfolioRestController {
+public class PortfolioRestController implements PortfolioAPI{
 
     private final PortfolioService portfolioService;
 
