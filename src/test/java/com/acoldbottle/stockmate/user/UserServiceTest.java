@@ -112,7 +112,7 @@ public class UserServiceTest {
 
         UserSignUpRes savedUser = userService.signUp(userData);
 
-        UsernamePasswordAuthenticationToken token = userService.checkUserInfoForLogin(UserLoginReq.builder()
+        UsernamePasswordAuthenticationToken token = userService.createLoginToken(UserLoginReq.builder()
                 .username(userData.getUsername())
                 .password(userData.getPassword())
                 .build());
@@ -133,7 +133,7 @@ public class UserServiceTest {
 
         UserSignUpRes savedUser = userService.signUp(userData);
 
-        UsernamePasswordAuthenticationToken token = userService.checkUserInfoForLogin(UserLoginReq.builder()
+        UsernamePasswordAuthenticationToken token = userService.createLoginToken(UserLoginReq.builder()
                 .username("user_testtest")
                 .password("1234567800")
                 .build());
