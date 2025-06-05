@@ -25,6 +25,7 @@ public class SecurityConfig {
             "/api/login",
             "/api/signup",
             "/api/logout",
+            "/api/kis/token/reissue",
             "/swagger-ui/**",
             "/v3/api-docs/**"
     };

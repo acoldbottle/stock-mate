@@ -1,12 +1,13 @@
 package com.acoldbottle.stockmate.external.kis;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 
 @Getter
 public class KisTokenReissueRes {
-
+    @JsonProperty("access_token")
     private String token;
-    private LocalDateTime tokenExpired;
+    @JsonProperty("access_token_token_expired")
+    private String tokenExpired;
 }
