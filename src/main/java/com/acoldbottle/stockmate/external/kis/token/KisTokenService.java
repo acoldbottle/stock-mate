@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.external.kis;
+package com.acoldbottle.stockmate.external.kis.token;
 
 import com.acoldbottle.stockmate.exception.ErrorCode;
 import com.acoldbottle.stockmate.exception.kis.KisTokenReissueException;

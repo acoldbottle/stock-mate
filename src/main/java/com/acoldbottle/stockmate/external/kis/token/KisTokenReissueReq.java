@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.external.kis;
+package com.acoldbottle.stockmate.external.kis.token;
 
 import lombok.Builder;
 import lombok.Getter;

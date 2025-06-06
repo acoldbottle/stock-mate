@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.external.kis;
+package com.acoldbottle.stockmate.external.kis.token;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
