@@ -11,7 +11,6 @@ import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -52,7 +51,6 @@ public class KisTokenService {
         }
         String newKisToken = response.getToken();
         LocalDateTime tokenExpired = LocalDateTime.parse(response.getTokenExpired(), FORMATTER);
-
         KisToken oldKisToken = kisRepository.findById(TOKEN_ID).orElse(null);
         if (oldKisToken == null) {
             kisRepository.save(KisToken.builder()
