@@ -26,8 +26,10 @@ public class SecurityConfig {
             "/api/signup",
             "/api/logout",
             "/api/kis/token/reissue",
+            "/api/stock/update",
             "/swagger-ui/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/**"
     };
 
     @Bean

@@ -25,7 +25,7 @@ public class StockFileDownloader {
 
     @Value("${kis.download.nasdaq}")
     private String nasdaqUrl;
-    @Value(("${kis.download.nyse}"))
+    @Value("${kis.download.nyse}")
     private String nyseUrl;
     @Value("${kis.download.amex}")
     private String amexUrl;
