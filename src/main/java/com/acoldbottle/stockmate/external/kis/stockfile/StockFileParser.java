@@ -55,7 +55,7 @@ public class StockFileParser {
 
             StockDTO stockDTO = StockDTO.builder()
                     .symbol(fields[4])
-                    .korName(fields[6])
+                    .korName(containsHangul(fields[6]) ? fields[6] : "")
                     .engName(fields[7])
                     .marketCode(marketCode)
                     .build();
@@ -64,5 +64,17 @@ public class StockFileParser {
         }
 
         return stockList;
+    }
+
+    private boolean containsHangul(String s) {
+        if (s == null) return false;
+
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch >= 0xAC00 && ch <= 0xD7A3) {
+                return true;
+            }
+        }
+        return false;
     }
 }
