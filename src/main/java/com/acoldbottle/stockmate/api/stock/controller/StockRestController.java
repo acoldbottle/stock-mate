@@ -3,7 +3,6 @@ package com.acoldbottle.stockmate.api.stock.controller;
 import com.acoldbottle.stockmate.api.stock.dto.res.StockSearchRes;
 import com.acoldbottle.stockmate.api.stock.service.StockService;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
