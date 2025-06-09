@@ -1,5 +1,6 @@
 package com.acoldbottle.stockmate.api.stock.service;
 
+import com.acoldbottle.stockmate.api.stock.dto.res.StockSearchRes;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.stock.StockRepository;
 import com.acoldbottle.stockmate.external.kis.stockfile.StockDTO;
@@ -20,9 +21,15 @@ public class StockService {
     private final StockFileDownloader fileDownloader;
     private final StockFileParser fileParser;
 
+    public List<StockSearchRes> searchByKeyword(String keyword) {
+        List<Stock> searchedList = stockRepository.searchByKeyword(keyword);
+        return searchedList.stream()
+                .map(StockSearchRes::from)
+                .toList();
+    }
+
     @Transactional
     public void updateStockDB() {
-
         fileDownloader.downloadAll();
         List<StockDTO> stockDTOS = fileParser.parseAll();
         List<Stock> stockList = stockDTOS.stream()

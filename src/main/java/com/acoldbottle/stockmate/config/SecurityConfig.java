@@ -28,8 +28,7 @@ public class SecurityConfig {
             "/api/kis/token/reissue",
             "/api/stock/update",
             "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/**"
+            "/v3/api-docs/**"
     };
 
     @Bean
