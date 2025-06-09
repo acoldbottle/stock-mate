@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/stock")
-public class StockRestController {
+public class StockRestController implements StockAPI{
 
     private final StockService stockService;
 
