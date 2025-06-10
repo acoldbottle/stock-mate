@@ -14,6 +14,7 @@ public enum ErrorCode {
 
     PORTFOLIO_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 포트폴리오를 찾을 수 없습니다."),
 
+    STOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 주식을 찾을 수 없습니다."),
     STOCK_SEARCH_COND(HttpStatus.BAD_REQUEST, "검색어는 공백일 수 없습니다."),
 
     INVALID_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "필드가 잘 못 되었습니다."),
