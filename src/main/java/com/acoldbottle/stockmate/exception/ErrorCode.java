@@ -17,6 +17,8 @@ public enum ErrorCode {
     STOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 주식을 찾을 수 없습니다."),
     STOCK_SEARCH_COND(HttpStatus.BAD_REQUEST, "검색어는 공백일 수 없습니다."),
 
+    HOLDING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 보유 종목을 찾을 수 없습니다."),
+
     INVALID_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "필드가 잘 못 되었습니다."),
     INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST, "잘못된 요청 형식입니다. JSON 형식을 확인하세요."),
     INVALID_REQUEST_PARAM(HttpStatus.BAD_REQUEST, "잘못된 요청 형식입니다. 파라미터를 확인하세요."),

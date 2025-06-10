@@ -55,4 +55,9 @@ public class Holding {
         this.quantity = totalQuantity;
         this.purchasePrice = avgPurchasePrice;
     }
+
+    public void updateQuantityAndPurchasePrice(int newQuantity, BigDecimal newPurchasePrice) {
+        this.quantity = newQuantity;
+        this.purchasePrice = newPurchasePrice;
+    }
 }

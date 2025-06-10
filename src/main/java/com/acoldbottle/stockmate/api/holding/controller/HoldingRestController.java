@@ -2,7 +2,9 @@ package com.acoldbottle.stockmate.api.holding.controller;
 
 import com.acoldbottle.stockmate.annotation.UserId;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingCreateReq;
+import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
+import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
 import com.acoldbottle.stockmate.api.holding.service.HoldingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +34,12 @@ public class HoldingRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(holdingCreateRes);
     }
 
-
+    @PatchMapping("/{portfolioId}/stocks/{holdingId}")
+    public ResponseEntity<HoldingUpdateRes> updateHolding(@UserId Long userId,
+                                                          @PathVariable Long portfolioId,
+                                                          @PathVariable Long holdingId,
+                                                          @RequestBody @Valid HoldingUpdateReq holdingUpdateReq) {
+        HoldingUpdateRes holdingUpdateRes = holdingService.updateHolding(userId, portfolioId, holdingId, holdingUpdateReq);
+        return ResponseEntity.status(HttpStatus.OK).body(holdingUpdateRes);
+    }
 }

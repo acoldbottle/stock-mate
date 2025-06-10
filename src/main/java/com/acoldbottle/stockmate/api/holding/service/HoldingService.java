@@ -1,7 +1,9 @@
 package com.acoldbottle.stockmate.api.holding.service;
 
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingCreateReq;
+import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
+import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
@@ -10,14 +12,13 @@ import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.stock.StockRepository;
 import com.acoldbottle.stockmate.domain.user.User;
 import com.acoldbottle.stockmate.domain.user.UserRepository;
+import com.acoldbottle.stockmate.exception.holding.HoldingNotFoundException;
 import com.acoldbottle.stockmate.exception.portfolio.PortfolioNotFoundException;
 import com.acoldbottle.stockmate.exception.stock.StockNotFoundException;
 import com.acoldbottle.stockmate.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static com.acoldbottle.stockmate.exception.ErrorCode.*;
 
@@ -37,24 +38,34 @@ public class HoldingService {
         Portfolio portfolio = getPortfolio(portfolioId, user);
         Stock stock = getStock(holdingCreateReq.getSymbol());
 
-        Optional<Holding> holdingOptional = holdingRepository.findByPortfolioAndStock(portfolio, stock);
-        Holding holding;
-        if (holdingOptional.isPresent()) {
-            Holding existHolding = holdingOptional.get();
-            existHolding.addQuantityAndAvgPurchasePrice(holdingCreateReq.getQuantity(), holdingCreateReq.getPurchasePrice());
-            holding = existHolding;
-        } else {
-            Holding newHolding = Holding.builder()
-                    .portfolio(portfolio)
-                    .stock(stock)
-                    .quantity(holdingCreateReq.getQuantity())
-                    .purchasePrice(holdingCreateReq.getPurchasePrice())
-                    .build();
-            holding = newHolding;
-            holdingRepository.save(newHolding);
-        }
+        Holding holding = holdingRepository.findByPortfolioAndStock(portfolio, stock)
+                .map(existHolding -> {
+                    existHolding.addQuantityAndAvgPurchasePrice(holdingCreateReq.getQuantity(), holdingCreateReq.getPurchasePrice());
+                    return existHolding;
+                })
+                .orElseGet(() -> {
+                    Holding newHolding = Holding.builder()
+                            .portfolio(portfolio)
+                            .stock(stock)
+                            .quantity(holdingCreateReq.getQuantity())
+                            .purchasePrice(holdingCreateReq.getPurchasePrice())
+                            .build();
+                    holdingRepository.save(newHolding);
+                    return newHolding;
+                });
 
         return HoldingCreateRes.from(holding);
+    }
+
+    @Transactional
+    public HoldingUpdateRes updateHolding(Long userId, Long portfolioId, Long holdingId, HoldingUpdateReq holdingUpdateReq) {
+        User user = getUser(userId);
+        Portfolio portfolio = getPortfolio(portfolioId, user);
+        Holding findHolding = holdingRepository.findByIdAndPortfolio(holdingId, portfolio)
+                .orElseThrow(() -> new HoldingNotFoundException(HOLDING_NOT_FOUND));
+        findHolding.updateQuantityAndPurchasePrice(holdingUpdateReq.getQuantity(), holdingUpdateReq.getPurchasePrice());
+
+        return HoldingUpdateRes.from(findHolding);
     }
 
     private User getUser(Long userId) {
