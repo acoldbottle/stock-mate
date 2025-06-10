@@ -18,25 +18,25 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/portfolios")
 public class PortfolioRestController implements PortfolioAPI{
 
     private final PortfolioService portfolioService;
 
-    @GetMapping("/portfolio")
+    @GetMapping
     public ResponseEntity<List<PortfolioGetRes>> getPortfolioList(@UserId Long userId) {
         List<PortfolioGetRes> list = portfolioService.getPortfolioList(userId);
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
-    @PostMapping("/portfolio")
+    @PostMapping
     public ResponseEntity<PortfolioCreateRes> createPortfolio(@UserId Long userId,
                                                               @RequestBody @Valid PortfolioCreateReq portfolioCreateReq) {
         PortfolioCreateRes portfolioCreateRes = portfolioService.createPortfolio(userId, portfolioCreateReq);
         return ResponseEntity.status(HttpStatus.CREATED).body(portfolioCreateRes);
     }
 
-    @PatchMapping("/portfolio/{portfolioId}")
+    @PatchMapping("/{portfolioId}")
     public ResponseEntity<PortfolioUpdateRes> updatePortfolioTitle(@UserId Long userId,
                                                                    @PathVariable Long portfolioId,
                                                                    @RequestBody @Valid PortfolioUpdateReq portfolioUpdateReq) {
@@ -44,7 +44,7 @@ public class PortfolioRestController implements PortfolioAPI{
         return ResponseEntity.status(HttpStatus.OK).body(portfolioUpdateRes);
     }
 
-    @DeleteMapping("/portfolio/{portfolioId}")
+    @DeleteMapping("/{portfolioId}")
     public ResponseEntity<Void> deletePortfolio(@UserId Long userId,
                                                 @PathVariable @NotNull Long portfolioId) {
         portfolioService.deletePortfolio(userId, portfolioId);
