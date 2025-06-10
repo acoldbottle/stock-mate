@@ -27,9 +27,9 @@ public class StockFileParser {
         Path amexPath = Paths.get(downloadDir, "AMSMST.COD");
         List<StockDTO> result = new ArrayList<>();
         try {
-            List<StockDTO> nasdaqList = parse(nasdaqPath, "nasdaq");
-            List<StockDTO> nyseList = parse(nysePath, "nyse");
-            List<StockDTO> amexList = parse(amexPath, "amex");
+            List<StockDTO> nasdaqList = parse(nasdaqPath, "NAS");
+            List<StockDTO> nyseList = parse(nysePath, "NYS");
+            List<StockDTO> amexList = parse(amexPath, "AMS");
 
             result.addAll(nasdaqList);
             result.addAll(nyseList);
