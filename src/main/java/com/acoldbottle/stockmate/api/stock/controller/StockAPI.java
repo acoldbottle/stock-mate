@@ -2,6 +2,7 @@ package com.acoldbottle.stockmate.api.stock.controller;
 
 import com.acoldbottle.stockmate.api.stock.dto.res.StockSearchRes;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,6 +20,12 @@ public interface StockAPI {
     @Operation(
             summary = "키워드로 주식 검색",
             description = "키워드로 시작하는 주식을 검색하고 리스트로 반환합니다.",
+            parameters = @Parameter(
+                    name = "keyword",
+                    description = "검색 키워드 (예: 'apple', '애플', 'APPL')",
+                    required = true,
+                    example = "apple"
+            ),
             responses = {
                     @ApiResponse(
                             responseCode = "200", description = "주식 검색 성공",
