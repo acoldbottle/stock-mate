@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Entity
 @Getter
@@ -41,5 +42,17 @@ public class Holding {
         this.stock = stock;
         this.quantity = quantity;
         this.purchasePrice = purchasePrice;
+    }
+
+    public void addQuantityAndAvgPurchasePrice(int newQuantity, BigDecimal newPurchasePrice) {
+        int totalQuantity = this.quantity + newQuantity;
+
+        BigDecimal oldTotalCost = this.purchasePrice.multiply(BigDecimal.valueOf(this.quantity));
+        BigDecimal newTotalCost = newPurchasePrice.multiply(BigDecimal.valueOf(newQuantity));
+        BigDecimal totalCost = oldTotalCost.add(newTotalCost);
+        BigDecimal avgPurchasePrice = totalCost.divide(BigDecimal.valueOf(totalQuantity), 2, RoundingMode.HALF_UP);
+
+        this.quantity = totalQuantity;
+        this.purchasePrice = avgPurchasePrice;
     }
 }
