@@ -10,12 +10,14 @@ import java.math.BigDecimal;
 @Builder
 public class HoldingCreateRes {
 
+    private Long id;
     private String symbol;
     private int quantity;
     private BigDecimal purchasePrice;
 
     public static HoldingCreateRes from(Holding holding) {
         return HoldingCreateRes.builder()
+                .id(holding.getId())
                 .symbol(holding.getStock().getSymbol())
                 .quantity(holding.getQuantity())
                 .purchasePrice(holding.getPurchasePrice())

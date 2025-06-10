@@ -31,4 +31,6 @@ public class HoldingRestController {
         HoldingCreateRes holdingCreateRes = holdingService.createHolding(userId, portfolioId, holdingCreateReq);
         return ResponseEntity.status(HttpStatus.CREATED).body(holdingCreateRes);
     }
+
+
 }
