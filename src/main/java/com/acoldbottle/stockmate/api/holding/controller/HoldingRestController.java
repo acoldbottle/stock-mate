@@ -42,4 +42,12 @@ public class HoldingRestController {
         HoldingUpdateRes holdingUpdateRes = holdingService.updateHolding(userId, portfolioId, holdingId, holdingUpdateReq);
         return ResponseEntity.status(HttpStatus.OK).body(holdingUpdateRes);
     }
+
+    @DeleteMapping("/{portfolioId}/stocks/{holdingId}")
+    public ResponseEntity<Void> deleteHolding(@UserId Long userId,
+                                              @PathVariable Long portfolioId,
+                                              @PathVariable Long holdingId) {
+        holdingService.deleteHolding(userId, portfolioId, holdingId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

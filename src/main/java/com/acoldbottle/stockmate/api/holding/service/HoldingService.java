@@ -61,11 +61,18 @@ public class HoldingService {
     public HoldingUpdateRes updateHolding(Long userId, Long portfolioId, Long holdingId, HoldingUpdateReq holdingUpdateReq) {
         User user = getUser(userId);
         Portfolio portfolio = getPortfolio(portfolioId, user);
-        Holding findHolding = holdingRepository.findByIdAndPortfolio(holdingId, portfolio)
-                .orElseThrow(() -> new HoldingNotFoundException(HOLDING_NOT_FOUND));
+        Holding findHolding = getHolding(holdingId, portfolio);
         findHolding.updateQuantityAndPurchasePrice(holdingUpdateReq.getQuantity(), holdingUpdateReq.getPurchasePrice());
 
         return HoldingUpdateRes.from(findHolding);
+    }
+
+    @Transactional
+    public void deleteHolding(Long userId, Long portfolioId, Long holdingId) {
+        User user = getUser(userId);
+        Portfolio portfolio = getPortfolio(portfolioId, user);
+        Holding findHolding = getHolding(holdingId, portfolio);
+        holdingRepository.delete(findHolding);
     }
 
     private User getUser(Long userId) {
@@ -81,5 +88,10 @@ public class HoldingService {
     private Stock getStock(String symbol) {
         return stockRepository.findById(symbol)
                 .orElseThrow(() -> new StockNotFoundException(STOCK_NOT_FOUND));
+    }
+
+    private Holding getHolding(Long holdingId, Portfolio portfolio) {
+        return holdingRepository.findByIdAndPortfolio(holdingId, portfolio)
+                .orElseThrow(() -> new HoldingNotFoundException(HOLDING_NOT_FOUND));
     }
 }
