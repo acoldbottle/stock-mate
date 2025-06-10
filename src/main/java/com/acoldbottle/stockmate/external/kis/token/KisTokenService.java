@@ -28,7 +28,15 @@ public class KisTokenService {
     private String secret;
 
     @Transactional
-    public void reissueToken() {
+    public synchronized String getValidToken() {
+        KisToken token = kisRepository.findById(TOKEN_ID).orElse(null);
+        if (token == null || token.isExpiringSoon()) {
+            return reissueToken();
+        }
+        return token.getToken();
+    }
+
+    private String reissueToken() {
         KisTokenReissueReq request = KisTokenReissueReq.builder()
                 .grant_type("client_credentials")
                 .appkey(key)
@@ -61,5 +69,7 @@ public class KisTokenService {
         } else {
             oldKisToken.updateReissueToken(newKisToken, tokenExpired);
         }
+
+        return newKisToken;
     }
 }

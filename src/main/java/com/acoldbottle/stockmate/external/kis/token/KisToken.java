@@ -37,4 +37,8 @@ public class KisToken {
         this.token = newKisToken;
         this.tokenExpired = newTokenExpired;
     }
+
+    public boolean isExpiringSoon() {
+        return LocalDateTime.now().isAfter(this.tokenExpired.minusMinutes(10));
+    }
 }
