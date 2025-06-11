@@ -5,10 +5,11 @@ import com.acoldbottle.stockmate.exception.kis.KisTokenReissueException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -18,22 +19,20 @@ import java.time.format.DateTimeFormatter;
 public class KisTokenService {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final Long TOKEN_ID = 1L;
-
-    private final KisTokenRepository kisRepository;
+    private static final String REDIS_TOKEN_KEY = "kis:access-token";
+    private final RedisTemplate<String, String> redisTemplate;
     private final RestClient restClient;
     @Value("${kis.appkey}")
     private String key;
     @Value("${kis.appsecret}")
     private String secret;
 
-    @Transactional
     public synchronized String getValidToken() {
-        KisToken token = kisRepository.findById(TOKEN_ID).orElse(null);
-        if (token == null || token.isExpiringSoon()) {
-            return reissueToken();
+        String token = redisTemplate.opsForValue().get(REDIS_TOKEN_KEY);
+        if (token == null) {
+            return "Bearer " + reissueToken();
         }
-        return token.getToken();
+        return "Bearer " + token;
     }
 
     private String reissueToken() {
@@ -49,27 +48,20 @@ public class KisTokenService {
                 .retrieve()
                 .body(KisTokenReissueRes.class);
 
-        log.info("===== token reissue =====");
-        log.info("token = {}", response.getToken());
-        log.info("token expired = {}", response.getTokenExpired());
-        log.info("===== token reissue =====");
-
         if (response == null || response.getToken() == null) {
             throw new KisTokenReissueException(ErrorCode.KIS_TOKEN_REISSUE_FAILED);
         }
-        String newKisToken = response.getToken();
+        String token = response.getToken();
         LocalDateTime tokenExpired = LocalDateTime.parse(response.getTokenExpired(), FORMATTER);
-        KisToken oldKisToken = kisRepository.findById(TOKEN_ID).orElse(null);
-        if (oldKisToken == null) {
-            kisRepository.save(KisToken.builder()
-                    .id(TOKEN_ID)
-                    .token(newKisToken)
-                    .tokenExpired(tokenExpired)
-                    .build());
-        } else {
-            oldKisToken.updateReissueToken(newKisToken, tokenExpired);
-        }
+        long ttl = Duration.between(LocalDateTime.now(), tokenExpired).getSeconds() - 600;
+        redisTemplate.opsForValue().set(REDIS_TOKEN_KEY, token, Duration.ofSeconds(ttl));
 
-        return newKisToken;
+        log.info("===== token reissue =====");
+        log.info("token = {}", response.getToken());
+        log.info("token expired = {}", response.getTokenExpired());
+        log.info("ttl -> seconds : {}", ttl);
+        log.info("===== token reissue =====");
+
+        return token;
     }
 }
