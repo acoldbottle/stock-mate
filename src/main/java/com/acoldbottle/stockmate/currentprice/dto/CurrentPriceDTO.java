@@ -3,13 +3,14 @@ package com.acoldbottle.stockmate.currentprice.dto;
 import com.acoldbottle.stockmate.external.kis.KisCurrentPriceRes;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 
 @Slf4j
 @Getter
-@Builder
+@NoArgsConstructor
 public class CurrentPriceDTO {
 
     private BigDecimal last;
@@ -20,6 +21,12 @@ public class CurrentPriceDTO {
                 .last(parseBigDecimal(res.getOutput().getLast()))
                 .rate(parseBigDecimal(res.getOutput().getRate()))
                 .build();
+    }
+
+    @Builder
+    private CurrentPriceDTO(BigDecimal last, BigDecimal rate) {
+        this.last = last;
+        this.rate = rate;
     }
 
     private static BigDecimal parseBigDecimal(String value) {
