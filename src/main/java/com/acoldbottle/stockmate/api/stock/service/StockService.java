@@ -18,8 +18,6 @@ import java.util.List;
 public class StockService {
 
     private final StockRepository stockRepository;
-    private final StockFileDownloader fileDownloader;
-    private final StockFileParser fileParser;
 
     public List<StockSearchRes> searchByKeyword(String keyword) {
         List<Stock> searchedList = stockRepository.searchByKeyword(keyword);
@@ -29,9 +27,7 @@ public class StockService {
     }
 
     @Transactional
-    public void updateStockDB() {
-        fileDownloader.downloadAll();
-        List<StockDTO> stockDTOS = fileParser.parseAll();
+    public void saveStocks(List<StockDTO> stockDTOS) {
         List<Stock> stockList = stockDTOS.stream()
                 .map(stockDTO -> Stock.builder()
                         .symbol(stockDTO.getSymbol())
