@@ -56,6 +56,4 @@ public interface StockAPI {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.", content = @Content)
             })
     ResponseEntity<List<StockSearchRes>> searchStocks(@RequestParam @NotBlank String keyword);
-
-    ResponseEntity<Void> updateStockDB();
 }

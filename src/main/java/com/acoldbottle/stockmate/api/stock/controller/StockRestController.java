@@ -22,11 +22,4 @@ public class StockRestController implements StockAPI{
         List<StockSearchRes> stockList = stockService.searchByKeyword(keyword);
         return ResponseEntity.status(HttpStatus.OK).body(stockList);
     }
-
-    @PostMapping("/update")
-    public ResponseEntity<Void> updateStockDB() {
-
-        stockService.updateStockDB();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
 }
