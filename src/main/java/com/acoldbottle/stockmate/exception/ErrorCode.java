@@ -29,7 +29,8 @@ public enum ErrorCode {
 
     KIS_FILE_DOWNLOAD_ERROR(HttpStatus.NOT_FOUND, "한국투자증권 주식종목파일 다운로드에 실패했습니다."),
     KIS_FILE_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "한국투자증권 주식종목파일 파싱에 실패했습니다"),
-    KIS_TOKEN_REISSUE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "한국투자증권 토큰 발급에 실패했습니다");
+    KIS_TOKEN_REISSUE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "한국투자증권 토큰 발급에 실패했습니다"),
+    KIS_CURRENT_PRICE_ERROR(HttpStatus.BAD_GATEWAY, "현재 시세를 가져오지 못 했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

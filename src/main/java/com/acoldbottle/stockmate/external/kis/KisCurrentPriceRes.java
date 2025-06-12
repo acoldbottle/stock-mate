@@ -8,6 +8,7 @@ import lombok.Getter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KisCurrentPriceRes {
 
+    private String rt_cd;
     private Output output;
 
     @Getter

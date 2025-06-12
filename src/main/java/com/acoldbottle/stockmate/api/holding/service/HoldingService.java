@@ -4,6 +4,7 @@ import com.acoldbottle.stockmate.api.holding.dto.req.HoldingCreateReq;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
+import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
@@ -31,6 +32,7 @@ public class HoldingService {
     private final StockRepository stockRepository;
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
+    private final TrackedSymbolService trackedSymbolService;
 
     @Transactional
     public HoldingCreateRes createHolding(Long userId, Long portfolioId, HoldingCreateReq holdingCreateReq) {
@@ -54,6 +56,7 @@ public class HoldingService {
                     return newHolding;
                 });
 
+        trackedSymbolService.saveSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
         return HoldingCreateRes.from(holding);
     }
 
@@ -73,6 +76,7 @@ public class HoldingService {
         Portfolio portfolio = getPortfolio(portfolioId, user);
         Holding findHolding = getHolding(holdingId, portfolio);
         holdingRepository.delete(findHolding);
+        trackedSymbolService.deleteSymbolIfNotUse(findHolding.getStock());
     }
 
     private User getUser(Long userId) {

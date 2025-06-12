@@ -1,5 +1,6 @@
-package com.acoldbottle.stockmate.domain.symbol;
+package com.acoldbottle.stockmate.domain.trackedsymbol;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -10,15 +11,19 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "symbols")
+@Table(name = "tracked_symbols")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Symbol {
+public class TrackedSymbol {
 
     @Id
     private String symbol;
 
+    @Column(name = "market_code")
+    private String marketCode;
+
     @Builder
-    public Symbol(String symbol) {
+    public TrackedSymbol(String symbol, String marketCode) {
         this.symbol = symbol;
+        this.marketCode = marketCode;
     }
 }
