@@ -5,12 +5,14 @@ import com.acoldbottle.stockmate.external.kis.stockfile.StockDTO;
 import com.acoldbottle.stockmate.external.kis.stockfile.StockFileDownloader;
 import com.acoldbottle.stockmate.external.kis.stockfile.StockFileParser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class StockUpdateScheduler {
 
@@ -20,8 +22,12 @@ public class StockUpdateScheduler {
 
     @Scheduled(cron = "0 0 6 * * *", zone = "Asia/Seoul")
     public void updateStockDB() {
-        fileDownloader.downloadAll();
-        List<StockDTO> stockDTOS = fileParser.parseAll();
-        stockService.saveStocks(stockDTOS);
+        try {
+            fileDownloader.downloadAll();
+            List<StockDTO> stockDTOS = fileParser.parseAll();
+            stockService.saveStocks(stockDTOS);
+        } catch (Exception e) {
+            log.error("=== [스케줄러] 주식 종목 업데이트 실패 ===", e);
+        }
     }
 }
