@@ -4,8 +4,6 @@ import com.acoldbottle.stockmate.api.stock.dto.res.StockSearchRes;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.stock.StockRepository;
 import com.acoldbottle.stockmate.external.kis.stockfile.StockDTO;
-import com.acoldbottle.stockmate.external.kis.stockfile.StockFileDownloader;
-import com.acoldbottle.stockmate.external.kis.stockfile.StockFileParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

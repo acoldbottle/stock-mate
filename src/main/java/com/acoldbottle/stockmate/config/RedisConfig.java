@@ -33,13 +33,6 @@ public class RedisConfig {
         return new LettuceConnectionFactory(host, port);
     }
 
-    /**
-     * 레디스를 활용한 캐시 서비스(현재가,등락률 조회), KisClient에서는 외부 api 에 요청만 하고 dto 로 반환 -> 레디스에 저장
-     * <p>
-     * Async 서비스도 만들어서 여기에서 레디스 서비스를 주입해 레디스에 저장하는 작업을 @Async를 붙여 수행
-     * <p>
-     * holding 서비스에서는 캐시서비스를 주입받아 symbol로 레디스에서 캐싱해서 수익률 계산.
-     */
     @Bean
     public RedisTemplate<String, CurrentPriceDTO> redisTemplateForCurrentPrice(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, CurrentPriceDTO> redisTemplate = new RedisTemplate<>();
@@ -50,16 +43,6 @@ public class RedisConfig {
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
-
-//    @Bean
-//    public RedisTemplate<String, String> redisTemplateForKisToken(RedisConnectionFactory connectionFactory) {
-//        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-//        redisTemplate.setConnectionFactory(connectionFactory);
-//        redisTemplate.setKeySerializer(new StringRedisSerializer());
-//        redisTemplate.setValueSerializer(new StringRedisSerializer());
-//        redisTemplate.afterPropertiesSet();
-//        return redisTemplate;
-//    }
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {

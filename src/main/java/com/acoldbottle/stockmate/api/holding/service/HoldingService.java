@@ -3,8 +3,11 @@ package com.acoldbottle.stockmate.api.holding.service;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingCreateReq;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
+import com.acoldbottle.stockmate.api.holding.dto.res.HoldingGetWithProfitRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
+import com.acoldbottle.stockmate.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.currentprice.service.CurrentPriceCacheService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
@@ -21,6 +24,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.acoldbottle.stockmate.exception.ErrorCode.*;
 
 @Service
@@ -33,6 +40,17 @@ public class HoldingService {
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
     private final TrackedSymbolService trackedSymbolService;
+    private final HoldingProfitService holdingProfitService;
+
+    public List<HoldingGetWithProfitRes> getHoldingListWithProfit(Long userId, Long portfolioId) {
+        User user = getUser(userId);
+        Portfolio portfolio = getPortfolio(portfolioId, user);
+        List<Holding> holdingList = holdingRepository.findByPortfolio(portfolio);
+
+        return holdingList.stream()
+                .map(holdingProfitService::getHoldingWithProfit)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public HoldingCreateRes createHolding(Long userId, Long portfolioId, HoldingCreateReq holdingCreateReq) {
@@ -55,8 +73,7 @@ public class HoldingService {
                     holdingRepository.save(newHolding);
                     return newHolding;
                 });
-
-        trackedSymbolService.saveSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
+        trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
         return HoldingCreateRes.from(holding);
     }
 
@@ -76,7 +93,7 @@ public class HoldingService {
         Portfolio portfolio = getPortfolio(portfolioId, user);
         Holding findHolding = getHolding(holdingId, portfolio);
         holdingRepository.delete(findHolding);
-        trackedSymbolService.deleteSymbolIfNotUse(findHolding.getStock());
+        trackedSymbolService.deleteTrackedSymbolIfNotUse(findHolding.getStock());
     }
 
     private User getUser(Long userId) {
