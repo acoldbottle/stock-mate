@@ -4,10 +4,12 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
+@Setter
 public class HoldingUpdateReq {
 
     @Positive(message = "수량은 0보다 커야합니다.")
