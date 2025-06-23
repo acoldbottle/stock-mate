@@ -18,14 +18,15 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/portfolios")
-public class HoldingRestController {
+public class HoldingRestController implements HoldingAPI{
 
     private final HoldingService holdingService;
 
     @GetMapping("/{portfolioId}/stocks")
     public ResponseEntity<List<HoldingGetWithProfitRes>> getHoldingListWithProfit(@UserId Long userId,
                                                                                   @PathVariable Long portfolioId) {
-        List<HoldingGetWithProfitRes> result= holdingService.getHoldingListWithProfit(userId, portfolioId);
+
+        List<HoldingGetWithProfitRes> result = holdingService.getHoldingListWithProfit(userId, portfolioId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
