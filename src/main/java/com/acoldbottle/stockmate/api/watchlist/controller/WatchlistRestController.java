@@ -20,11 +20,6 @@ public class WatchlistRestController {
 
     private final WatchlistService watchlistService;
 
-    /**
-     * 관심 종목 추가
-     * 관심 종목 삭제
-     * 관심 종목 조회(=리스트)
-     */
     @GetMapping
     public ResponseEntity<List<WatchItemGetRes>> getWatchlist(@UserId Long userId) {
         List<WatchItemGetRes> res = watchlistService.getWatchlist(userId);
