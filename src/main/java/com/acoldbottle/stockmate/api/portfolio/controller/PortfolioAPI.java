@@ -152,6 +152,6 @@ public interface PortfolioAPI {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.", content = @Content)
             })
     ResponseEntity<Void> deletePortfolio(@UserId Long userId,
-                                         @PathVariable @NotNull Long portfolioId);
+                                         @PathVariable Long portfolioId);
 
 }
