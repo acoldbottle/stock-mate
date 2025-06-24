@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "watchlist")
 @Getter
+@Table(name = "watchlist", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "stock_id"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WatchItem {
 
@@ -33,3 +33,5 @@ public class WatchItem {
         this.stock = stock;
     }
 }
+
+

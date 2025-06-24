@@ -4,6 +4,7 @@ import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.trackedsymbol.TrackedSymbol;
 import com.acoldbottle.stockmate.domain.trackedsymbol.TrackedSymbolRepository;
+import com.acoldbottle.stockmate.domain.watchitem.WatchItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,10 @@ public class TrackedSymbolService {
 
     private final TrackedSymbolRepository trackedSymbolRepository;
     private final HoldingRepository holdingRepository;
+    private final WatchItemRepository watchItemRepository;
+    private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     public CompletableFuture<Void> saveTrackedSymbolIfNotExists(String symbol, String marketCode) {
-        ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
         return CompletableFuture.runAsync(() ->
                         trackedSymbolRepository.save(TrackedSymbol.builder()
                                 .symbol(symbol)
