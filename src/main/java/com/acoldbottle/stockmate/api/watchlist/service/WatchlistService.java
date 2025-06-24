@@ -3,6 +3,9 @@ package com.acoldbottle.stockmate.api.watchlist.service;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.api.watchlist.dto.req.WatchItemCreateReq;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemCreateRes;
+import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemGetRes;
+import com.acoldbottle.stockmate.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.currentprice.service.CurrentPriceCacheService;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.stock.StockRepository;
 import com.acoldbottle.stockmate.domain.user.User;
@@ -17,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.acoldbottle.stockmate.exception.ErrorCode.*;
 
 @Service
@@ -28,6 +34,19 @@ public class WatchlistService {
     private final StockRepository stockRepository;
     private final WatchItemRepository watchItemRepository;
     private final TrackedSymbolService trackedSymbolService;
+    private final CurrentPriceCacheService currentPriceCacheService;
+
+    public List<WatchItemGetRes> getWatchlist(Long userId) {
+        User user = getUser(userId);
+        List<WatchItem> watchlist = watchItemRepository.findAllByUser(user);
+
+        return watchlist.stream()
+                .map(watchItem -> {
+                    CurrentPriceDTO currentPrice = currentPriceCacheService.getCurrentPrice(watchItem.getStock().getSymbol());
+                    return WatchItemGetRes.from(watchItem, currentPrice);
+                })
+                .toList();
+    }
 
     @Transactional
     public WatchItemCreateRes createWatchItem(Long userId, WatchItemCreateReq watchItemCreateReq) {
