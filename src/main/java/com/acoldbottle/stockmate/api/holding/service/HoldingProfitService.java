@@ -44,7 +44,8 @@ public class HoldingProfitService {
         BigDecimal profitRate = BigDecimal.ZERO;
         if (totalAmount.compareTo(BigDecimal.ZERO) > 0) {
             profitRate = profitAmount.divide(totalAmount, 6, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100));
+                    .multiply(BigDecimal.valueOf(100))
+                    .setScale(2, RoundingMode.HALF_UP);
         }
 
         return HoldingGetWithProfitRes.builder()
