@@ -42,7 +42,7 @@ public class TrackedSymbolService {
     @Transactional
     public void deleteTrackedSymbolIfNotUse(Stock stock) {
         log.info("=== stock.symbol = {} ===", stock.getSymbol());
-        if (!holdingRepository.existsByStock_symbol(stock.getSymbol())) {
+        if (!holdingRepository.existsByStock(stock) && !watchItemRepository.existsByStock(stock)) {
             trackedSymbolRepository.deleteById(stock.getSymbol());
         }
     }

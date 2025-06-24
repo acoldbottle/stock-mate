@@ -12,6 +12,7 @@ import com.acoldbottle.stockmate.domain.watchitem.WatchItemRepository;
 import com.acoldbottle.stockmate.exception.stock.StockNotFoundException;
 import com.acoldbottle.stockmate.exception.user.UserNotFoundException;
 import com.acoldbottle.stockmate.exception.watchitem.WatchItemAlreadyExistsException;
+import com.acoldbottle.stockmate.exception.watchitem.WatchItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,14 @@ public class WatchlistService {
         return WatchItemCreateRes.from(savedWatchItem);
     }
 
+    @Transactional
+    public void deleteWatchItem(Long userId, Long watchItemId) {
+        User user = getUser(userId);
+        WatchItem watchItem = getWatchItem(watchItemId, user);
+        watchItemRepository.delete(watchItem);
+        trackedSymbolService.deleteTrackedSymbolIfNotUse(watchItem.getStock());
+    }
+
     private User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
@@ -53,5 +62,10 @@ public class WatchlistService {
     private Stock getStock(String symbol) {
         return stockRepository.findById(symbol)
                 .orElseThrow(() -> new StockNotFoundException(STOCK_NOT_FOUND));
+    }
+
+    private WatchItem getWatchItem(Long watchItemId, User user) {
+        return watchItemRepository.findByIdAndUser(watchItemId, user)
+                .orElseThrow(() -> new WatchItemNotFoundException(WATCH_ITEM_NOT_FOUND));
     }
 }

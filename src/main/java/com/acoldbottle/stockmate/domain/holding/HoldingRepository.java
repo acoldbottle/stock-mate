@@ -12,7 +12,7 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
 
     Optional<Holding> findByPortfolioAndStock(Portfolio portfolio, Stock stock);
     Optional<Holding> findByIdAndPortfolio(Long id, Portfolio portfolio);
-    boolean existsByStock_symbol(String symbol);
+    boolean existsByStock(Stock stock);
 
     List<Holding> findByPortfolio(Portfolio portfolio);
 }

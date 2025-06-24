@@ -19,6 +19,7 @@ public enum ErrorCode {
 
     HOLDING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 보유 종목을 찾을 수 없습니다."),
 
+    WATCH_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 관심종목을 찾을 수 없습니다."),
     WATCH_ITEM_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 관심종목에 등록되어 있습니다."),
 
     INVALID_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "필드가 잘 못 되었습니다."),
