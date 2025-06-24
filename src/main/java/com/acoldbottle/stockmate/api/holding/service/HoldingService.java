@@ -45,7 +45,7 @@ public class HoldingService {
     public List<HoldingGetWithProfitRes> getHoldingListWithProfit(Long userId, Long portfolioId) {
         User user = getUser(userId);
         Portfolio portfolio = getPortfolio(portfolioId, user);
-        List<Holding> holdingList = holdingRepository.findByPortfolio(portfolio);
+        List<Holding> holdingList = holdingRepository.findAllByPortfolio(portfolio);
 
         return holdingList.stream()
                 .map(holdingProfitService::getHoldingWithProfit)

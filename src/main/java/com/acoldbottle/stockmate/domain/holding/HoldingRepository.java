@@ -13,6 +13,7 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
     Optional<Holding> findByPortfolioAndStock(Portfolio portfolio, Stock stock);
     Optional<Holding> findByIdAndPortfolio(Long id, Portfolio portfolio);
     boolean existsByStock(Stock stock);
-
+    @Query("SELECT h FROM Holding h WHERE h.portfolio = :portfolio " +
+            "ORDER BY h.purchasePrice * h.quantity DESC")
     List<Holding> findAllByPortfolio(Portfolio portfolio);
 }
