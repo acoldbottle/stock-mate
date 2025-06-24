@@ -46,7 +46,7 @@ public class PortfolioRestController implements PortfolioAPI{
 
     @DeleteMapping("/{portfolioId}")
     public ResponseEntity<Void> deletePortfolio(@UserId Long userId,
-                                                @PathVariable @NotNull Long portfolioId) {
+                                                @PathVariable Long portfolioId) {
         portfolioService.deletePortfolio(userId, portfolioId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
