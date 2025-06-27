@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,19 +23,22 @@ public class CurrentPriceScheduler {
     private final CurrentPriceService currentPriceService;
     private ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
-
     @Scheduled(fixedRate = 60000L)
     public void requestCurrentPriceAndCache() {
         try {
             List<TrackedSymbol> trackedSymbolList = trackedSymbolService.getTrackedSymbolAll();
-            for (TrackedSymbol t : trackedSymbolList) {
-                KisCurrentPriceRes currentPriceRes = currentPriceService.requestCurrentPriceToKisAPI(t.getSymbol(), t.getMarketCode(), executor);
-                currentPriceService.updateCurrentPrice(t.getSymbol(), currentPriceRes, executor);
-            }
-        } catch (InterruptedException e) {
-            log.error("=== [스케줄러] 인터럽트 발생 ===");
+
+            List<CompletableFuture<Void>> futures = trackedSymbolList.stream()
+                    .map(t -> currentPriceService.requestCurrentPriceToKisAPI(t.getSymbol(), t.getMarketCode(), executor)
+                            .thenCompose(kisCurrentPriceRes -> currentPriceService.updateCurrentPrice(t.getSymbol(), kisCurrentPriceRes, executor))
+                            .exceptionally(e -> {
+                                log.error("=== 현재가 요청 or 업데이트 실패 ===", e);
+                                return null;
+                            }))
+                    .toList();
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
         } catch (Exception e) {
-            log.error("=== [스케줄러] 현재가 요청 실패 ===");
+            log.error("=== [스케줄러] 현재가 업데이트 실패 ===", e);
         }
     }
 }

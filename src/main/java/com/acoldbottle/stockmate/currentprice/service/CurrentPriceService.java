@@ -1,6 +1,9 @@
 package com.acoldbottle.stockmate.currentprice.service;
 
 import com.acoldbottle.stockmate.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.exception.etc.RedisSaveException;
+import com.acoldbottle.stockmate.exception.kis.KisRequestInterruptedException;
+import com.acoldbottle.stockmate.exception.kis.KisTooManyRequestException;
 import com.acoldbottle.stockmate.external.kis.KisAPIClient;
 import com.acoldbottle.stockmate.external.kis.KisCurrentPriceRes;
 import io.github.bucket4j.Bucket;
@@ -10,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
+
+import static com.acoldbottle.stockmate.exception.ErrorCode.*;
 
 @Service
 @Slf4j
@@ -21,20 +27,18 @@ public class CurrentPriceService {
     private final KisAPIClient kisAPIClient;
     private final CurrentPriceCacheService cacheService;
 
-    public KisCurrentPriceRes requestCurrentPriceToKisAPI(String symbol, String marketCode, ExecutorService executor) throws InterruptedException {
-        if (bucket.asBlocking().tryConsume(1, Duration.ofSeconds(50))) {
-            CompletableFuture<KisCurrentPriceRes> kisCurrentPriceFuture = CompletableFuture.supplyAsync(() ->
-                    kisAPIClient.requestCurrentPrice(symbol, marketCode), executor)
-                    .exceptionally(ex -> {
-                        log.error("=== KIS API 현재가 가져오는 과정에서 오류 발생 ===]", ex);
-                        return null;
-                    });
-            return kisCurrentPriceFuture.join();
-        } else {
-            log.warn("=== KIS API 현재가 요청 실패 ===");
-            log.warn("=== 스레드 대기 시간 초과 ===");
-            return null;
-        }
+    public CompletableFuture<KisCurrentPriceRes> requestCurrentPriceToKisAPI(String symbol, String marketCode, ExecutorService executor) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                if (bucket.asBlocking().tryConsume(1, Duration.ofSeconds(59))) {
+                    return kisAPIClient.requestCurrentPrice(symbol, marketCode);
+                } else {
+                    throw new CompletionException(new KisTooManyRequestException(KIS_TOO_MANY_REQUEST));
+                }
+            } catch (InterruptedException e) {
+                throw new CompletionException(new KisRequestInterruptedException(KIS_REQUEST_INTERRUPTED_ERROR));
+            }
+        }, executor);
     }
 
     public CompletableFuture<Void> updateCurrentPrice(String symbol, KisCurrentPriceRes kisCurrentPriceRes, ExecutorService executor) {
@@ -44,11 +48,10 @@ public class CurrentPriceService {
         }
         return CompletableFuture.supplyAsync(() ->
                         CurrentPriceDTO.from(kisCurrentPriceRes), executor)
+                .thenAccept(dto -> cacheService.updateCurrentPrice(symbol, dto))
                 .exceptionally(ex -> {
-                    log.error("=== 레디스에 저장 실패 ===");
                     log.error("=== DTO:{}, symbol:{} ===", kisCurrentPriceRes, symbol);
-                    return null;
-                })
-                .thenAccept(dto -> cacheService.updateCurrentPrice(symbol, dto));
+                    throw new CompletionException(new RedisSaveException(REDIS_SAVE_ERROR));
+                });
     }
 }
