@@ -5,8 +5,12 @@ import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioUpdateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
+import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
+import com.acoldbottle.stockmate.domain.holding.Holding;
+import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import com.acoldbottle.stockmate.domain.portfolio.PortfolioRepository;
+import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.user.User;
 import com.acoldbottle.stockmate.domain.user.UserRepository;
 import com.acoldbottle.stockmate.exception.ErrorCode;
@@ -18,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,8 @@ public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
+    private final HoldingRepository holdingRepository;
+    private final TrackedSymbolService trackedSymbolService;
 
     public List<PortfolioGetRes> getPortfolioList(Long userId) {
         User user = getUser(userId);
@@ -60,6 +67,11 @@ public class PortfolioService {
     public void deletePortfolio(Long userId, Long portfolioId) {
         User user = getUser(userId);
         Portfolio findPortfolio = getPortfolio(portfolioId, user);
+        List<Holding> holdings = holdingRepository.findAllByPortfolio(findPortfolio);
+        holdingRepository.deleteAllByPortfolio(findPortfolio);
+        holdings.stream()
+                        .map(Holding::getStock)
+                                .forEach(trackedSymbolService::deleteTrackedSymbolIfNotUse);
         portfolioRepository.delete(findPortfolio);
     }
 

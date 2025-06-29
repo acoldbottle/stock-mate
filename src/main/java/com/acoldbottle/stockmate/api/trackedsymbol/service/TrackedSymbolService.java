@@ -24,6 +24,7 @@ public class TrackedSymbolService {
     private final TrackedSymbolRepository trackedSymbolRepository;
     private final HoldingRepository holdingRepository;
     private final WatchItemRepository watchItemRepository;
+
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     public CompletableFuture<Void> saveTrackedSymbolIfNotExists(String symbol, String marketCode) {

@@ -3,6 +3,7 @@ package com.acoldbottle.stockmate.domain.holding;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -16,4 +17,7 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
     @Query("SELECT h FROM Holding h WHERE h.portfolio = :portfolio " +
             "ORDER BY h.purchasePrice * h.quantity DESC")
     List<Holding> findAllByPortfolio(Portfolio portfolio);
+    @Modifying
+    @Query("DELETE FROM Holding h WHERE h.portfolio = :portfolio")
+    void deleteAllByPortfolio(Portfolio portfolio);
 }
