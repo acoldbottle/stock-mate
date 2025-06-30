@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 @Builder
 public class HoldingGetWithProfitRes {
 
+    private Long holdingId;
     private String symbol;
     private String marketCode;
     private BigDecimal avgPurchasePrice; // 평균 매수가

@@ -49,6 +49,7 @@ public class HoldingProfitService {
         }
 
         return HoldingGetWithProfitRes.builder()
+                .holdingId(holding.getId())
                 .symbol(symbol)
                 .marketCode(marketCode)
                 .avgPurchasePrice(avgPurchasePrice)

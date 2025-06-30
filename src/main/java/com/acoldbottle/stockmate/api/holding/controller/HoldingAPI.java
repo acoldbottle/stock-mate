@@ -34,6 +34,7 @@ public interface HoldingAPI {
                                     examples = @ExampleObject(value = """
                                             [
                                                 {
+                                                    "holdingId": 1,
                                                     "symbol": "AAPL",
                                                     "marketCode": "NAS",
                                                     "avgPurchasePrice": 150.88,
@@ -45,6 +46,7 @@ public interface HoldingAPI {
                                                     "profitRate": 33.218500
                                                 },
                                                 {
+                                                    "holdingId": 4,
                                                     "symbol": "NVDA",
                                                     "marketCode": "NAS",
                                                     "avgPurchasePrice": 140.04,
