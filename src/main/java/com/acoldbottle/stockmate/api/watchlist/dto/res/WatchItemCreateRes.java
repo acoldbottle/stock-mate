@@ -8,12 +8,12 @@ import lombok.Getter;
 @Builder
 public class WatchItemCreateRes {
 
-    private Long id;
+    private Long watchItemId;
     private String symbol;
 
     public static WatchItemCreateRes from(WatchItem watchItem) {
         return WatchItemCreateRes.builder()
-                .id(watchItem.getId())
+                .watchItemId(watchItem.getId())
                 .symbol(watchItem.getStock().getSymbol())
                 .build();
     }
