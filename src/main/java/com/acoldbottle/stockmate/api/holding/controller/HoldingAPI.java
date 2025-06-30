@@ -95,7 +95,7 @@ public interface HoldingAPI {
                                     schema = @Schema(implementation = HoldingCreateRes.class),
                                     examples = @ExampleObject(value = """
                                             {
-                                                "id": 1,
+                                                "holdingId": 1,
                                                 "symbol": "AAPL",
                                                 "quantity": 10,
                                                 "purchasePrice": 120.88
@@ -143,7 +143,7 @@ public interface HoldingAPI {
                                     schema = @Schema(implementation = HoldingUpdateRes.class),
                                     examples = @ExampleObject(value = """
                                             {
-                                                "id": 1,
+                                                "holdingId": 1,
                                                 "symbol": "AAPL",
                                                 "quantity": 8,
                                                 "purchasePrice": 111.88
