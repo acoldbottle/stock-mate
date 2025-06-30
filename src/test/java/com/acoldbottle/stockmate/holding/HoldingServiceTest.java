@@ -78,7 +78,7 @@ public class HoldingServiceTest {
         User user = userRepository.findByUsername("root").get();
         Portfolio portfolio = portfolioRepository.findAllByUser(user).get(0);
         HoldingCreateRes savedHolding = holdingService.createHolding(user.getId(), portfolio.getId(), createReq);
-        assertThat(savedHolding.getId()).isEqualTo(1L);
+        assertThat(savedHolding.getHoldingId()).isEqualTo(1L);
     }
 
     @Test

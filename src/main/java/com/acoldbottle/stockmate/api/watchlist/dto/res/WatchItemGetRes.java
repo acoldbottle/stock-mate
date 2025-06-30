@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @Builder
 public class WatchItemGetRes {
 
+    private Long watchItemId;
     private String symbol;
     private String marketCode;
     private BigDecimal currentPrice;
@@ -19,6 +20,7 @@ public class WatchItemGetRes {
     public static WatchItemGetRes from(WatchItem watchItem, CurrentPriceDTO currentPriceDTO) {
         if (currentPriceDTO == null) {
             return WatchItemGetRes.builder()
+                    .watchItemId(watchItem.getId())
                     .symbol(watchItem.getStock().getSymbol())
                     .marketCode(watchItem.getStock().getMarketCode())
                     .currentPrice(BigDecimal.ZERO)
@@ -26,6 +28,7 @@ public class WatchItemGetRes {
                     .build();
         }
         return WatchItemGetRes.builder()
+                .watchItemId(watchItem.getId())
                 .symbol(watchItem.getStock().getSymbol())
                 .marketCode(watchItem.getStock().getMarketCode())
                 .currentPrice(currentPriceDTO.getLast())
