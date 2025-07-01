@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/watchlist")
-public class WatchlistRestController {
+public class WatchlistRestController implements WatchlistAPI{
 
     private final WatchlistService watchlistService;
 
