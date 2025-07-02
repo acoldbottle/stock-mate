@@ -51,13 +51,15 @@ public interface UserAPI {
 
                             )
                     ),
+                    @ApiResponse(responseCode = "400", description = "아이디는 영어와 숫자로만 5~15자여야 합니다.", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "아이디는 필수 입력값입니다.", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "비밀번호는 필수 입력값입니다.", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "비밀번호는 8자 이상이어야 합니다.", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "비밀번호 확인은 필수 입력값입니다.", content = @Content),
                     @ApiResponse(responseCode = "400", description = "비밀번호가 일치하지 않습니다.", content = @Content),
-                    @ApiResponse(responseCode = "400", description = "회원 아이디는 5자 이상, 15자 이하여야 합니다.", content = @Content),
-                    @ApiResponse(responseCode = "400", description = "회원 비밀번호는 8자 이상이어야 합니다.", content = @Content),
                     @ApiResponse(responseCode = "409", description = "이미 존재하는 회원 아이디입니다.", content = @Content),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.", content = @Content)
-            }
-    )
+            })
     ResponseEntity<UserSignUpRes> signUp(@RequestBody @Valid UserSignUpReq userSignUpReq);
 
     @Operation(
@@ -93,8 +95,7 @@ public interface UserAPI {
                     ),
                     @ApiResponse(responseCode = "401", description = "아이디 또는 비밀번호가 잘못되었습니다.", content = @Content),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.", content = @Content)
-            }
-    )
+            })
     ResponseEntity<UserLoginRes> login(@RequestBody UserLoginReq userLoginReq, HttpServletRequest request);
 
     @Operation(
@@ -103,7 +104,6 @@ public interface UserAPI {
             responses = {
                     @ApiResponse(responseCode = "204", description = "로그아웃 성공"),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.", content = @Content)
-            }
-    )
+            })
     ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response);
 }

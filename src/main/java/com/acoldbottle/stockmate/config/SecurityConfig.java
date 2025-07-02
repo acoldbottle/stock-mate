@@ -27,7 +27,8 @@ public class SecurityConfig {
             "/api/logout",
             "/api/stock/update",
             "/swagger-ui/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/stockmate/signup"
     };
 
     @Bean
@@ -44,6 +45,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(WHITE_LIST).permitAll()
                         .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/stockmate/login")
+                        .loginProcessingUrl("/stockmate/login")
+                        .defaultSuccessUrl("/stockmate/portfolios")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/stockmate/logout")
+                        .logoutSuccessUrl("/stockmate/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll())
                 .exceptionHandling((exception) -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement((session) -> session
