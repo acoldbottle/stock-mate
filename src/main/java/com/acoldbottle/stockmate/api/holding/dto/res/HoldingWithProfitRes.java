@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Builder
-public class HoldingGetWithProfitRes {
+public class HoldingWithProfitRes {
 
     private Long holdingId;
     private String symbol;

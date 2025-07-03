@@ -4,7 +4,7 @@ import com.acoldbottle.stockmate.annotation.UserId;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingCreateReq;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
-import com.acoldbottle.stockmate.api.holding.dto.res.HoldingGetWithProfitRes;
+import com.acoldbottle.stockmate.api.holding.dto.res.HoldingWithProfitRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
 import com.acoldbottle.stockmate.api.holding.service.HoldingService;
 import jakarta.validation.Valid;
@@ -23,10 +23,10 @@ public class HoldingRestController implements HoldingAPI{
     private final HoldingService holdingService;
 
     @GetMapping("/{portfolioId}/stocks")
-    public ResponseEntity<List<HoldingGetWithProfitRes>> getHoldingListWithProfit(@UserId Long userId,
-                                                                                  @PathVariable Long portfolioId) {
+    public ResponseEntity<List<HoldingWithProfitRes>> getHoldingListWithProfit(@UserId Long userId,
+                                                                               @PathVariable Long portfolioId) {
 
-        List<HoldingGetWithProfitRes> result = holdingService.getHoldingListWithProfit(userId, portfolioId);
+        List<HoldingWithProfitRes> result = holdingService.getHoldingListWithProfit(userId, portfolioId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

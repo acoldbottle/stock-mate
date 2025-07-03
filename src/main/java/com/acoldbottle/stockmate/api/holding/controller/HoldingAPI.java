@@ -4,7 +4,7 @@ import com.acoldbottle.stockmate.annotation.UserId;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingCreateReq;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
-import com.acoldbottle.stockmate.api.holding.dto.res.HoldingGetWithProfitRes;
+import com.acoldbottle.stockmate.api.holding.dto.res.HoldingWithProfitRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +30,7 @@ public interface HoldingAPI {
                             responseCode = "200", description = "주식 종목들 조회 성공",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = HoldingGetWithProfitRes.class),
+                                    schema = @Schema(implementation = HoldingWithProfitRes.class),
                                     examples = @ExampleObject(value = """
                                             [
                                                 {
@@ -67,8 +67,8 @@ public interface HoldingAPI {
                     @ApiResponse(responseCode = "404", description = "해당 주식을 찾을 수 없습니다.", content = @Content),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.", content = @Content)
             })
-    ResponseEntity<List<HoldingGetWithProfitRes>> getHoldingListWithProfit(@UserId Long userId,
-                                                                           @PathVariable Long portfolioId);
+    ResponseEntity<List<HoldingWithProfitRes>> getHoldingListWithProfit(@UserId Long userId,
+                                                                        @PathVariable Long portfolioId);
     @Operation(
             summary = "가지고 있는 주식 종목 포트폴리오에 등록",
             description = "사용자의 포트폴리오에 주식 종목을 등록합니다.",

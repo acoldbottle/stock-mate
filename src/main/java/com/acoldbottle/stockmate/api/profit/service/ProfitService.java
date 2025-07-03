@@ -1,8 +1,8 @@
 package com.acoldbottle.stockmate.api.holding.service;
 
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingGetWithProfitRes;
-import com.acoldbottle.stockmate.currentprice.dto.CurrentPriceDTO;
-import com.acoldbottle.stockmate.currentprice.service.CurrentPriceCacheService;
+import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceCacheService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
