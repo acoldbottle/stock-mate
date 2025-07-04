@@ -44,7 +44,7 @@ public class HoldingService {
     public List<HoldingWithProfitRes> getHoldingListWithProfit(Long userId, Long portfolioId) {
         User user = getUser(userId);
         Portfolio portfolio = getPortfolio(portfolioId, user);
-        List<Holding> holdingList = holdingRepository.findAllByPortfolio(portfolio);
+        List<Holding> holdingList = holdingRepository.findAllWithStockByPortfolio(portfolio);
         return profitService.calculateProfitInPortfolio(holdingList)
                 .getHoldingList()
                 .stream()

@@ -80,7 +80,7 @@ public class PortfolioService {
     public PortfolioWithProfitRes getPortfolioWithProfit(Long userId, Long portfolioId) {
         User user = getUser(userId);
         Portfolio portfolio = getPortfolio(portfolioId, user);
-        List<Holding> holdings = holdingRepository.findAllByPortfolio(portfolio);
+        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolio(portfolio);
         ProfitDTO profitDTO = profitService.calculateProfitInPortfolio(holdings);
         return PortfolioWithProfitRes.from(portfolio,profitDTO);
     }
