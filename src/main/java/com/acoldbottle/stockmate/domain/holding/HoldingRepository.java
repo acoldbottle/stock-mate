@@ -20,4 +20,9 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
     @Modifying
     @Query("DELETE FROM Holding h WHERE h.portfolio = :portfolio")
     void deleteAllByPortfolio(Portfolio portfolio);
+    @Query("SELECT h FROM Holding h " +
+            "JOIN FETCH h.stock " +
+            "WHERE h.portfolio = :portfolio " +
+            "ORDER BY h.purchasePrice * h.quantity DESC")
+    List<Holding> findAllWithStockByPortfolio(Portfolio portfolio);
 }
