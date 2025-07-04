@@ -5,6 +5,7 @@ import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingWithProfitRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
+import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
 import com.acoldbottle.stockmate.api.profit.service.ProfitService;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
@@ -44,10 +45,11 @@ public class HoldingService {
         User user = getUser(userId);
         Portfolio portfolio = getPortfolio(portfolioId, user);
         List<Holding> holdingList = holdingRepository.findAllByPortfolio(portfolio);
-
-        return holdingList.stream()
-                .map(profitService::getHoldingWithProfit)
-                .collect(Collectors.toList());
+        return profitService.calculateProfitInPortfolio(holdingList)
+                .getHoldingList()
+                .stream()
+                .map(HoldingWithProfitRes::from)
+                .toList();
     }
 
     @Transactional

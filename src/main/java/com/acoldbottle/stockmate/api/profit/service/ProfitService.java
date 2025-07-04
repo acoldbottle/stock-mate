@@ -2,7 +2,6 @@ package com.acoldbottle.stockmate.api.profit.service;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
 import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceCacheService;
-import com.acoldbottle.stockmate.api.holding.dto.res.HoldingWithProfitRes;
 import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ public class ProfitService {
 
     private final CurrentPriceCacheService cacheService;
     private final ExecutorService virtualExecutor = Executors.newVirtualThreadPerTaskExecutor();
-    private final ExecutorService cpuExecutor = Executors.newFixedThreadPool(2);
 
     public ProfitDTO calculateProfitInPortfolio(List<Holding> holdings) {
         final BigDecimal[] portfolioCurrentValue = {BigDecimal.ZERO};
@@ -48,9 +46,9 @@ public class ProfitService {
         portfolioProfitRate = calculateProfitRate(portfolioTotalPurchaseAmount, portfolioProfitAmount[0]);
 
         return ProfitDTO.builder()
-                .portfolioCurrentValue(portfolioCurrentValue[0].setScale(2, RoundingMode.HALF_UP))
+                .portfolioCurrentValue(portfolioCurrentValue[0])
                 .portfolioProfitRate(portfolioProfitRate)
-                .portfolioProfitAmount(portfolioProfitAmount[0].setScale(2, RoundingMode.HALF_UP))
+                .portfolioProfitAmount(portfolioProfitAmount[0])
                 .holdingList(holdingProfitDTOList)
                 .build();
     }
@@ -92,6 +90,7 @@ public class ProfitService {
         BigDecimal totalAmount = avgPurchasePrice.multiply(BigDecimal.valueOf(quantity));
 
         return HoldingProfitDTO.builder()
+                .holdingId(holding.getId())
                 .symbol(symbol)
                 .marketCode(marketCode)
                 .avgPurchasePrice(avgPurchasePrice)
@@ -112,60 +111,5 @@ public class ProfitService {
                     .setScale(2, RoundingMode.HALF_UP);
         }
         return profitRate;
-    }
-
-
-    public HoldingWithProfitRes getHoldingWithProfit(Holding holding) {
-        CompletableFuture<CurrentPriceDTO> currentInfoFuture = CompletableFuture.supplyAsync(() ->
-                cacheService.getCurrentPrice(holding.getStock().getSymbol()), virtualExecutor);
-
-        return currentInfoFuture.thenApplyAsync(currentInfo -> calculateHoldingProfit(holding, currentInfo), cpuExecutor).join();
-    }
-
-    private HoldingWithProfitRes calculateHoldingProfit(Holding holding, CurrentPriceDTO currentInfo) {
-        if (currentInfo == null) {
-            return ifCurrentInfoIsNull(holding);
-        }
-        String symbol = holding.getStock().getSymbol();
-        String marketCode = holding.getStock().getMarketCode();
-        BigDecimal avgPurchasePrice = holding.getPurchasePrice();
-        int quantity = holding.getQuantity();
-        BigDecimal totalAmount = avgPurchasePrice.multiply(BigDecimal.valueOf(quantity));
-        BigDecimal currentPrice = currentInfo.getLast();
-        BigDecimal rate = currentInfo.getRate();
-        BigDecimal profitAmount = currentPrice.subtract(avgPurchasePrice).multiply(BigDecimal.valueOf(quantity));
-        BigDecimal profitRate = calculateProfitRate(totalAmount, profitAmount);
-
-        return HoldingWithProfitRes.builder()
-                .holdingId(holding.getId())
-                .symbol(symbol)
-                .marketCode(marketCode)
-                .avgPurchasePrice(avgPurchasePrice)
-                .quantity(quantity)
-                .totalAmount(totalAmount)
-                .currentPrice(currentPrice)
-                .rate(rate)
-                .profitAmount(profitAmount)
-                .profitRate(profitRate)
-                .build();
-    }
-
-    private HoldingWithProfitRes ifCurrentInfoIsNull(Holding holding) {
-        String symbol = holding.getStock().getSymbol();
-        String marketCode = holding.getStock().getMarketCode();
-        BigDecimal avgPurchasePrice = holding.getPurchasePrice();
-        int quantity = holding.getQuantity();
-        BigDecimal totalAmount = avgPurchasePrice.multiply(BigDecimal.valueOf(quantity));
-        return HoldingWithProfitRes.builder()
-                .symbol(symbol)
-                .marketCode(marketCode)
-                .avgPurchasePrice(avgPurchasePrice)
-                .quantity(quantity)
-                .totalAmount(totalAmount)
-                .currentPrice(BigDecimal.ZERO)
-                .rate(BigDecimal.ZERO)
-                .profitAmount(BigDecimal.ZERO)
-                .profitRate(BigDecimal.ZERO)
-                .build();
     }
 }

@@ -1,9 +1,11 @@
 package com.acoldbottle.stockmate.api.holding.dto.res;
 
+import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Getter
 @Builder
@@ -20,4 +22,18 @@ public class HoldingWithProfitRes {
     private BigDecimal profitAmount; // 총 수익
     private BigDecimal profitRate; // 총 수익률
 
+    public static HoldingWithProfitRes from(ProfitDTO.HoldingProfitDTO holdingProfitDTO) {
+        return HoldingWithProfitRes.builder()
+                .holdingId(holdingProfitDTO.getHoldingId())
+                .symbol(holdingProfitDTO.getSymbol())
+                .marketCode(holdingProfitDTO.getSymbol())
+                .avgPurchasePrice(holdingProfitDTO.getAvgPurchasePrice())
+                .quantity(holdingProfitDTO.getQuantity())
+                .totalAmount(holdingProfitDTO.getTotalAmount().setScale(2, RoundingMode.HALF_UP))
+                .currentPrice(holdingProfitDTO.getCurrentPrice().setScale(2, RoundingMode.HALF_UP))
+                .rate(holdingProfitDTO.getRate())
+                .profitAmount(holdingProfitDTO.getProfitAmount().setScale(2, RoundingMode.HALF_UP))
+                .profitRate(holdingProfitDTO.getProfitRate())
+                .build();
+    }
 }
