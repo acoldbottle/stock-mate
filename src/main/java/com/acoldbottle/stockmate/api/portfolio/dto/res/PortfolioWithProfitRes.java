@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Getter
 @Builder
@@ -22,8 +23,8 @@ public class PortfolioWithProfitRes {
         return PortfolioWithProfitRes.builder()
                 .portfolioId(portfolio.getId())
                 .title(portfolio.getTitle())
-                .portfolioCurrentValue(profitDTO.getPortfolioCurrentValue())
-                .portfolioProfitAmount(profitDTO.getPortfolioProfitAmount())
+                .portfolioCurrentValue(profitDTO.getPortfolioCurrentValue().setScale(2, RoundingMode.HALF_UP))
+                .portfolioProfitAmount(profitDTO.getPortfolioProfitAmount().setScale(2, RoundingMode.HALF_UP))
                 .portfolioProfitRate(profitDTO.getPortfolioProfitRate())
                 .build();
     }

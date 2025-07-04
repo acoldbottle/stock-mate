@@ -26,7 +26,7 @@ public class HoldingWithProfitRes {
         return HoldingWithProfitRes.builder()
                 .holdingId(holdingProfitDTO.getHoldingId())
                 .symbol(holdingProfitDTO.getSymbol())
-                .marketCode(holdingProfitDTO.getSymbol())
+                .marketCode(holdingProfitDTO.getMarketCode())
                 .avgPurchasePrice(holdingProfitDTO.getAvgPurchasePrice())
                 .quantity(holdingProfitDTO.getQuantity())
                 .totalAmount(holdingProfitDTO.getTotalAmount().setScale(2, RoundingMode.HALF_UP))
