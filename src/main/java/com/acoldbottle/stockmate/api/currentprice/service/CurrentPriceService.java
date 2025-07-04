@@ -1,7 +1,6 @@
 package com.acoldbottle.stockmate.api.currentprice.service;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
-import com.acoldbottle.stockmate.exception.etc.RedisSaveException;
 import com.acoldbottle.stockmate.exception.kis.KisRequestInterruptedException;
 import com.acoldbottle.stockmate.exception.kis.KisTooManyRequestException;
 import com.acoldbottle.stockmate.external.kis.KisAPIClient;
@@ -16,7 +15,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 
-import static com.acoldbottle.stockmate.exception.ErrorCode.*;
+import static com.acoldbottle.stockmate.exception.ErrorCode.KIS_REQUEST_INTERRUPTED_ERROR;
+import static com.acoldbottle.stockmate.exception.ErrorCode.KIS_TOO_MANY_REQUEST;
 
 @Service
 @Slf4j
@@ -50,8 +50,8 @@ public class CurrentPriceService {
                         CurrentPriceDTO.from(kisCurrentPriceRes), executor)
                 .thenAccept(dto -> cacheService.updateCurrentPrice(symbol, dto))
                 .exceptionally(ex -> {
-                    log.error("=== DTO:{}, symbol:{} ===", kisCurrentPriceRes, symbol);
-                    throw new CompletionException(new RedisSaveException(REDIS_SAVE_ERROR));
+                    log.error("=== [CurrentPriceService] 현재가 업데이트 중 오류 발생 DTO:{}, symbol:{} ===", kisCurrentPriceRes, symbol);
+                    return null;
                 });
     }
 }

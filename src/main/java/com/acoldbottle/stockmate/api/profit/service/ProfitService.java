@@ -24,31 +24,32 @@ public class ProfitService {
     private final ExecutorService virtualExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
     public ProfitDTO calculateProfitInPortfolio(List<Holding> holdings) {
-        final BigDecimal[] portfolioCurrentValue = {BigDecimal.ZERO};
-        BigDecimal portfolioProfitRate = BigDecimal.ZERO;
-        final BigDecimal[] portfolioProfitAmount = {BigDecimal.ZERO};
-
-        List<HoldingProfitDTO> holdingProfitDTOList = holdings.stream()
+        List<CompletableFuture<HoldingProfitDTO>> futures = holdings.stream()
                 .map(
                         holding -> CompletableFuture.supplyAsync(() -> cacheService.getCurrentPrice(holding.getStock().getSymbol()), virtualExecutor)
                                 .thenApply(currentPriceDTO -> getHoldingProfitDTOWithProfit(holding, currentPriceDTO))
-                                .join()
                 )
                 .toList();
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        List<HoldingProfitDTO> holdingProfitDTOList = futures.stream()
+                .map(CompletableFuture::join)
+                .toList();
 
-        holdingProfitDTOList
-                .forEach(dto ->{
-                    portfolioCurrentValue[0] = portfolioCurrentValue[0].add(dto.getTotalAmount());
-                    portfolioProfitAmount[0] = portfolioProfitAmount[0].add(dto.getProfitAmount());
-                });
+        BigDecimal portfolioCurrentValue = holdingProfitDTOList.stream()
+                .map(HoldingProfitDTO::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal portfolioTotalPurchaseAmount = portfolioCurrentValue[0].subtract(portfolioProfitAmount[0]);
-        portfolioProfitRate = calculateProfitRate(portfolioTotalPurchaseAmount, portfolioProfitAmount[0]);
+        BigDecimal portfolioProfitAmount = holdingProfitDTOList.stream()
+                .map(HoldingProfitDTO::getProfitAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal portfolioTotalPurchaseAmount = portfolioCurrentValue.subtract(portfolioProfitAmount);
+        BigDecimal portfolioProfitRate = calculateProfitRate(portfolioTotalPurchaseAmount, portfolioProfitAmount);
 
         return ProfitDTO.builder()
-                .portfolioCurrentValue(portfolioCurrentValue[0])
+                .portfolioCurrentValue(portfolioCurrentValue)
                 .portfolioProfitRate(portfolioProfitRate)
-                .portfolioProfitAmount(portfolioProfitAmount[0])
+                .portfolioProfitAmount(portfolioProfitAmount)
                 .holdingList(holdingProfitDTOList)
                 .build();
     }

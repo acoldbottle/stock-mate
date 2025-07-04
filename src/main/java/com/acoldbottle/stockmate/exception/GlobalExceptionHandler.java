@@ -1,6 +1,9 @@
 package com.acoldbottle.stockmate.exception;
 
+import io.lettuce.core.RedisConnectionException;
+import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -78,6 +81,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus())
                 .body(new ErrorResponse(e));
+    }
+
+    @ExceptionHandler(RedisConnectionException.class)
+    protected ResponseEntity<ErrorResponse> handleRedisConnectionException(RedisConnectionException e) {
+        ErrorCode error = ErrorCode.REDIS_CONNECTION_FAILED;
+        log.error("[RedisConnectionException] -> {}", error.getMessage());
+        return ResponseEntity
+                .status(error.getHttpStatus())
+                .body(new ErrorResponse(error.getHttpStatus(), error.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

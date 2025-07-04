@@ -34,8 +34,8 @@ public enum ErrorCode {
     INVALID_REQUEST_PARAM(HttpStatus.BAD_REQUEST, "잘못된 요청 형식입니다. 파라미터를 확인하세요."),
 
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "접근 권한이 없습니다."),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
-    REDIS_SAVE_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "레디스에 저장하지 못 했습니다.");
+    REDIS_CONNECTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "레디스 연결에 실패했습니다."),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
