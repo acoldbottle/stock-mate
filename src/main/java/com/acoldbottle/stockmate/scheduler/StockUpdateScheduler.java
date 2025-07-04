@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.domain.stock;
+package com.acoldbottle.stockmate.scheduler;
 
 import com.acoldbottle.stockmate.api.stock.service.StockService;
 import com.acoldbottle.stockmate.external.kis.stockfile.StockDTO;

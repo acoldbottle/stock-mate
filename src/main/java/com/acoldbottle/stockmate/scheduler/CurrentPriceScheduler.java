@@ -1,9 +1,8 @@
-package com.acoldbottle.stockmate.currentprice.scheduler;
+package com.acoldbottle.stockmate.scheduler;
 
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
-import com.acoldbottle.stockmate.currentprice.service.CurrentPriceService;
+import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceService;
 import com.acoldbottle.stockmate.domain.trackedsymbol.TrackedSymbol;
-import com.acoldbottle.stockmate.external.kis.KisCurrentPriceRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

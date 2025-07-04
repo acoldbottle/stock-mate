@@ -6,6 +6,7 @@ import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioUpdateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
+import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
 import com.acoldbottle.stockmate.api.portfolio.service.PortfolioService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -51,5 +52,11 @@ public class PortfolioRestController implements PortfolioAPI{
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @GetMapping("/{portfolioId}/profit")
+    public ResponseEntity<PortfolioWithProfitRes> getPortfolioProfit(@UserId Long userId,
+                                                                     @PathVariable Long portfolioId) {
+        PortfolioWithProfitRes portfolioProfitRes = portfolioService.getPortfolioWithProfit(userId, portfolioId);
+        return ResponseEntity.status(HttpStatus.OK).body(portfolioProfitRes);
+    }
 
 }

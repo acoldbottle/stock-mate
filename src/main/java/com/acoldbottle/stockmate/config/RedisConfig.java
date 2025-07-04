@@ -1,6 +1,6 @@
 package com.acoldbottle.stockmate.config;
 
-import com.acoldbottle.stockmate.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;

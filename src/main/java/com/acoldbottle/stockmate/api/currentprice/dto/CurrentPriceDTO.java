@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.currentprice.dto;
+package com.acoldbottle.stockmate.api.currentprice.dto;
 
 import com.acoldbottle.stockmate.external.kis.KisCurrentPriceRes;
 import lombok.Builder;

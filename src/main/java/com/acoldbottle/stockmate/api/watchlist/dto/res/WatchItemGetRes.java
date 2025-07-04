@@ -1,6 +1,6 @@
 package com.acoldbottle.stockmate.api.watchlist.dto.res;
 
-import com.acoldbottle.stockmate.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
 import com.acoldbottle.stockmate.domain.watchitem.WatchItem;
 import lombok.Builder;
 import lombok.Getter;

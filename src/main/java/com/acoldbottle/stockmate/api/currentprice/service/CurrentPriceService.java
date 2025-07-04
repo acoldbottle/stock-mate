@@ -1,6 +1,6 @@
-package com.acoldbottle.stockmate.currentprice.service;
+package com.acoldbottle.stockmate.api.currentprice.service;
 
-import com.acoldbottle.stockmate.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
 import com.acoldbottle.stockmate.exception.etc.RedisSaveException;
 import com.acoldbottle.stockmate.exception.kis.KisRequestInterruptedException;
 import com.acoldbottle.stockmate.exception.kis.KisTooManyRequestException;

@@ -5,6 +5,9 @@ import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioUpdateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
+import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
+import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
+import com.acoldbottle.stockmate.api.profit.service.ProfitService;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
@@ -30,6 +33,7 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
     private final HoldingRepository holdingRepository;
+    private final ProfitService profitService;
     private final TrackedSymbolService trackedSymbolService;
 
     public List<PortfolioGetRes> getPortfolioList(Long userId) {
@@ -73,6 +77,14 @@ public class PortfolioService {
         portfolioRepository.delete(findPortfolio);
     }
 
+    public PortfolioWithProfitRes getPortfolioWithProfit(Long userId, Long portfolioId) {
+        User user = getUser(userId);
+        Portfolio portfolio = getPortfolio(portfolioId, user);
+        List<Holding> holdings = holdingRepository.findAllByPortfolio(portfolio);
+        ProfitDTO profitDTO = profitService.calculateProfitInPortfolio(holdings);
+        return PortfolioWithProfitRes.from(portfolio,profitDTO);
+    }
+
     private User getUser(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -82,5 +94,4 @@ public class PortfolioService {
         return portfolioRepository.findByIdAndUser(portfolioId, user)
                 .orElseThrow(() -> new PortfolioNotFoundException(ErrorCode.PORTFOLIO_NOT_FOUND));
     }
-
 }

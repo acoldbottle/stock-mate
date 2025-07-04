@@ -4,8 +4,8 @@ import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.api.watchlist.dto.req.WatchItemCreateReq;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemCreateRes;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemGetRes;
-import com.acoldbottle.stockmate.currentprice.dto.CurrentPriceDTO;
-import com.acoldbottle.stockmate.currentprice.service.CurrentPriceCacheService;
+import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceCacheService;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.stock.StockRepository;
 import com.acoldbottle.stockmate.domain.user.User;
@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.acoldbottle.stockmate.exception.ErrorCode.*;
