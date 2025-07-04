@@ -20,7 +20,7 @@ public class CurrentPriceScheduler {
 
     private final TrackedSymbolService trackedSymbolService;
     private final CurrentPriceService currentPriceService;
-    private ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+    private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     @Scheduled(fixedRate = 60000L)
     public void requestCurrentPriceAndCache() {
