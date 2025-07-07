@@ -14,6 +14,10 @@
             height: 550px;
             border-radius: 1rem;}
 
+        body {
+            background: linear-gradient(135deg, #350A6B, #0D6EFD);
+        }
+
     @media (max-width: 576px) {
         .my-card {
             width: 100vw;
@@ -28,7 +32,7 @@
     }
     </style>
 </head>
-<body class="bg-primary d-flex justify-content-center align-items-center vh-100">
+<body class="d-flex justify-content-center align-items-center vh-100">
 <div class="card bg-white my-card">
     <div class="card-body p-5 text-center">
         <h2 class="text-primary">StockMate</h2>
@@ -36,18 +40,18 @@
 
         <form action="/stockmate/signup" method="POST">
             <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
-            <div class="mb-4">
-                <label class="form-label text-primary">ID</label>
-                <input type="text" class="form-control" name="username" placeholder="아이디는 영어와 숫자로만 5~15자여야 합니다.">
+            <div class="mb-4 text-start">
+                <label class="form-label text-black fw-bold">ID</label>
+                <input type="text" class="form-control" name="username" placeholder="아이디는 영어와 숫자로만 5~15자여야 합니다">
             </div>
 
-            <div class="mb-4">
-                <label class="form-label text-primary">PASSWORD</label>
-                <input type="password" class="form-control" name="password" placeholder="비밀번호는 8자 이상이어야 합니다.">
+            <div class="mb-4 text-start">
+                <label class="form-label text-black fw-bold">PASSWORD</label>
+                <input type="password" class="form-control" name="password" placeholder="비밀번호는 8자 이상이어야 합니다">
             </div>
 
-            <div class="mb-4">
-                <label class="form-label text-primary">PASSWORD 확인</label>
+            <div class="mb-4 text-start">
+                <label class="form-label text-black fw-bold">PASSWORD 확인</label>
                 <input type="password" class="form-control" name="passwordConfirm">
             </div>
             <div style="min-height: 15px; max-height: 15px;" class="mb-5">
