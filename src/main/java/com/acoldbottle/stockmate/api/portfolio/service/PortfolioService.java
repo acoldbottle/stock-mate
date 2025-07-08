@@ -3,7 +3,6 @@ package com.acoldbottle.stockmate.api.portfolio.service;
 import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioCreateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioUpdateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
-import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
 import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
@@ -22,7 +21,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,13 +38,21 @@ public class PortfolioService {
     private final ProfitService profitService;
     private final TrackedSymbolService trackedSymbolService;
 
-    public List<PortfolioGetRes> getPortfolioList(Long userId) {
+    public List<PortfolioWithProfitRes> getPortfolioList(Long userId) {
         User user = getUser(userId);
-        List<Portfolio> portfolioList = portfolioRepository.findAllByUser(user);
+        List<Portfolio> portfolios = portfolioRepository.findAllByUser(user);
+        Map<Long, List<Holding>> holdingsByPortfolioId = holdingRepository.findAllWithStockByPortfolioIn(portfolios)
+                .stream()
+                .collect(Collectors.groupingBy(h -> h.getPortfolio().getId()));
 
-        return portfolioList.stream()
-                .map(PortfolioGetRes::from)
-                .collect(Collectors.toList());
+        return portfolios.stream()
+                .map(portfolio -> {
+                    List<Holding> holdings = holdingsByPortfolioId.getOrDefault(portfolio.getId(), Collections.emptyList());
+                    ProfitDTO profitDTO = profitService.calculateProfitInPortfolio(holdings);
+                    return PortfolioWithProfitRes.from(portfolio, profitDTO);
+                })
+                .sorted(Comparator.comparing(PortfolioWithProfitRes::getPortfolioCurrentValue).reversed())
+                .toList();
     }
 
     @Transactional
@@ -77,13 +87,13 @@ public class PortfolioService {
         portfolioRepository.delete(findPortfolio);
     }
 
-    public PortfolioWithProfitRes getPortfolioWithProfit(Long userId, Long portfolioId) {
-        User user = getUser(userId);
-        Portfolio portfolio = getPortfolio(portfolioId, user);
-        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolio(portfolio);
-        ProfitDTO profitDTO = profitService.calculateProfitInPortfolio(holdings);
-        return PortfolioWithProfitRes.from(portfolio,profitDTO);
-    }
+//    public PortfolioWithProfitRes getPortfolioWithProfit(Long userId, Long portfolioId) {
+//        User user = getUser(userId);
+//        Portfolio portfolio = getPortfolio(portfolioId, user);
+//        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolio(portfolio);
+//        ProfitDTO profitDTO = profitService.calculateProfitInPortfolio(holdings);
+//        return PortfolioWithProfitRes.from(portfolio,profitDTO);
+//    }
 
     private User getUser(Long userId){
         return userRepository.findById(userId)

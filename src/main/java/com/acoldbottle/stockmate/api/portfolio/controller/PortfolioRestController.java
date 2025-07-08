@@ -4,12 +4,10 @@ import com.acoldbottle.stockmate.annotation.UserId;
 import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioCreateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioUpdateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
-import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
 import com.acoldbottle.stockmate.api.portfolio.service.PortfolioService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +23,8 @@ public class PortfolioRestController implements PortfolioAPI{
     private final PortfolioService portfolioService;
 
     @GetMapping
-    public ResponseEntity<List<PortfolioGetRes>> getPortfolioList(@UserId Long userId) {
-        List<PortfolioGetRes> list = portfolioService.getPortfolioList(userId);
+    public ResponseEntity<List<PortfolioWithProfitRes>> getPortfolioList(@UserId Long userId) {
+        List<PortfolioWithProfitRes> list = portfolioService.getPortfolioList(userId);
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
@@ -52,11 +50,5 @@ public class PortfolioRestController implements PortfolioAPI{
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/{portfolioId}/profit")
-    public ResponseEntity<PortfolioWithProfitRes> getPortfolioProfit(@UserId Long userId,
-                                                                     @PathVariable Long portfolioId) {
-        PortfolioWithProfitRes portfolioProfitRes = portfolioService.getPortfolioWithProfit(userId, portfolioId);
-        return ResponseEntity.status(HttpStatus.OK).body(portfolioProfitRes);
-    }
 
 }

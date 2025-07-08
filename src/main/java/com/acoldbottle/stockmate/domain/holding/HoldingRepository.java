@@ -25,4 +25,8 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
             "WHERE h.portfolio = :portfolio " +
             "ORDER BY h.purchasePrice * h.quantity DESC")
     List<Holding> findAllWithStockByPortfolio(Portfolio portfolio);
+    @Query("SELECT h FROM Holding h " +
+            "JOIN FETCH h.stock " +
+            "WHERE h.portfolio IN :portfolios")
+    List<Holding> findAllWithStockByPortfolioIn(List<Portfolio> portfolios);
 }

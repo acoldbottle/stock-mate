@@ -6,6 +6,7 @@ import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioUpdateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioGetRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
+import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -32,20 +33,29 @@ public interface PortfolioAPI {
                             responseCode = "200", description = "포트폴리오 리스트 조회 성공",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = PortfolioGetRes.class),
+                                    schema = @Schema(implementation = PortfolioWithProfitRes.class),
                                     examples = @ExampleObject(value = """
                                             [
                                                 {
-                                                    "portfolioId": 8,
-                                                    "title": "my third portfolio"
+                                                    "portfolioId": 4,
+                                                    "title": "my portfolio",
+                                                    "portfolioCurrentValue": 27552.90,
+                                                    "portfolioProfitAmount": 340.58,
+                                                    "portfolioProfitRate": 1.25
                                                 },
                                                 {
-                                                    "portfolioId": 5,
-                                                    "title": "my second portfolio"
+                                                    "portfolioId": 6,
+                                                    "title": "risk portfolio",
+                                                    "portfolioCurrentValue": 5790.90,
+                                                    "portfolioProfitAmount": 830.50,
+                                                    "portfolioProfitRate": 16.74
                                                 },
                                                 {
-                                                    "portfolioId": 1,
-                                                    "title": "my first portfolio"
+                                                    "portfolioId": 7,
+                                                    "title": "etf portfolio",
+                                                    "portfolioCurrentValue": 0.00,
+                                                    "portfolioProfitAmount": 0.00,
+                                                    "portfolioProfitRate": 0
                                                 }
                                             ]
                                             """)
@@ -56,7 +66,7 @@ public interface PortfolioAPI {
                     @ApiResponse(responseCode = "404", description = "해당 포트폴리오를 찾을 수 없습니다.", content = @Content),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.", content = @Content)
             })
-    ResponseEntity<List<PortfolioGetRes>> getPortfolioList(@UserId Long userId);
+    ResponseEntity<List<PortfolioWithProfitRes>> getPortfolioList(@UserId Long userId);
 
     @Operation(
             summary = "포트폴리오 생성",
