@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <main class="main-content" th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="portfolio-list">
+                <div class="card portfolio-card" th:each="portfolio : ${portfolios}">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary fw-bold" th:text="${portfolio.title}">포트폴리오 이름</h5>
+                        <p class="mb-2">
+                            <span class="text-dark fw-bold">자산가치 </span>
+                            <span class="text-success fw-bold">$<span th:text="${#numbers.formatDecimal(portfolio.portfolioCurrentValue, 1, 'COMMA', 2, 'POINT')}">0.00</span></span>
+                        </p>
+                        <p class="mb-2">
+                            <span class="text-dark fw-bold">총 수익 </span>
+                            <!-- 수익 (양수) -->
+                            <span th:if="${portfolio.portfolioProfitAmount > 0}" class="text-danger fw-bold">
+                            +$<span th:text="${#numbers.formatDecimal(portfolio.portfolioProfitAmount, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                            (+<span th:text="${#numbers.formatDecimal(portfolio.portfolioProfitRate, 1, 'COMMA', 2, 'POINT')}">0.00</span>%)</span>
+
+                            <!-- 손실 (음수) -->
+                            <span th:if="${portfolio.portfolioProfitAmount < 0}" class="text-primary fw-bold">
+                            -$<span th:text="${#numbers.formatDecimal(portfolio.portfolioProfitAmount.abs(), 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                            (-<span th:text="${#numbers.formatDecimal(portfolio.portfolioProfitRate.abs(), 1, 'COMMA', 2, 'POINT')}">0.00</span>%)</span>
+
+                            <!-- 0일 때 -->
+                            <span th:if="${portfolio.portfolioProfitAmount == 0}" class="text-secondary fw-bold">
+                            $<span th:text="${#numbers.formatDecimal(portfolio.portfolioProfitAmount, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                            (<span th:text="${#numbers.formatDecimal(portfolio.portfolioProfitRate, 1, 'COMMA', 2, 'POINT')}">0.00</span>%)
+                            </span>
+                        </p>
+                        <div class="d-flex justify-content-end gap-2 mt-2">
+                            <a th:href="@{/portfolio/{id}/edit(id=${portfolio.portfolioId})}" class="btn btn-sm btn-outline-primary">수정</a>
+                            <form th:action="@{/portfolio/{id}/delete(id=${portfolio.portfolioId})}" method="post" th:onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- 모달 불러오기 -->
+        <div th:replace="portfolios/modal-create :: createModal"></div>
+
+        <!-- 생성 버튼 -->
+        <button class="fab" data-bs-toggle="modal" data-bs-target="#createPortfolioModal">+</button>
+    </main>
+</body>
+</html>

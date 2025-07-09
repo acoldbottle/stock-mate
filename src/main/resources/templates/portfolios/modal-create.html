@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<div th:fragment="createModal">
+<div class="modal fade" id="createPortfolioModal" tabindex="-1" aria-labelledby="createPortfolioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/stockmate/portfolios/create}" method="post" th:object="${portfolioCreateReq}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createPortfolioModalLabel">포트폴리오 생성</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">이름</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="title"
+                                name="title"
+                                placeholder="포트폴리오 이름을 입력하세요"
+                                th:field="*{title}"
+                                required
+                        />
+                        <div class="invalid-feedback">
+                            포트폴리오 이름을 입력해야 합니다.
+                        </div>
+                        <div style="min-height: 15px; max-height: 15px;" class="mt-2">
+                            <p th:if="${errorMessage}" th:text="${errorMessage}" class="alert alert-danger"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="submit" class="btn btn-primary">생성</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
