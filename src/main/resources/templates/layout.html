@@ -49,5 +49,20 @@
     const modal = new bootstrap.Modal(document.getElementById('createPortfolioModal'));
     modal.show();
 </script>
+<script>
+    function handleDeleteButtonClick(button) {
+    const id = button.getAttribute('data-id');
+    const title = button.getAttribute('data-title');
+
+    const form = document.getElementById('deletePortfolioForm');
+    const titleSpan = document.getElementById('deletePortfolioTitle');
+
+    form.action = `/stockmate/portfolios/${id}/delete`;
+    titleSpan.textContent = title;
+
+    const modal = new bootstrap.Modal(document.getElementById('deletePortfolioModal'));
+    modal.show();
+}
+</script>
 </body>
 </html>

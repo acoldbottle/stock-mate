@@ -34,20 +34,22 @@
                         </p>
                         <div class="d-flex justify-content-end gap-2 mt-2">
                             <a th:href="@{/portfolio/{id}/edit(id=${portfolio.portfolioId})}" class="btn btn-sm btn-outline-primary">수정</a>
-                            <form th:action="@{/portfolio/{id}/delete(id=${portfolio.portfolioId})}" method="post" th:onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
-                            </form>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger btn-delete-portfolio"
+                                    th:data-id="${portfolio.portfolioId}"
+                                    th:data-title="${portfolio.title}"
+                                    onclick="handleDeleteButtonClick(this)"
+                                    >
+                                삭제
+                            </button>
                         </div>
                     </div>
                 </div>
-
             </div>
-        </div>
-        <!-- 모달 불러오기 -->
-        <div th:replace="portfolios/modal-create :: createModal"></div>
-
-        <!-- 생성 버튼 -->
+            <div th:replace="portfolios/modal-delete :: deleteModal"></div>
+            <div th:replace="portfolios/modal-create :: createModal"></div>
         <button class="fab" data-bs-toggle="modal" data-bs-target="#createPortfolioModal">+</button>
+        </div>
     </main>
 </body>
 </html>
