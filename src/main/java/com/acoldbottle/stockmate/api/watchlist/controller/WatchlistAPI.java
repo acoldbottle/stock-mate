@@ -31,20 +31,24 @@ public interface WatchlistAPI {
                                     schema = @Schema(implementation = WatchItemGetRes.class),
                                     examples = @ExampleObject(value = """
                                             [
-                                                {
-                                                    "watchItemId": 4,
-                                                    "symbol": "TSLA",
-                                                    "marketCode": "NAS",
-                                                    "currentPrice": 317.6600,
-                                                    "rate": 0
-                                                },
-                                                {
-                                                    "watchItemId": 3,
-                                                    "symbol": "AAPL",
-                                                    "marketCode": "NAS",
-                                                    "currentPrice": 205.1700,
-                                                    "rate": 0
-                                                }
+                                               {
+                                                     "watchItemId": 4,
+                                                     "symbol": "TSLA",
+                                                     "korName": "테슬라",
+                                                     "engName": "TESLA INC",
+                                                     "marketCode": "NAS",
+                                                     "currentPrice": 309.0800,
+                                                     "rate": -0.25
+                                                     },
+                                                     {
+                                                     "watchItemId": 3,
+                                                     "symbol": "AAPL",
+                                                     "korName": "애플",
+                                                     "engName": "APPLE INC",
+                                                     "marketCode": "NAS",
+                                                     "currentPrice": 211.2500,
+                                                     "rate": -0.55
+                                                     }
                                             ]
                                             """)
                             )

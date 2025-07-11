@@ -37,7 +37,7 @@ public class WatchlistService {
 
     public List<WatchItemGetRes> getWatchlist(Long userId) {
         User user = getUser(userId);
-        List<WatchItem> watchlist = watchItemRepository.findAllByUser(user);
+        List<WatchItem> watchlist = watchItemRepository.findAllWithStockByUser(user);
 
         return watchlist.stream()
                 .map(watchItem -> {

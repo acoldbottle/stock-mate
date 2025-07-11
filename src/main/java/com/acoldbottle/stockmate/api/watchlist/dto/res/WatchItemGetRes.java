@@ -13,6 +13,8 @@ public class WatchItemGetRes {
 
     private Long watchItemId;
     private String symbol;
+    private String korName;
+    private String engName;
     private String marketCode;
     private BigDecimal currentPrice;
     private BigDecimal rate;
@@ -22,6 +24,8 @@ public class WatchItemGetRes {
             return WatchItemGetRes.builder()
                     .watchItemId(watchItem.getId())
                     .symbol(watchItem.getStock().getSymbol())
+                    .korName(watchItem.getStock().getKorName())
+                    .engName(watchItem.getStock().getEngName())
                     .marketCode(watchItem.getStock().getMarketCode())
                     .currentPrice(BigDecimal.ZERO)
                     .rate(BigDecimal.ZERO)
@@ -30,6 +34,8 @@ public class WatchItemGetRes {
         return WatchItemGetRes.builder()
                 .watchItemId(watchItem.getId())
                 .symbol(watchItem.getStock().getSymbol())
+                .korName(watchItem.getStock().getKorName())
+                .engName(watchItem.getStock().getEngName())
                 .marketCode(watchItem.getStock().getMarketCode())
                 .currentPrice(currentPriceDTO.getLast())
                 .rate(currentPriceDTO.getRate())

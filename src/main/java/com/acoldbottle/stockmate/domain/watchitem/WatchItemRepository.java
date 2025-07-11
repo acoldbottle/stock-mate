@@ -10,9 +10,11 @@ import java.util.Optional;
 
 public interface WatchItemRepository extends JpaRepository<WatchItem, Long> {
 
-    @Query("SELECT w FROM WatchItem w WHERE w.user = :user " +
+    @Query("SELECT w FROM WatchItem w " +
+            "JOIN FETCH w.stock " +
+            "WHERE w.user = :user " +
             "ORDER BY w.id DESC")
-    List<WatchItem> findAllByUser(User user);
+    List<WatchItem> findAllWithStockByUser(User user);
     boolean existsByUserAndStock(User user, Stock stock);
     Optional<WatchItem> findByIdAndUser(Long id, User user);
     boolean existsByStock(Stock stock);
