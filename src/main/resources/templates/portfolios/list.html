@@ -33,22 +33,27 @@
                             </span>
                         </p>
                         <div class="d-flex justify-content-end gap-2 mt-2">
-                            <a th:href="@{/portfolio/{id}/edit(id=${portfolio.portfolioId})}" class="btn btn-sm btn-outline-primary">수정</a>
                             <button type="button"
-                                    class="btn btn-sm btn-outline-danger btn-delete-portfolio"
+                                    class="btn btn-sm btn-outline-primary"
                                     th:data-id="${portfolio.portfolioId}"
                                     th:data-title="${portfolio.title}"
-                                    onclick="handleDeleteButtonClick(this)"
-                                    >
-                                삭제
-                            </button>
+                                    onclick="portfolioUpdateButtonClick(this)"
+                            >수정</button>
+
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger"
+                                    th:data-id="${portfolio.portfolioId}"
+                                    th:data-title="${portfolio.title}"
+                                    onclick="portfolioDeleteButtonClick(this)"
+                                    >삭제</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div th:replace="portfolios/modal-delete :: deleteModal"></div>
             <div th:replace="portfolios/modal-create :: createModal"></div>
-        <button class="fab" data-bs-toggle="modal" data-bs-target="#createPortfolioModal">+</button>
+            <div th:replace="portfolios/modal-update :: updateModal"></div>
+            <div th:replace="portfolios/modal-delete :: deleteModal"></div>
+            <button class="fab" data-bs-toggle="modal" data-bs-target="#createPortfolioModal">+</button>
         </div>
     </main>
 </body>

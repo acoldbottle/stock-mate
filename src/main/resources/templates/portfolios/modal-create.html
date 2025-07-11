@@ -11,7 +11,6 @@
             <form th:action="@{/stockmate/portfolios/create}" method="post" th:object="${portfolioCreateReq}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createPortfolioModalLabel">포트폴리오 생성</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -34,7 +33,21 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <!-- 오류 있을 때 -->
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                            th:if="${errorMessage}"
+                            onclick="window.location.href='/stockmate/portfolios';">취소
+                    </button>
+                    <!-- 오류 없을 때 -->
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                            th:unless="${errorMessage}">취소
+                    </button>
                     <button type="submit" class="btn btn-primary">생성</button>
                 </div>
             </form>

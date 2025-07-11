@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<div th:fragment="updateModal">
+    <div class="modal fade" id="updatePortfolioModal" tabindex="-1" aria-labelledby="updatePortfolioModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="updatePortfolioForm" action="#" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updatePortfolioModalLabel">포트폴리오 이름 수정</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="updateTitle" class="form-label">이름</label>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="updateTitle"
+                                    name="title"
+                                    placeholder="포트폴리오 이름을 입력하세요"
+                                    required
+                            />
+                            <div class="invalid-feedback">
+                                포트폴리오 이름을 입력해야 합니다.
+                            </div>
+                            <div style="min-height: 15px; max-height: 15px;" class="mt-2">
+                                <p th:if="${errorMessage}" th:text="${errorMessage}" class="alert alert-danger"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- 오류 있을 때 -->
+                        <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                th:if="${errorMessage}"
+                                onclick="window.location.href='/stockmate/portfolios';">취소
+                        </button>
+                        <!-- 오류 없을 때 -->
+                        <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                th:unless="${errorMessage}">취소
+                        </button>
+                        <button type="submit" class="btn btn-primary">수정</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

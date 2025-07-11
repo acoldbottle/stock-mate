@@ -45,24 +45,53 @@
     </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!--포트폴리오 생성 오류-->
 <script th:if="${openCreateModal}">
     const modal = new bootstrap.Modal(document.getElementById('createPortfolioModal'));
     modal.show();
 </script>
-<script>
-    function handleDeleteButtonClick(button) {
-    const id = button.getAttribute('data-id');
-    const title = button.getAttribute('data-title');
+<!--포트폴리오 수정 오류-->
+<script th:if="${openUpdateModal}">
+    const id = [[${portfolioErrId}]];
 
-    const form = document.getElementById('deletePortfolioForm');
-    const titleSpan = document.getElementById('deletePortfolioTitle');
+    const form = document.getElementById('updatePortfolioForm');
 
-    form.action = `/stockmate/portfolios/${id}/delete`;
-    titleSpan.textContent = title;
+    form.action = `/stockmate/portfolios/${id}/update`;
 
-    const modal = new bootstrap.Modal(document.getElementById('deletePortfolioModal'));
+    const modal = new bootstrap.Modal(document.getElementById('updatePortfolioModal'));
     modal.show();
-}
+</script>
+<!--포트폴리오 수정-->
+<script>
+    function portfolioUpdateButtonClick(button) {
+        const id = button.getAttribute('data-id');
+        const title = button.getAttribute('data-title');
+
+        const form = document.getElementById('updatePortfolioForm');
+        const input = document.getElementById('updateTitle');
+
+        form.action = `/stockmate/portfolios/${id}/update`;
+        input.value = title;
+
+        const modal = new bootstrap.Modal(document.getElementById('updatePortfolioModal'));
+        modal.show();
+    }
+</script>
+<!--포트폴리오 삭제-->
+<script>
+    function portfolioDeleteButtonClick(button) {
+        const id = button.getAttribute('data-id');
+        const title = button.getAttribute('data-title');
+
+        const form = document.getElementById('deletePortfolioForm');
+        const titleSpan = document.getElementById('deletePortfolioTitle');
+
+        form.action = `/stockmate/portfolios/${id}/delete`;
+        titleSpan.textContent = title;
+
+        const modal = new bootstrap.Modal(document.getElementById('deletePortfolioModal'));
+        modal.show();
+    }
 </script>
 </body>
 </html>
