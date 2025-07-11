@@ -35,12 +35,12 @@ public class UserController {
         if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
             return "redirect:/stockmate/portfolios";
         }
-        return "login";
+        return "user/login";
     }
 
     @GetMapping("/signup")
     public String signup() {
-        return "signup";
+        return "user/signup";
     }
 
     @PostMapping("/signup")
@@ -53,10 +53,10 @@ public class UserController {
             userService.signUp(user);
         } catch (UserAlreadyExistsException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "signup";
+            return "user/signup";
         } catch (UserPasswordMismatchException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "signup";
+            return "user/signup";
         }
 
         return "redirect:/stockmate/login";
@@ -72,7 +72,7 @@ public class UserController {
                         .map(FieldError::getDefaultMessage)
                         .orElseGet(() -> result.getFieldErrors(field).get(0).getDefaultMessage());
                 model.addAttribute(ERR_MSG, errorMessage);
-                return "signup";
+                return "user/signup";
             }
         }
         return null;
