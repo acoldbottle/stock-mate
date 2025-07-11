@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@Slf4j
 @RequestMapping("/stockmate/portfolios")
 @RequiredArgsConstructor
 public class PortfolioController {
