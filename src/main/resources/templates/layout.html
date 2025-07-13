@@ -115,5 +115,23 @@
         modal.show();
     }
 </script>
+
+<!--주식 검색 결과-->
+<script th:if="${openSearchModal}">
+    const searchModal = new bootstrap.Modal(document.getElementById('watchlistSearchModal'));
+    searchModal.show();
+</script>
+<!--검색결과로 나온 주식종목을 관심종목에 추가-->
+<script>
+    function watchItemCreateButtonClick(button) {
+        const symbol = button.getAttribute('data-symbol');
+
+        document.getElementById('createSymbolInput').value = symbol;
+        document.getElementById('createWatchItemSymbol').textContent = symbol;
+
+        const modal = new bootstrap.Modal(document.getElementById('createWatchItemModal'));
+        modal.show();
+    }
+</script>
 </body>
 </html>

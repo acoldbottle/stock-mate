@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<div th:fragment="createModal">
+    <div class="modal fade" id="createWatchItemModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/stockmate/watchlist/create}" method="post">
+                    <div class="modal-header" style="background-color: #001f3f;">
+                        <h5 class="modal-title">관심종목 추가</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body bg-light">
+                        <p><strong id="createWatchItemSymbol"></strong> 를 관심종목에 추가하시겠습니까?</p>
+                        <input type="hidden" id="createSymbolInput" name="symbol">
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-primary" style="background-color: #001f3f;">추가</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

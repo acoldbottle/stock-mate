@@ -69,3 +69,21 @@
     background-color: #084298;
     box-shadow: 0 0 14px rgba(8, 66, 152, 0.9);
 }
+
+.search-modal {
+  max-width: 500px; /* 검색용은 더 큼 */
+  height: 60vh;
+  overflow: hidden;
+}
+
+.search-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 1rem;
+}
