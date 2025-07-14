@@ -77,6 +77,7 @@ public class WatchlistController {
     private void setupWatchlist(Model model, List<WatchItemGetRes> watchlist) {
         model.addAttribute("watchlist", watchlist);
         model.addAttribute("activePage", "watchlist");
+        model.addAttribute("activeMenu", "watchlist");
         model.addAttribute("pageTitle", "StockMate - Watchlist");
         model.addAttribute("watchItemCreateReq", new WatchItemCreateReq());
     }
