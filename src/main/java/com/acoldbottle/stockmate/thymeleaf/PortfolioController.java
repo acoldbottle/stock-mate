@@ -27,6 +27,7 @@ public class PortfolioController {
         List<PortfolioWithProfitRes> portfolioList = portfolioService.getPortfolioList(userId);
         model.addAttribute("portfolios", portfolioList);
         model.addAttribute("activePage", "portfolio");
+        model.addAttribute("activeMenu", "portfolio");
         model.addAttribute("pageTitle", "StockMate - Portfolios");
         model.addAttribute("portfolioCreateReq", new PortfolioCreateReq());
         return "layout";
