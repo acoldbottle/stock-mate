@@ -27,5 +27,8 @@ public class ProfitDTO {
         private BigDecimal profitAmount; // 총 수익
         private BigDecimal profitRate; // 총 수익률
         private BigDecimal totalAmount; // 총 금액
+
+        private String korName;
+        private String engName;
     }
 }

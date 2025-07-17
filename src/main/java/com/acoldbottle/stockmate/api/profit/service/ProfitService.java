@@ -80,6 +80,8 @@ public class ProfitService {
                 .profitAmount(profitAmount)
                 .profitRate(profitRate)
                 .totalAmount(totalAmount)
+                .korName(holding.getStock().getKorName())
+                .engName(holding.getStock().getEngName())
                 .build();
     }
 
@@ -101,6 +103,8 @@ public class ProfitService {
                 .rate(BigDecimal.ZERO)
                 .profitAmount(BigDecimal.ZERO)
                 .profitRate(BigDecimal.ZERO)
+                .korName(holding.getStock().getKorName())
+                .engName(holding.getStock().getEngName())
                 .build();
     }
 
