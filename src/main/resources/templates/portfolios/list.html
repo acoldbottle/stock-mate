@@ -7,7 +7,8 @@
     <div th:fragment="content">
         <div class="row justify-content-center">
             <div class="portfolio-list">
-                <div class="card list-card" th:each="portfolio : ${portfolios}">
+                <div class="card list-card" th:each="portfolio : ${portfolios}"
+                     th:onclick="window.location.href='/stockmate/portfolios/' + [[${portfolio.portfolioId}]] + '/stocks'">
                     <div class="card-body">
                         <h5 class="card-title text-dark fw-bold" th:text="${portfolio.title}">포트폴리오 이름</h5>
                         <p class="mb-2">
@@ -37,14 +38,14 @@
                                     class="btn btn-sm btn-outline-primary"
                                     th:data-id="${portfolio.portfolioId}"
                                     th:data-title="${portfolio.title}"
-                                    onclick="portfolioUpdateButtonClick(this)"
+                                    onclick="event.stopPropagation(); portfolioUpdateButtonClick(this)"
                             >수정</button>
 
                             <button type="button"
                                     class="btn btn-sm btn-outline-danger"
                                     th:data-id="${portfolio.portfolioId}"
                                     th:data-title="${portfolio.title}"
-                                    onclick="portfolioDeleteButtonClick(this)"
+                                    onclick="event.stopPropagation(); portfolioDeleteButtonClick(this)"
                                     >삭제</button>
                         </div>
                     </div>

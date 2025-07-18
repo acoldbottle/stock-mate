@@ -39,6 +39,8 @@ public class PortfolioController {
             model.addAttribute("portfolioCreateReq", portfolioCreateReq);
             model.addAttribute(ERR_MSG, "포트폴리오 이름은 공백일 수 없습니다.");
             model.addAttribute("openCreateModal", true);
+            model.addAttribute("activePage", "portfolio");
+            model.addAttribute("activeMenu", "portfolio");
             model.addAttribute("portfolios", portfolioService.getPortfolioList(userId));
             return "layout";
         }
@@ -52,6 +54,8 @@ public class PortfolioController {
         if (result.hasErrors()) {
             model.addAttribute("portfolioErrId", portfolioId);
             model.addAttribute(ERR_MSG, "포트폴리오 이름은 공백일 수 없습니다.");
+            model.addAttribute("activePage", "portfolio");
+            model.addAttribute("activeMenu", "portfolio");
             model.addAttribute("openUpdateModal", true);
             model.addAttribute("portfolioCreateReq", new PortfolioCreateReq());
             model.addAttribute("portfolios", portfolioService.getPortfolioList(userId));

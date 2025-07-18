@@ -11,7 +11,7 @@
                 <div class="card list-card" th:each="watchItem : ${watchlist}">
                     <div class="card-body">
                         <h5 class="card-title text-dark fw-bold">
-                            <span th:text="${watchItem.symbol}">주식 심볼</span>
+                            <span th:text="${watchItem.symbol}" style="color:navy;">주식 심볼</span>
                             <small class="text-muted fw-normal fs-6 ms-3" th:switch="${watchItem.marketCode}">
                                 <span th:case="'NAS'">| 나스닥</span>
                                 <span th:case="'NYS'">| 뉴욕 증권거래소</span>
