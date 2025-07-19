@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<div th:fragment="updateModal">
+    <div class="modal fade" id="updateHoldingModal" tabindex="-1" aria-labelledby="updateHoldingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="updateHoldingForm" action="#" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateHoldingModalLabel">보유 종목 수정</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-1">
+                            <label for="updateQuantity" class="form-label">수 량</label>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="updateQuantity"
+                                    name="quantity"
+                                    placeholder="구매 수량을 입력하세요."
+                                    required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="updatePurchasePrice" class="form-label">평균 매수가 $</label>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="updatePurchasePrice"
+                                    name="purchasePrice"
+                                    placeholder="평균 매수가를 입력하세요."
+                                    required
+                            />
+
+                            <div style="min-height: 15px; max-height: 15px;" class="mt-2">
+                                <p th:if="${errorMessage}" th:text="${errorMessage}" class="alert alert-danger"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- 오류 있을 때 -->
+                        <button
+                                type="button"
+                                class="btn btn-secondary"
+                                id="updateCancelButton"
+                                data-bs-dismiss="modal"
+                                th:if="${errorMessage}">취소
+                        </button>
+                        <!-- 오류 없을 때 -->
+                        <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                th:unless="${errorMessage}">취소
+                        </button>
+                        <button type="submit" class="btn btn-primary">수정</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

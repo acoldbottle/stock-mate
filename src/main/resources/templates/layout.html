@@ -153,5 +153,42 @@
         modal.show();
     }
 </script>
+<!--보유 종목 수정-->
+<script>
+    function holdingUpdateButtonClick(button) {
+        const portfolioId = button.getAttribute('data-portfolioId');
+        const holdingId = button.getAttribute('data-holdingId');
+        const symbol = button.getAttribute('data-symbol');
+        const quantity = button.getAttribute('data-quantity');
+        const purchasePrice = button.getAttribute('data-purchasePrice');
+
+        const form = document.getElementById('updateHoldingForm');
+        const inputQuantity = document.getElementById('updateQuantity');
+        const inputPurchasePrice = document.getElementById('updatePurchasePrice');
+
+        form.action = `/stockmate/portfolios/${portfolioId}/stocks/${holdingId}/update`;
+        inputQuantity.value = quantity;
+        inputPurchasePrice.value = purchasePrice;
+
+        const modal = new bootstrap.Modal(document.getElementById('updateHoldingModal'));
+        modal.show();
+    }
+</script>
+<!--보유 종목 수정 오류-->
+<script th:if="${openHoldingUpdateModal}">
+    const portfolioId = [[${portfolioId}]];
+    const holdingId = [[${holdingId}]];
+
+    const form = document.getElementById('updateHoldingForm');
+    form.action = `/stockmate/portfolios/${portfolioId}/stocks/${holdingId}/update`;
+
+    const cancelButton = document.getElementById('updateCancelButton');
+    cancelButton.onclick = function () {
+        window.location.href = `/stockmate/portfolios/${portfolioId}/stocks`;
+    };
+
+    const modal = new bootstrap.Modal(document.getElementById('updateHoldingModal'));
+    modal.show();
+</script>
 </body>
 </html>
