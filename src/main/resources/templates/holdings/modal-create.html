@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<div th:fragment="createModal">
+    <div class="modal fade" id="createHoldingModal" tabindex="-1" aria-labelledby="createHoldingModalLabel" style="z-index: 1060;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="createHoldingForm" action="#" method="post">
+                    <div class="modal-header" style="background-color: #001f3f;">
+                        <h5 class="modal-title" id="createHoldingModalLabel">보유 종목 추가</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong id="createHoldingSymbol">추가하려는 주식 종목</strong></p>
+                        <input type="hidden" id="createSymbolInput" name="symbol">
+                        <div class="mb-1">
+                            <label for="createQuantity" class="form-label">수 량</label>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="createQuantity"
+                                    name="quantity"
+                                    placeholder="구매 수량을 입력하세요."
+                                    required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="createPurchasePrice" class="form-label">평균 매수가 $</label>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="createPurchasePrice"
+                                    name="purchasePrice"
+                                    placeholder="평균 매수가를 입력하세요."
+                                    required
+                            />
+
+                            <div style="min-height: 15px; max-height: 15px;" class="mt-2">
+                                <p th:if="${errorMessageCreate}" th:text="${errorMessageCreate}" class="alert alert-danger"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                onclick="cancelCreateHolding()">취소
+                        </button>
+                        <button type="submit" class="btn btn-primary">추가</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

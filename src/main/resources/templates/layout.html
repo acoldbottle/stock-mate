@@ -119,7 +119,7 @@
     }
 </script>
 
-<!--주식 검색 결과-->
+<!--관심종목 주식 검색 결과-->
 <script th:if="${openSearchModal}">
     const searchModal = new bootstrap.Modal(document.getElementById('watchlistSearchModal'));
     searchModal.show();
@@ -189,6 +189,50 @@
 
     const modal = new bootstrap.Modal(document.getElementById('updateHoldingModal'));
     modal.show();
+</script>
+<!--보유종목 주식 종목 검색 결과-->
+<script th:if="${openHoldingSearchModal}">
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchModal = new bootstrap.Modal(document.getElementById('holdingSearchModal'));
+      searchModal.show();
+    });
+</script>
+<!--보유종목에 주식 종목 추가-->
+<script>
+    function holdingCreateButtonClick(button) {
+        const portfolioId = button.getAttribute('data-portfolioId');
+        const symbol = button.getAttribute('data-symbol');
+
+        document.getElementById('createSymbolInput').value = symbol;
+        document.getElementById('createHoldingSymbol').textContent = symbol;
+
+        const form = document.getElementById('createHoldingForm');
+        form.action = `/stockmate/portfolios/${portfolioId}/stocks/create`;
+
+        const modal = new bootstrap.Modal(document.getElementById('createHoldingModal'));
+        modal.show();
+    }
+</script>
+<!--보유종목 주식 종목 추가 오류-->
+<script th:if="${openHoldingCreateModal}">
+    document.addEventListener('DOMContentLoaded', () => {
+      const createModal = new bootstrap.Modal(document.getElementById('createHoldingModal'));
+      createModal.show();
+    });
+</script>
+<script>
+    function cancelCreateHolding() {
+    // 에러 메시지 숨기기
+    const errorMsg = document.querySelector('#createHoldingModal .alert-danger');
+    if (errorMsg) errorMsg.style.display = 'none';
+
+    // 모달 닫기
+    const createModalEl = document.getElementById('createHoldingModal');
+    const modalInstance = bootstrap.Modal.getInstance(createModalEl);
+    if (modalInstance) {
+        modalInstance.hide();
+    }
+}
 </script>
 </body>
 </html>

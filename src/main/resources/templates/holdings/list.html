@@ -113,8 +113,10 @@
             </div>
         </div>
         <div th:replace="holdings/modal-update :: updateModal"></div>
+        <div th:replace="holdings/modal-create :: createModal"></div>
         <div th:replace="holdings/modal-delete :: deleteModal"></div>
-        <button class="fab">+</button>
+        <div th:replace="holdings/modal-search :: searchModal"></div>
+        <button type="button" class="fab" data-bs-toggle="modal" data-bs-target="#holdingSearchModal">+</button>
     </div>
 </div>
 </body>

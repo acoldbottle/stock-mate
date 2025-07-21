@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<div th:fragment="searchModal">
+    <div class="modal fade" id="holdingSearchModal" tabindex="-1" aria-labelledby="holdingSearchModalLabel" aria-hidden="true">
+        <div class="modal-dialog search-modal">
+            <div class="modal-content search-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="holdingSearchModalLabel">주식종목 검색</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                </div>
+
+                <div class="modal-body search-body">
+                    <form id="holdingStockForm" th:action="@{/stockmate/portfolios/{portfolioId}/stocks/search(portfolioId = ${portfolioId})}" method="get" class="d-flex mb-2">
+                        <input type="text" class="form-control" name="keyword" placeholder="주식 검색 (ex.AAPL or APPLE or 애플)">
+                        <button type="submit" class="btn btn-primary ms-1" style="white-space: nowrap;">검색</button>
+                    </form>
+
+                    <div th:if="${searchResults != null and !searchResults.isEmpty()}">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center"
+                                th:each="stock : ${searchResults}">
+                                <div>
+                                    <span class="fw-bold" th:text="${stock.symbol}">AAPL</span>
+                                    <small class="text-muted fw-normal ms-2" th:switch="${stock.marketCode}">
+                                        <span th:case="'NAS'">| 나스닥</span>
+                                        <span th:case="'NYS'">| 뉴욕 증권거래소</span>
+                                        <span th:case="'AMS'">| 아메리칸 증권거래소</span>
+                                    </small>
+                                    <br>
+                                    <span class="text-muted" th:text="${stock.korName}">애플</span>
+                                    <span class="text-muted ms-1" th:text="${stock.engName}">Apple Inc.</span>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button class="btn btn-sm btn-outline-primary"
+                                            th:data-portfolioId="${portfolioId}"
+                                            th:data-symbol="${stock.symbol}"
+                                            onclick="holdingCreateButtonClick(this)">추가
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <p th:if="${searchResults != null and searchResults.isEmpty()}"
+                       class="text-center text-muted mt-3">검색 결과가 없습니다.</p>
+
+                    <div style="min-height: 15px; max-height: 15px;" class="mt-2">
+                        <p th:if="${errorMessage}" th:text="${errorMessage}" class="alert alert-danger"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
