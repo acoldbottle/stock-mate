@@ -45,7 +45,9 @@ public class WatchlistController {
         try {
             watchlistService.createWatchItem(userId, watchItemCreateReq);
         } catch (WatchItemAlreadyExistsException e) {
+            List<StockSearchRes> searchResult = stockService.searchByKeyword(watchItemCreateReq.getSymbol());
             model.addAttribute("errorMessage", "이미 관심종목에 등록 된 주식입니다.");
+            model.addAttribute("searchResults", searchResult);
             model.addAttribute("openSearchModal", true);
             setupWatchlist(model, watchlist);
             return "layout";
