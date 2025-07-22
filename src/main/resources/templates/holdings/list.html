@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 </head>
 <body>
 <div th:fragment="content">
@@ -30,6 +31,12 @@
                     (<span th:text="${#numbers.formatDecimal(portfolioProfitRate, 1, 'COMMA', 2, 'POINT')}">0.00</span>%)
                 </span>
             </p>
+        </div>
+
+        <!-- 차트를 그릴 캔버스 -->
+        <div class="card my-3 p-3">
+            <h5 class="text-muted fw-bold">보유 종목 비중</h5>
+            <canvas id="holdingChart" height="150"></canvas>
         </div>
 
         <div th:each="holding : ${holdingList}">
@@ -118,6 +125,84 @@
         <div th:replace="holdings/modal-search :: searchModal"></div>
         <button type="button" class="fab" data-bs-toggle="modal" data-bs-target="#holdingSearchModal">+</button>
     </div>
+
+    <!-- 차트 스크립트 -->
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+
+            /*<![CDATA[*/
+            const holdingList = /*[[${holdingList}]]*/ [];
+            const totalSum = holdingList.reduce((sum, h) => sum + Number(h.totalAmount), 0);
+
+            let labels = [];
+            let data = [];
+            let backgroundColors = [];
+
+            if (totalSum === 0) {
+                labels = [''];
+                data = [1];
+                backgroundColors = ['#CCCCCC']; // 연한 회색
+            } else if (holdingList.length > 10) {
+                const sortedHoldings = holdingList.slice().sort((a, b) => b.totalAmount - a.totalAmount);
+
+                const top9 = sortedHoldings.slice(0, 9);
+                const etc = sortedHoldings.slice(9);
+
+                const etcSum = etc.reduce((sum, h) => sum + Number(h.totalAmount), 0);
+
+                top9.forEach(h => {
+                    const percent = (h.totalAmount / totalSum * 100).toFixed(1);
+                    labels.push(`${h.symbol} (${percent}%)`);
+                    data.push(Number(h.totalAmount));
+                });
+
+                const etcPercent = (etcSum / totalSum * 100).toFixed(1);
+                labels.push(`ETC (${etcPercent}%)`);
+                data.push(etcSum);
+
+                backgroundColors = [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                    '#FF9F40', '#FFCD56', '#C9CBCF', '#8AC926', '#1982C4', '#AAAAAA' // ETC는 진한 회색
+                ];
+            } else {
+                holdingList.forEach(h => {
+                    const percent = (h.totalAmount / totalSum * 100).toFixed(1);
+                    labels.push(`${h.symbol} (${percent}%)`);
+                    data.push(Number(h.totalAmount));
+                });
+
+                backgroundColors = [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                    '#FF9F40', '#FFCD56', '#C9CBCF', '#8AC926', '#1982C4'
+                ].slice(0, holdingList.length);
+            }
+
+            console.log("차트 라벨:", labels);
+            console.log("차트 데이터:", data);
+
+            const ctx = document.getElementById('holdingChart')?.getContext('2d');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+        });
+        /*]]>*/
+    </script>
 </div>
 </body>
 </html>
