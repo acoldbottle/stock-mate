@@ -5,6 +5,7 @@ import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioCreateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioUpdateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
 import com.acoldbottle.stockmate.api.portfolio.service.PortfolioService;
+import com.acoldbottle.stockmate.exception.portfolio.PortfolioNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -51,24 +52,32 @@ public class PortfolioController {
     @PostMapping("/{portfolioId}/update")
     public String updatePortfolio(@ModelAttribute @Valid PortfolioUpdateReq portfolioUpdateReq, BindingResult result,
                                   Model model, @UserId Long userId, @PathVariable Long portfolioId) {
-        if (result.hasErrors()) {
-            model.addAttribute("portfolioErrId", portfolioId);
-            model.addAttribute(ERR_MSG, "포트폴리오 이름은 공백일 수 없습니다.");
-            model.addAttribute("activePage", "portfolio");
-            model.addAttribute("activeMenu", "portfolio");
-            model.addAttribute("openUpdateModal", true);
-            model.addAttribute("portfolioCreateReq", new PortfolioCreateReq());
-            model.addAttribute("portfolios", portfolioService.getPortfolioList(userId));
-            return "layout";
+        try {
+            if (result.hasErrors()) {
+                model.addAttribute("portfolioErrId", portfolioId);
+                model.addAttribute(ERR_MSG, "포트폴리오 이름은 공백일 수 없습니다.");
+                model.addAttribute("activePage", "portfolio");
+                model.addAttribute("activeMenu", "portfolio");
+                model.addAttribute("openUpdateModal", true);
+                model.addAttribute("portfolioCreateReq", new PortfolioCreateReq());
+                model.addAttribute("portfolios", portfolioService.getPortfolioList(userId));
+                return "layout";
+            }
+            portfolioService.updatePortfolio(userId, portfolioId, portfolioUpdateReq);
+        } catch (PortfolioNotFoundException e) {
+            return "redirect:/stockmate/portfolios";
         }
-        portfolioService.updatePortfolio(userId, portfolioId, portfolioUpdateReq);
         return "redirect:/stockmate/portfolios";
     }
 
 
     @PostMapping("/{portfolioId}/delete")
     public String deletePortfolio(@UserId Long userId, @PathVariable Long portfolioId) {
-        portfolioService.deletePortfolio(userId, portfolioId);
+        try {
+            portfolioService.deletePortfolio(userId, portfolioId);
+        } catch (PortfolioNotFoundException e) {
+            return "redirect:/stockmate/portfolios";
+        }
         return "redirect:/stockmate/portfolios";
     }
 }

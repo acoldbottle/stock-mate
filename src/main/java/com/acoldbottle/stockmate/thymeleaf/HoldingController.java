@@ -4,8 +4,14 @@ import com.acoldbottle.stockmate.annotation.UserId;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingCreateReq;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.service.HoldingService;
+import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioCreateReq;
+import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
+import com.acoldbottle.stockmate.api.portfolio.service.PortfolioService;
 import com.acoldbottle.stockmate.api.stock.dto.res.StockSearchRes;
 import com.acoldbottle.stockmate.api.stock.service.StockService;
+import com.acoldbottle.stockmate.exception.holding.HoldingNotFoundException;
+import com.acoldbottle.stockmate.exception.portfolio.PortfolioNotFoundException;
+import com.acoldbottle.stockmate.exception.stock.StockNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -27,8 +33,12 @@ public class HoldingController {
 
     @GetMapping("/{portfolioId}/stocks")
     public String getHoldings(@PathVariable Long portfolioId, Model model, @UserId Long userId) {
-        PortfolioHoldingListDTO result = portfolioHoldingProfitService.getHoldingList(userId, portfolioId);
-        setupHoldingList(portfolioId, model, result);
+        try {
+            PortfolioHoldingListDTO result = portfolioHoldingProfitService.getHoldingList(userId, portfolioId);
+            setupHoldingList(portfolioId, model, result);
+        } catch (PortfolioNotFoundException e) {
+            return "redirect:/stockmate/portfolios";
+        }
 
         return "layout";
     }
@@ -40,30 +50,41 @@ public class HoldingController {
                                  Model model,
                                  @UserId Long userId) {
         PortfolioHoldingListDTO holdingList = portfolioHoldingProfitService.getHoldingList(userId, portfolioId);
-        if (result.hasErrors()) {
-            String[] fields = {"symbol", "quantity", "purchasePrice"};
-            for (String field : fields) {
-                if (result.hasFieldErrors(field)) {
-                    FieldError error = result.getFieldErrors(field).getFirst();
-                    String errorMessage;
-                    if (error.getCode().equals("typeMismatch")) {
-                        errorMessage = "숫자만 입력해주세요. ex) 124.00 or 124";
-                    } else {
-                        errorMessage = error.getDefaultMessage();
+        try {
+            if (result.hasErrors()) {
+                String[] fields = {"symbol", "quantity", "purchasePrice"};
+                for (String field : fields) {
+                    if (result.hasFieldErrors(field)) {
+                        FieldError error = result.getFieldErrors(field).getFirst();
+                        String errorMessage;
+                        if (error.getCode().equals("typeMismatch")) {
+                            errorMessage = "숫자만 입력해주세요. ex) 124.00 or 124";
+                        } else {
+                            errorMessage = error.getDefaultMessage();
+                        }
+                        List<StockSearchRes> searchResults = stockService.searchByKeyword(holdingCreateReq.getSymbol());
+                        model.addAttribute("searchResults", searchResults);
+                        model.addAttribute("errorMessageCreate", errorMessage);
+                        model.addAttribute("openHoldingSearchModal", true);
+                        model.addAttribute("openHoldingCreateModal", true);
+                        model.addAttribute("symbol", holdingCreateReq.getSymbol());
+                        model.addAttribute("holdingCreateReq", new HoldingCreateReq());
+                        setupHoldingList(portfolioId, model, holdingList);
+                        return "layout";
                     }
-                    List<StockSearchRes> searchResults = stockService.searchByKeyword(holdingCreateReq.getSymbol());
-                    model.addAttribute("searchResults", searchResults);
-                    model.addAttribute("errorMessageCreate", errorMessage);
-                    model.addAttribute("openHoldingSearchModal", true);
-                    model.addAttribute("openHoldingCreateModal", true);
-                    model.addAttribute("symbol", holdingCreateReq.getSymbol());
-                    model.addAttribute("holdingCreateReq", new HoldingCreateReq());
-                    setupHoldingList(portfolioId, model, holdingList);
-                    return "layout";
                 }
             }
+            holdingService.createHolding(userId, portfolioId, holdingCreateReq);
+        } catch (StockNotFoundException e) {
+            List<StockSearchRes> searchResults = stockService.searchByKeyword(holdingCreateReq.getSymbol());
+            model.addAttribute("searchResults", searchResults);
+            model.addAttribute("openHoldingSearchModal", true);
+            model.addAttribute("holdingCreateReq", new HoldingCreateReq());
+            setupHoldingList(portfolioId, model, holdingList);
+            return "layout";
+        } catch (PortfolioNotFoundException e) {
+            return "redirect:/stockmate/portfolios";
         }
-        holdingService.createHolding(userId, portfolioId, holdingCreateReq);
 
         return "redirect:/stockmate/portfolios/" + portfolioId + "/stocks";
     }
@@ -76,27 +97,33 @@ public class HoldingController {
                                 @PathVariable Long portfolioId,
                                 @PathVariable Long holdingId) {
         PortfolioHoldingListDTO holdingList = portfolioHoldingProfitService.getHoldingList(userId, portfolioId);
-        if (result.hasErrors()) {
-            String[] fields = {"quantity", "purchasePrice"};
-            for (String field : fields) {
-                if (result.hasFieldErrors(field)) {
-                    FieldError error = result.getFieldErrors(field).getFirst();
-                    String errorMessage;
-                    if (error.getCode().equals("typeMismatch")) {
-                        errorMessage = "숫자만 입력해주세요. ex) 124.00 or 124";
-                    } else {
-                        errorMessage = error.getDefaultMessage();
+        try {
+            if (result.hasErrors()) {
+                String[] fields = {"quantity", "purchasePrice"};
+                for (String field : fields) {
+                    if (result.hasFieldErrors(field)) {
+                        FieldError error = result.getFieldErrors(field).getFirst();
+                        String errorMessage;
+                        if (error.getCode().equals("typeMismatch")) {
+                            errorMessage = "숫자만 입력해주세요. ex) 124.00 or 124";
+                        } else {
+                            errorMessage = error.getDefaultMessage();
+                        }
+                        model.addAttribute("errorMessage", errorMessage);
+                        model.addAttribute("holdingId", holdingId);
+                        model.addAttribute("openHoldingUpdateModal", true);
+                        model.addAttribute("holdingUpdateReq", new HoldingUpdateReq());
+                        setupHoldingList(portfolioId, model, holdingList);
+                        return "layout";
                     }
-                    model.addAttribute("errorMessage", errorMessage);
-                    model.addAttribute("holdingId", holdingId);
-                    model.addAttribute("openHoldingUpdateModal", true);
-                    model.addAttribute("holdingUpdateReq", new HoldingUpdateReq());
-                    setupHoldingList(portfolioId, model, holdingList);
-                    return "layout";
                 }
             }
+            holdingService.updateHolding(userId, portfolioId, holdingId, holdingUpdateReq);
+        } catch (StockNotFoundException | HoldingNotFoundException e) {
+            return "redirect:/stockmate/portfolios/" + portfolioId + "/stocks";
+        } catch (PortfolioNotFoundException e) {
+            return "redirect:/stockmate/portfolios";
         }
-        holdingService.updateHolding(userId, portfolioId, holdingId, holdingUpdateReq);
 
         return "redirect:/stockmate/portfolios/" + portfolioId + "/stocks";
     }
@@ -106,7 +133,13 @@ public class HoldingController {
     public String deleteHolding(@PathVariable Long portfolioId,
                                 @PathVariable Long holdingId,
                                 @UserId Long userId) {
-        holdingService.deleteHolding(userId, portfolioId, holdingId);
+        try {
+            holdingService.deleteHolding(userId, portfolioId, holdingId);
+        } catch (HoldingNotFoundException e) {
+            return "redirect:/stockmate/portfolios/" + portfolioId + "/stocks";
+        } catch (PortfolioNotFoundException e) {
+            return "redirect:/stockmate/portfolios";
+        }
         return "redirect:/stockmate/portfolios/" + portfolioId + "/stocks";
     }
 
@@ -115,16 +148,20 @@ public class HoldingController {
                                @UserId Long userId,
                                @PathVariable Long portfolioId,
                                Model model) {
-        if (keyword == null || keyword.isBlank()) {
-            model.addAttribute("errorMessage", "검색어를 입력해주세요.");
-            model.addAttribute("searchResults", null);
-        } else {
-            List<StockSearchRes> searchResults = stockService.searchByKeyword(keyword);
-            model.addAttribute("searchResults", searchResults);
+        try {
+            if (keyword == null || keyword.isBlank()) {
+                model.addAttribute("errorMessage", "검색어를 입력해주세요.");
+                model.addAttribute("searchResults", null);
+            } else {
+                List<StockSearchRes> searchResults = stockService.searchByKeyword(keyword);
+                model.addAttribute("searchResults", searchResults);
+            }
+            PortfolioHoldingListDTO holdingList = portfolioHoldingProfitService.getHoldingList(userId, portfolioId);
+            model.addAttribute("openHoldingSearchModal", true);
+            setupHoldingList(portfolioId, model, holdingList);
+        } catch (PortfolioNotFoundException e) {
+            return "redirect:/stockmate/portfolios";
         }
-        PortfolioHoldingListDTO holdingList = portfolioHoldingProfitService.getHoldingList(userId, portfolioId);
-        model.addAttribute("openHoldingSearchModal", true);
-        setupHoldingList(portfolioId, model, holdingList);
         return "layout";
     }
 

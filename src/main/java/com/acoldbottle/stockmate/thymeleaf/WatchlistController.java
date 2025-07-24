@@ -7,6 +7,7 @@ import com.acoldbottle.stockmate.api.watchlist.dto.req.WatchItemCreateReq;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemGetRes;
 import com.acoldbottle.stockmate.api.watchlist.service.WatchlistService;
 import com.acoldbottle.stockmate.exception.watchitem.WatchItemAlreadyExistsException;
+import com.acoldbottle.stockmate.exception.watchitem.WatchItemNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +58,11 @@ public class WatchlistController {
 
     @PostMapping("/{watchItemId}/delete")
     public String deleteWatchItem(@UserId Long userId, @PathVariable Long watchItemId) {
-        watchlistService.deleteWatchItem(userId, watchItemId);
+        try {
+            watchlistService.deleteWatchItem(userId, watchItemId);
+        } catch (WatchItemNotFoundException e) {
+            return "redirect:/stockmate/watchlist";
+        }
         return "redirect:/stockmate/watchlist";
     }
 

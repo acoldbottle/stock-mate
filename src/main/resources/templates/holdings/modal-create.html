@@ -13,8 +13,8 @@
                         <h5 class="modal-title" id="createHoldingModalLabel">보유 종목 추가</h5>
                     </div>
                     <div class="modal-body">
-                        <p><strong id="createHoldingSymbol">추가하려는 주식 종목</strong></p>
-                        <input type="hidden" id="createSymbolInput" name="symbol">
+                        <p><strong id="createHoldingSymbol" th:text="${symbol}">추가하려는 주식 종목</strong></p>
+                        <input type="hidden" id="createSymbolInput" name="symbol" th:value="${symbol}">
                         <div class="mb-1">
                             <label for="createQuantity" class="form-label">수 량</label>
                             <input
