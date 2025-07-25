@@ -27,11 +27,18 @@ public class Stock {
     @Column(name = "market_code")
     private String marketCode;
 
+    @Column(name = "is_delisted")
+    private boolean isDelisted = false;
+
     @Builder
     public Stock(String symbol, String korName, String engName, String marketCode) {
         this.symbol = symbol;
         this.korName = korName;
         this.engName = engName;
         this.marketCode = marketCode;
+    }
+
+    public void delistStock() {
+        this.isDelisted = true;
     }
 }
