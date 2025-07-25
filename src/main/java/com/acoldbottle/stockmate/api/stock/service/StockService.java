@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,15 +29,23 @@ public class StockService {
 
     @Transactional
     public void saveStocks(List<StockDTO> stockDTOS) {
-        List<Stock> stockList = stockDTOS.stream()
+        List<Stock> stockListNotDelist = stockDTOS.stream()
                 .map(stockDTO -> Stock.builder()
                         .symbol(stockDTO.getSymbol())
+                        .marketCode(stockDTO.getMarketCode())
                         .korName(stockDTO.getKorName())
                         .engName(stockDTO.getEngName())
-                        .marketCode(stockDTO.getMarketCode())
                         .build())
                 .toList();
 
-        stockRepository.saveAll(stockList);
+        Set<String> symbolSetNotDelist = stockListNotDelist.stream()
+                .map(Stock::getSymbol)
+                .collect(Collectors.toSet());
+
+        stockRepository.findAll().stream()
+                .filter(stock -> !symbolSetNotDelist.contains(stock.getSymbol()))
+                .forEach(Stock::delistStock);
+
+        stockRepository.saveAll(stockListNotDelist);
     }
 }
