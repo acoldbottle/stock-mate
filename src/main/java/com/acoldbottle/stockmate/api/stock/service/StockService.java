@@ -23,7 +23,6 @@ public class StockService {
         List<Stock> searchedList = stockRepository.searchByKeyword(keyword);
         return searchedList.stream()
                 .map(StockSearchRes::from)
-                .limit(10)
                 .toList();
     }
 
