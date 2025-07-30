@@ -27,6 +27,7 @@ public enum ErrorCode {
     KIS_TOKEN_REISSUE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "한국투자증권 토큰 발급에 실패했습니다"),
     KIS_CURRENT_PRICE_ERROR(HttpStatus.BAD_GATEWAY, "현재 시세를 가져오지 못 했습니다."),
     KIS_TOO_MANY_REQUEST(HttpStatus.TOO_MANY_REQUESTS, "요청 한도를 초과하여 현재 시세를 가져오지 못했습니다."),
+    KIS_UPDATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "현재 시세를 레디스에 업데이트하지 못했습니다."),
     KIS_REQUEST_INTERRUPTED_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "한국투자증권 현재 시세 요청 중에 인터럽트가 발생하였습니다."),
 
     INVALID_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "필드가 잘 못 되었습니다."),
