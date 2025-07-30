@@ -21,37 +21,37 @@ import static com.acoldbottle.stockmate.api.profit.dto.ProfitDTO.HoldingProfitDT
 public class ProfitService {
 
     private final CurrentPriceCacheService cacheService;
-    private final ExecutorService virtualExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
     public ProfitDTO calculateProfitInPortfolio(List<Holding> holdings) {
-        List<CompletableFuture<HoldingProfitDTO>> futures = holdings.stream()
-                .map(
-                        holding -> CompletableFuture.supplyAsync(() -> cacheService.getCurrentPrice(holding.getStock().getSymbol()), virtualExecutor)
-                                .thenApply(currentPriceDTO -> getHoldingProfitDTOWithProfit(holding, currentPriceDTO))
-                )
-                .toList();
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-        List<HoldingProfitDTO> holdingProfitDTOList = futures.stream()
-                .map(CompletableFuture::join)
-                .toList();
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<CompletableFuture<HoldingProfitDTO>> futures = holdings.stream()
+                    .map(
+                            holding -> CompletableFuture.supplyAsync(() -> cacheService.getCurrentPrice(holding.getStock().getSymbol()), executor)
+                                    .thenApply(currentPriceDTO -> getHoldingProfitDTOWithProfit(holding, currentPriceDTO))
+                    )
+                    .toList();
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+            allFutures.join();
+            List<HoldingProfitDTO> holdingProfitDTOList = futures.stream()
+                    .map(CompletableFuture::join)
+                    .toList();
 
-        BigDecimal portfolioCurrentValue = holdingProfitDTOList.stream()
-                .map(HoldingProfitDTO::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal portfolioCurrentValue = BigDecimal.ZERO;
+            BigDecimal portfolioProfitAmount = BigDecimal.ZERO;
+            for (HoldingProfitDTO holdingProfitDTO : holdingProfitDTOList) {
+                portfolioCurrentValue = portfolioCurrentValue.add(holdingProfitDTO.getTotalAmount());
+                portfolioProfitAmount = portfolioProfitAmount.add(holdingProfitDTO.getProfitAmount());
+            }
+            BigDecimal portfolioTotalPurchaseAmount = portfolioCurrentValue.subtract(portfolioProfitAmount);
+            BigDecimal portfolioProfitRate = calculateProfitRate(portfolioTotalPurchaseAmount, portfolioProfitAmount);
 
-        BigDecimal portfolioProfitAmount = holdingProfitDTOList.stream()
-                .map(HoldingProfitDTO::getProfitAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal portfolioTotalPurchaseAmount = portfolioCurrentValue.subtract(portfolioProfitAmount);
-        BigDecimal portfolioProfitRate = calculateProfitRate(portfolioTotalPurchaseAmount, portfolioProfitAmount);
-
-        return ProfitDTO.builder()
-                .portfolioCurrentValue(portfolioCurrentValue)
-                .portfolioProfitRate(portfolioProfitRate)
-                .portfolioProfitAmount(portfolioProfitAmount)
-                .holdingList(holdingProfitDTOList)
-                .build();
+            return ProfitDTO.builder()
+                    .portfolioCurrentValue(portfolioCurrentValue)
+                    .portfolioProfitRate(portfolioProfitRate)
+                    .portfolioProfitAmount(portfolioProfitAmount)
+                    .holdingList(holdingProfitDTOList)
+                    .build();
+        }
     }
 
     private HoldingProfitDTO getHoldingProfitDTOWithProfit(Holding holding, CurrentPriceDTO currentPriceDTO) {
