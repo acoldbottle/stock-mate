@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -28,8 +31,19 @@ public class CurrentPriceScheduler {
     private final CurrentPriceService currentPriceService;
     private final EmailService emailService;
 
+    private final static int MONDAY = 1;
+    private final static int TUESDAY = 2;
+    private final static int FRIDAY = 5;
+    private final static int SATURDAY = 6;
+
+    private final static int MARKET_OPEN_HOUR = 16;
+    private final static int MARKET_CLOSE_HOUR = 7;
+
+
     @Scheduled(fixedRate = 60000L)
     public void requestCurrentPriceAndCache() {
+        if (!isMarketTime()) return;
+
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             Map<String, String> failedMap = new ConcurrentHashMap<>();
 
@@ -57,5 +71,16 @@ public class CurrentPriceScheduler {
             log.error("=== [스케줄러] 현재가 업데이트 실패 ===", e);
             emailService.sendEmailAlertError("정의하지 않은 예외 발생 -> " + e.getMessage());
         }
+    }
+
+    private boolean isMarketTime() {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        int nowDay = now.getDayOfWeek().getValue();
+        int nowHour = now.getHour();
+
+        if (nowDay >= MONDAY && nowDay <= FRIDAY && nowHour >= MARKET_OPEN_HOUR) return true;
+        if (nowDay >= TUESDAY && nowDay <= SATURDAY && nowHour < MARKET_CLOSE_HOUR) return true;
+
+        return false;
     }
 }
