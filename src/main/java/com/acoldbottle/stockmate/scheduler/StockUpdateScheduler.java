@@ -20,7 +20,7 @@ public class StockUpdateScheduler {
     private final StockFileDownloader fileDownloader;
     private final StockFileParser fileParser;
 
-    @Scheduled(cron = "0 0 6 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 4 * * SUN", zone = "Asia/Seoul")
     public void updateStockDB() {
         try {
             fileDownloader.downloadAll();
