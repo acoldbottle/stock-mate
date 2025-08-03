@@ -20,12 +20,22 @@ public class SseService {
     public SseEmitter connect(Long userId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitterMap.put(userId, emitter);
-        emitter.onCompletion(() -> emitterMap.remove(userId));
+        log.info("[SseService] user={} --> login", userId);
+        emitter.onCompletion(() -> {
+            emitterMap.remove(userId);
+            log.info("[SseService] user={} --> connection closed", userId);
+        });
         emitter.onError((e) -> {
             emitterMap.remove(userId);
             log.error("[SseService] Connection Error! userId={}", userId, e);
         });
         return emitter;
+    }
+
+    public void disconnect(Long userId) {
+        log.info("[SseService] user={} --> logout", userId);
+        emitterMap.get(userId).complete();
+        emitterMap.remove(userId);
     }
 
     @PostConstruct
@@ -47,6 +57,9 @@ public class SseService {
 
     @PreDestroy
     public void shutdown() {
+        for (SseEmitter emitter : emitterMap.values()) {
+            emitter.complete();
+        }
         scheduler.shutdown();
         emitterMap.clear();
     }

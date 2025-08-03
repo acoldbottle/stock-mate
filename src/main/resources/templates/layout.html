@@ -36,7 +36,7 @@
         </nav>
         <div class="logout">
             <form th:action="@{/stockmate/logout}" method="post">
-                <button type="submit" class="btn btn-outline-danger w-100">로그아웃</button>
+                <button type="submit" class="btn btn-outline-danger w-100" onclick="disconnectSSE(event)">로그아웃</button>
             </form>
         </div>
     </aside>
@@ -234,6 +234,8 @@
     }
 }
 </script>
+<!--SSE 연결 -->
+<script src="/js/sse.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 </body>
 </html>
