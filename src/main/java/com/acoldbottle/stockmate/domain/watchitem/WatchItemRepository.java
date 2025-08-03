@@ -18,4 +18,8 @@ public interface WatchItemRepository extends JpaRepository<WatchItem, Long> {
     boolean existsByUserAndStock(User user, Stock stock);
     Optional<WatchItem> findByIdAndUser(Long id, User user);
     boolean existsByStock(Stock stock);
+
+    @Query("SELECT w.stock.symbol FROM WatchItem w " +
+            "WHERE w.user.id = :userId")
+    List<String> findSymbolsByUserId(Long userId);
 }

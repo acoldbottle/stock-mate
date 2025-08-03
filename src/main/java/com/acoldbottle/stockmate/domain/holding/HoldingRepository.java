@@ -29,4 +29,7 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
             "JOIN FETCH h.stock " +
             "WHERE h.portfolio IN :portfolios")
     List<Holding> findAllWithStockByPortfolioIn(List<Portfolio> portfolios);
+
+    @Query("SELECT h.stock.symbol FROM Holding h WHERE h.portfolio.user.id = :userId")
+    List<String> findSymbolsByUserId(Long userId);
 }

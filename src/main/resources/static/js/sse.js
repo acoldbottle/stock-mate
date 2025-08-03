@@ -1,6 +1,6 @@
 let eventSource;
 
-function connectSSE() {
+function connectSSE(event) {
     if (eventSource && eventSource.readyState !== EventSource.CLOSED) {
         return;
     }
@@ -23,6 +23,5 @@ function disconnectSSE(event) {
             event.target.form.submit();
         });
 }
-
 
 document.addEventListener("DOMContentLoaded", connectSSE);
