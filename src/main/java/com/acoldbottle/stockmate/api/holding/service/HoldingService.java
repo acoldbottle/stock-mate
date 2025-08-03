@@ -7,6 +7,7 @@ import com.acoldbottle.stockmate.api.holding.dto.res.HoldingWithProfitRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
 import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
 import com.acoldbottle.stockmate.api.profit.service.ProfitService;
+import com.acoldbottle.stockmate.api.sse.SubscriberRegistry;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
@@ -40,6 +41,7 @@ public class HoldingService {
     private final UserRepository userRepository;
     private final TrackedSymbolService trackedSymbolService;
     private final ProfitService profitService;
+    private final SubscriberRegistry subscriberRegistry;
 
     public List<HoldingWithProfitRes> getHoldingListWithProfit(Long userId, Long portfolioId) {
         User user = getUser(userId);
@@ -74,6 +76,7 @@ public class HoldingService {
                     return newHolding;
                 });
         trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
+        subscriberRegistry.save(userId, stock.getSymbol());
         return HoldingCreateRes.from(holding);
     }
 

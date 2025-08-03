@@ -31,7 +31,7 @@ public class SseService {
         }
         SseEmitter newEmitter = new SseEmitter(Long.MAX_VALUE);
         emitterRegistry.save(userId, newEmitter);
-        subscriberRegistry.save(userId);
+        subscriberRegistry.saveAllByUserId(userId);
         log.info("[SseService] user={} --> login", userId);
         newEmitter.onCompletion(() -> {
             emitterRegistry.delete(userId);

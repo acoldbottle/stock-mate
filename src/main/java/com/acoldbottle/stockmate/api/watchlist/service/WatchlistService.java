@@ -1,5 +1,6 @@
 package com.acoldbottle.stockmate.api.watchlist.service;
 
+import com.acoldbottle.stockmate.api.sse.SubscriberRegistry;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.api.watchlist.dto.req.WatchItemCreateReq;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemCreateRes;
@@ -33,6 +34,7 @@ public class WatchlistService {
     private final StockRepository stockRepository;
     private final WatchItemRepository watchItemRepository;
     private final TrackedSymbolService trackedSymbolService;
+    private final SubscriberRegistry subscriberRegistry;
     private final CurrentPriceCacheService currentPriceCacheService;
 
     public List<WatchItemGetRes> getWatchlist(Long userId) {
@@ -61,6 +63,7 @@ public class WatchlistService {
                 .build());
 
         trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
+        subscriberRegistry.save(userId, stock.getSymbol());
         return WatchItemCreateRes.from(savedWatchItem);
     }
 

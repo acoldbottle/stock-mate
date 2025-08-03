@@ -16,7 +16,13 @@ public class SubscriberRegistry {
     private final HoldingRepository holdingRepository;
     private final WatchItemRepository watchItemRepository;
 
-    public void save(Long userId) {
+    public void save(Long userId, String symbol) {
+        symbolSubscribersMap
+                .computeIfAbsent(symbol, k -> ConcurrentHashMap.newKeySet())
+                .add(userId);
+    }
+
+    public void saveAllByUserId(Long userId) {
         Set<String> symbolSet = new HashSet<>();
         List<String> holdingSymbolList = holdingRepository.findSymbolsByUserId(userId);
         List<String> watchItemSymbolList = watchItemRepository.findSymbolsByUserId(userId);
