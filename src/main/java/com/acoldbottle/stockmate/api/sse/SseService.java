@@ -46,7 +46,7 @@ public class SseService {
 
     public void disconnect(Long userId) {
         log.info("[SseService] user={} --> logout", userId);
-        subscriberRegistry.delete(userId);
+        subscriberRegistry.deleteByUserId(userId);
         SseEmitter removedEmitter = emitterRegistry.delete(userId);
         if (removedEmitter != null) {
             removedEmitter.complete();
@@ -65,7 +65,7 @@ public class SseService {
                     log.error("[SseService] userId={}",userId, e);
                     emitter.completeWithError(e);
                     emitterRegistry.delete(userId);
-                    subscriberRegistry.delete(userId);
+                    subscriberRegistry.deleteByUserId(userId);
                 }
             }
         }, 0, 30, TimeUnit.SECONDS);

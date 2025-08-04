@@ -97,6 +97,7 @@ public class HoldingService {
         Holding findHolding = getHolding(holdingId, portfolio);
         holdingRepository.delete(findHolding);
         trackedSymbolService.deleteTrackedSymbolIfNotUse(findHolding.getStock());
+        subscriberRegistry.delete(userId, findHolding.getStock().getSymbol());
     }
 
     private User getUser(Long userId) {

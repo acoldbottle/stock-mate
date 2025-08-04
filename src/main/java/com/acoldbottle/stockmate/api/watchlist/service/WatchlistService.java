@@ -73,6 +73,7 @@ public class WatchlistService {
         WatchItem watchItem = getWatchItem(watchItemId, user);
         watchItemRepository.delete(watchItem);
         trackedSymbolService.deleteTrackedSymbolIfNotUse(watchItem.getStock());
+        subscriberRegistry.delete(userId, watchItem.getStock().getSymbol());
     }
 
     private User getUser(Long userId) {

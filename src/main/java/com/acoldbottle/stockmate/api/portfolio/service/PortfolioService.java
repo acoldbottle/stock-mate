@@ -7,6 +7,7 @@ import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
 import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
 import com.acoldbottle.stockmate.api.profit.service.ProfitService;
+import com.acoldbottle.stockmate.api.sse.SubscriberRegistry;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
@@ -37,6 +38,7 @@ public class PortfolioService {
     private final HoldingRepository holdingRepository;
     private final ProfitService profitService;
     private final TrackedSymbolService trackedSymbolService;
+    private final SubscriberRegistry subscriberRegistry;
 
     public List<PortfolioWithProfitRes> getPortfolioList(Long userId) {
         User user = getUser(userId);
@@ -82,18 +84,13 @@ public class PortfolioService {
         List<Holding> holdings = holdingRepository.findAllByPortfolio(findPortfolio);
         holdingRepository.deleteAllByPortfolio(findPortfolio);
         holdings.stream()
-                        .map(Holding::getStock)
-                                .forEach(trackedSymbolService::deleteTrackedSymbolIfNotUse);
+                .map(Holding::getStock)
+                .forEach(stock -> {
+                    trackedSymbolService.deleteTrackedSymbolIfNotUse(stock);
+                    subscriberRegistry.delete(userId, stock.getSymbol());
+                });
         portfolioRepository.delete(findPortfolio);
     }
-
-//    public PortfolioWithProfitRes getPortfolioWithProfit(Long userId, Long portfolioId) {
-//        User user = getUser(userId);
-//        Portfolio portfolio = getPortfolio(portfolioId, user);
-//        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolio(portfolio);
-//        ProfitDTO profitDTO = profitService.calculateProfitInPortfolio(holdings);
-//        return PortfolioWithProfitRes.from(portfolio,profitDTO);
-//    }
 
     private User getUser(Long userId){
         return userRepository.findById(userId)

@@ -35,7 +35,17 @@ public class SubscriberRegistry {
         );
     }
 
-    public void delete(Long userId) {
+    public void delete(Long userId, String symbol) {
+        boolean isHoldingExists = holdingRepository.existsByUserIdAndSymbol(userId, symbol);
+        boolean isWatchItemExists = watchItemRepository.existsByUserIdAndSymbol(userId, symbol);
+        if (!isHoldingExists && !isWatchItemExists) {
+            Set<Long> userSet = symbolSubscribersMap.get(symbol);
+            userSet.remove(userId);
+            if (userSet.isEmpty()) symbolSubscribersMap.remove(symbol);
+        }
+    }
+
+    public void deleteByUserId(Long userId) {
         symbolSubscribersMap.forEach((symbol, users) -> users.remove(userId));
         symbolSubscribersMap.entrySet().removeIf(entry -> entry.getValue().isEmpty());
     }

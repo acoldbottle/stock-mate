@@ -13,7 +13,6 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
 
     Optional<Holding> findByPortfolioAndStock(Portfolio portfolio, Stock stock);
     Optional<Holding> findByIdAndPortfolio(Long id, Portfolio portfolio);
-    boolean existsByStock(Stock stock);
     @Query("SELECT h FROM Holding h WHERE h.portfolio = :portfolio " +
             "ORDER BY h.purchasePrice * h.quantity DESC")
     List<Holding> findAllByPortfolio(Portfolio portfolio);
@@ -32,4 +31,9 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
 
     @Query("SELECT h.stock.symbol FROM Holding h WHERE h.portfolio.user.id = :userId")
     List<String> findSymbolsByUserId(Long userId);
+
+    @Query("SELECT COUNT(h) > 0 FROM Holding h " +
+            "WHERE h.portfolio.user.id = :userId " +
+            "AND h.stock.symbol = :symbol")
+    boolean existsByUserIdAndSymbol(Long userId, String symbol);
 }
