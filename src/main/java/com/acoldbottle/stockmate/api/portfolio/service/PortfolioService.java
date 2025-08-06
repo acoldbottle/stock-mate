@@ -7,7 +7,7 @@ import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
 import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
 import com.acoldbottle.stockmate.api.profit.service.ProfitService;
-import com.acoldbottle.stockmate.api.sse.SubscriberRegistry;
+import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSubscriberRegistry;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
@@ -38,7 +38,7 @@ public class PortfolioService {
     private final HoldingRepository holdingRepository;
     private final ProfitService profitService;
     private final TrackedSymbolService trackedSymbolService;
-    private final SubscriberRegistry subscriberRegistry;
+    private final PortfolioSubscriberRegistry subscriberRegistry;
 
     public List<PortfolioWithProfitRes> getPortfolioList(Long userId) {
         User user = getUser(userId);
@@ -81,15 +81,13 @@ public class PortfolioService {
     public void deletePortfolio(Long userId, Long portfolioId) {
         User user = getUser(userId);
         Portfolio findPortfolio = getPortfolio(portfolioId, user);
-        List<Holding> holdings = holdingRepository.findAllByPortfolio(findPortfolio);
+        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolioId(portfolioId);
         holdingRepository.deleteAllByPortfolio(findPortfolio);
         holdings.stream()
                 .map(Holding::getStock)
-                .forEach(stock -> {
-                    trackedSymbolService.deleteTrackedSymbolIfNotUse(stock);
-                    subscriberRegistry.delete(userId, stock.getSymbol());
-                });
+                .forEach(trackedSymbolService::deleteTrackedSymbolIfNotUse);
         portfolioRepository.delete(findPortfolio);
+        subscriberRegistry.unregister(portfolioId);
     }
 
     private User getUser(Long userId){

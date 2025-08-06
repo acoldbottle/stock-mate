@@ -5,7 +5,6 @@ import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingWithProfitRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
-import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
 import com.acoldbottle.stockmate.api.profit.service.ProfitService;
 import com.acoldbottle.stockmate.api.sse.SubscriberRegistry;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.acoldbottle.stockmate.exception.ErrorCode.*;
 
@@ -46,7 +44,7 @@ public class HoldingService {
     public List<HoldingWithProfitRes> getHoldingListWithProfit(Long userId, Long portfolioId) {
         User user = getUser(userId);
         Portfolio portfolio = getPortfolio(portfolioId, user);
-        List<Holding> holdingList = holdingRepository.findAllWithStockByPortfolio(portfolio);
+        List<Holding> holdingList = holdingRepository.findAllWithStockByPortfolioId(portfolioId);
         return profitService.calculateProfitInPortfolio(holdingList)
                 .getHoldingList()
                 .stream()

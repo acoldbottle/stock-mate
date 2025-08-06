@@ -11,12 +11,9 @@ import com.acoldbottle.stockmate.domain.user.UserRepository;
 import com.acoldbottle.stockmate.exception.ErrorCode;
 import com.acoldbottle.stockmate.exception.portfolio.PortfolioNotFoundException;
 import com.acoldbottle.stockmate.exception.user.UserNotFoundException;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -36,29 +33,10 @@ public class PortfolioHoldingProfitService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         Portfolio portfolio = portfolioRepository.findByIdAndUser(portfolioId, user)
                 .orElseThrow(() -> new PortfolioNotFoundException(ErrorCode.PORTFOLIO_NOT_FOUND));
-        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolio(portfolio);
+        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolioId(portfolioId);
         String title = portfolio.getTitle();
         ProfitDTO profitDTO = profitService.calculateProfitInPortfolio(holdings);
         return PortfolioHoldingListDTO.from(title, profitDTO);
     }
 
-//    @Getter
-//    @Builder
-//    public static class PortfolioHoldingListDTO {
-//        private String portfolioTitle;
-//        private BigDecimal portfolioCurrentValue;
-//        private BigDecimal portfolioProfitAmount;
-//        private BigDecimal portfolioProfitRate;
-//        private List<ProfitDTO.HoldingProfitDTO> holdingList;
-//
-//        public static PortfolioHoldingListDTO from(String title, ProfitDTO profitDTO) {
-//            return PortfolioHoldingListDTO.builder()
-//                    .portfolioTitle(title)
-//                    .portfolioCurrentValue(profitDTO.getPortfolioCurrentValue())
-//                    .portfolioProfitAmount(profitDTO.getPortfolioProfitAmount())
-//                    .portfolioProfitRate(profitDTO.getPortfolioProfitRate())
-//                    .holdingList(profitDTO.getHoldingList())
-//                    .build();
-//        }
-//    }
 }
