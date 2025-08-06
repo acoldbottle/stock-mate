@@ -1,12 +1,12 @@
 package com.acoldbottle.stockmate.api.watchlist.service;
 
-import com.acoldbottle.stockmate.api.sse.SubscriberRegistry;
+import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceCacheService;
+import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberRegistry;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.api.watchlist.dto.req.WatchItemCreateReq;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemCreateRes;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemGetRes;
-import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
-import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceCacheService;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.stock.StockRepository;
 import com.acoldbottle.stockmate.domain.user.User;
@@ -34,8 +34,8 @@ public class WatchlistService {
     private final StockRepository stockRepository;
     private final WatchItemRepository watchItemRepository;
     private final TrackedSymbolService trackedSymbolService;
-    private final SubscriberRegistry subscriberRegistry;
     private final CurrentPriceCacheService currentPriceCacheService;
+    private final WatchlistSubscriberRegistry watchlistSubscriberRegistry;
 
     public List<WatchItemGetRes> getWatchlist(Long userId) {
         User user = getUser(userId);
@@ -63,7 +63,7 @@ public class WatchlistService {
                 .build());
 
         trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
-        subscriberRegistry.save(userId, stock.getSymbol());
+        watchlistSubscriberRegistry.register(userId, stock.getSymbol());
         return WatchItemCreateRes.from(savedWatchItem);
     }
 
@@ -73,7 +73,7 @@ public class WatchlistService {
         WatchItem watchItem = getWatchItem(watchItemId, user);
         watchItemRepository.delete(watchItem);
         trackedSymbolService.deleteTrackedSymbolIfNotUse(watchItem.getStock());
-        subscriberRegistry.delete(userId, watchItem.getStock().getSymbol());
+        watchlistSubscriberRegistry.unregister(userId, watchItem.getStock().getSymbol());
     }
 
     private User getUser(Long userId) {

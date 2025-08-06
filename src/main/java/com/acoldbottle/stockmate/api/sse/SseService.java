@@ -35,10 +35,12 @@ public class SseService {
         log.info("[SseService] user={} --> login", userId);
         newEmitter.onCompletion(() -> {
             emitterRegistry.delete(userId);
+            subscriberRegistry.deleteByUserId(userId);
             log.info("[SseService] user={} --> connection closed", userId);
         });
         newEmitter.onError((e) -> {
             emitterRegistry.delete(userId);
+            subscriberRegistry.deleteByUserId(userId);
             log.error("[SseService] Connection Error! userId={}", userId, e);
         });
         return newEmitter;

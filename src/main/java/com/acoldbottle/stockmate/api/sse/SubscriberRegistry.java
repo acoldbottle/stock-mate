@@ -16,6 +16,10 @@ public class SubscriberRegistry {
     private final HoldingRepository holdingRepository;
     private final WatchItemRepository watchItemRepository;
 
+    public Set<Long> findSubscribersBySymbol(String symbol) {
+        return symbolSubscribersMap.get(symbol);
+    }
+
     public void save(Long userId, String symbol) {
         symbolSubscribersMap
                 .computeIfAbsent(symbol, k -> ConcurrentHashMap.newKeySet())

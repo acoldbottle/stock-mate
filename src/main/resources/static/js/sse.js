@@ -1,27 +1,29 @@
-let eventSource;
+let watchlistEventSource;
 
-function connectSSE(event) {
-    if (eventSource && eventSource.readyState !== EventSource.CLOSED) {
+function connectWatchlistSSE() {
+    if (watchlistEventSource && watchlistEventSource.readyState !== EventSource.CLOSED) {
         return;
     }
-    eventSource = new EventSource("/sse/connect");
-
-    eventSource.onerror = function (event) {
-        eventSource.close();
+    watchlistEventSource = new EventSource("/sse/connect/watchlist");
+    console.log("✅ Watchlist SSE 연결됨");
+    watchlistEventSource.onerror = () => {
+        console.warn("⚠️ Watchlist SSE 연결 오류, 연결 종료");
+        watchlistEventSource.close();
     };
 }
 
-function disconnectSSE(event) {
-    event.preventDefault();
 
-    if (eventSource) {
-        eventSource.close();
+function disconnectWatchlistSSE() {
+    if (watchlistEventSource) {
+        watchlistEventSource.close();
+        console.log("🔌 Watchlist SSE 연결 해제");
     }
 
-    fetch('/sse/disconnect', { method: 'POST' })
-        .finally(() => {
-            event.target.form.submit();
-        });
+    fetch('/sse/disconnect/watchlist', { method: 'POST' });
 }
 
-document.addEventListener("DOMContentLoaded", connectSSE);
+function disconnectSSEAndLogout(event) {
+    event.preventDefault();
+    disconnectWatchlistSSE();
+    event.target.form.submit();
+}

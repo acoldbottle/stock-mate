@@ -36,7 +36,7 @@
         </nav>
         <div class="logout">
             <form th:action="@{/stockmate/logout}" method="post">
-                <button type="submit" class="btn btn-outline-danger w-100" onclick="disconnectSSE(event)">로그아웃</button>
+                <button type="submit" class="btn btn-outline-danger w-100" onclick="disconnectSSEAndLogout(event)">로그아웃</button>
             </form>
         </div>
     </aside>
@@ -234,7 +234,19 @@
     }
 }
 </script>
-<!--SSE 연결 -->
+<!-- activePage에 따라 관심종목 SSE 연결 -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener("DOMContentLoaded", function () {
+        const activePage = /*[[${activePage}]]*/ "none";
+
+        if (activePage === "watchlist") {
+            console.log("📡 관심종목 SSE 연결 시도");
+            connectWatchlistSSE();
+        }
+    });
+    /*]]>*/
+</script>
 <script src="/js/sse.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 </body>

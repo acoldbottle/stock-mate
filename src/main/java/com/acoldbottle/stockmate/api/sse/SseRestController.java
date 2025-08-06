@@ -1,6 +1,7 @@
 package com.acoldbottle.stockmate.api.sse;
 
 import com.acoldbottle.stockmate.annotation.UserId;
+import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,15 +15,15 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class SseRestController {
 
-    private final SseService sseService;
+    private final WatchlistSseService watchlistSseService;
 
-    @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/connect/watchlist", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter connect(@UserId Long userId) {
-        return sseService.connect(userId);
+        return watchlistSseService.connect(userId);
     }
 
-    @PostMapping("/disconnect")
+    @PostMapping("/disconnect/watchlist")
     public void disconnect(@UserId Long userId) {
-        sseService.disconnect(userId);
+        watchlistSseService.disconnect(userId);
     }
 }
