@@ -14,4 +14,7 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
     @Query("SELECT p FROM Portfolio p WHERE p.user = :user ORDER BY p.id DESC")
     List<Portfolio> findAllByUser(User user);
     Optional<Portfolio> findByIdAndUser(Long id, User user);
+
+    @Query("SELECT p FROM Portfolio p WHERE p.user.id = :userId")
+    List<Portfolio> findAllByUserId(Long userId);
 }

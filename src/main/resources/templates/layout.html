@@ -234,14 +234,25 @@
     }
 }
 </script>
-<!-- activePage에 따라 관심종목 SSE 연결 -->
+<!-- 포트폴리오 SSE 연결 -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener("DOMContentLoaded", function () {
+        const activePage = /*[[${activePage}]]*/ "none";
+
+        if (activePage === "portfolio") {
+            connectPortfolioSSE();
+        }
+    });
+    /*]]>*/
+</script>
+<!-- 관심종목 SSE 연결 -->
 <script th:inline="javascript">
     /*<![CDATA[*/
     document.addEventListener("DOMContentLoaded", function () {
         const activePage = /*[[${activePage}]]*/ "none";
 
         if (activePage === "watchlist") {
-            console.log("📡 관심종목 SSE 연결 시도");
             connectWatchlistSSE();
         }
     });
