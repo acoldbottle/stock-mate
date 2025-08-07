@@ -39,27 +39,33 @@ public class PortfolioSubscriberRegistry {
 
     public void unregister(Long portfolioId) {
         List<Holding> holdings = holdingRepository.findAllWithStockByPortfolioId(portfolioId);
-        holdings.stream()
-                .map(holding -> holding.getStock().getSymbol())
-                .forEach(symbol -> {
-                    Set<Long> portfolioIdSet = portfolioSubscribersMap.get(symbol);
-                    portfolioIdSet.remove(portfolioId);
-                    if (portfolioIdSet.isEmpty()) {
-                        portfolioSubscribersMap.remove(symbol);
-                    }
-                });
+        if (!holdings.isEmpty()) {
+            holdings.stream()
+                    .map(holding -> holding.getStock().getSymbol())
+                    .forEach(symbol -> {
+                        Set<Long> portfolioIdSet = portfolioSubscribersMap.get(symbol);
+                        if (portfolioIdSet != null) {
+                            portfolioIdSet.remove(portfolioId);
+                            if (portfolioIdSet.isEmpty()) {
+                                portfolioSubscribersMap.remove(symbol);
+                            }
+                        }
+                    });
+        }
     }
 
     public void unregisterByUserId(Long userId) {
         List<Portfolio> portfolios = portfolioRepository.findAllByUserId(userId);
-        Set<Long> portfolioIds = portfolios.stream()
-                .map(Portfolio::getId)
-                .collect(Collectors.toSet());
-        portfolioSubscribersMap.forEach((symbol, portfolioIdSet) -> {
-            portfolioIdSet.removeIf(portfolioIds::contains);
-            if (portfolioIdSet.isEmpty()) {
-                portfolioSubscribersMap.remove(symbol);
-            }
-        });
+        if (!portfolios.isEmpty()) {
+            Set<Long> portfolioIds = portfolios.stream()
+                    .map(Portfolio::getId)
+                    .collect(Collectors.toSet());
+            portfolioSubscribersMap.forEach((symbol, portfolioIdSet) -> {
+                portfolioIdSet.removeIf(portfolioIds::contains);
+                if (portfolioIdSet.isEmpty()) {
+                    portfolioSubscribersMap.remove(symbol);
+                }
+            });
+        }
     }
 }

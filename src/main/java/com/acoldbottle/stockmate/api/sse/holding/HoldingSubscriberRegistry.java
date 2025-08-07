@@ -17,6 +17,11 @@ public class HoldingSubscriberRegistry {
     private final Map<String, Set<Long>> holdingSubscribersMap = new ConcurrentHashMap<>();
     private final HoldingRepository holdingRepository;
 
+    public void register(String symbol, Long portfolioId) {
+        holdingSubscribersMap.computeIfAbsent(symbol, k -> ConcurrentHashMap.newKeySet())
+                .add(portfolioId);
+    }
+
     public void registerAllByPortfolioId(Long portfolioId) {
         List<Holding> holdings = holdingRepository.findAllWithStockByPortfolioId(portfolioId);
         if (!holdings.isEmpty()) {
@@ -27,6 +32,16 @@ public class HoldingSubscriberRegistry {
         }
     }
 
+    public void unregister(String symbol, Long portfolioId) {
+        Set<Long> subscribers = holdingSubscribersMap.get(symbol);
+        if (subscribers != null) {
+            subscribers.remove(portfolioId);
+            if (subscribers.isEmpty()) {
+                holdingSubscribersMap.remove(symbol);
+            }
+        }
+    }
+
     public void unregisterByPortfolioId(Long portfolioId) {
         List<Holding> holdings = holdingRepository.findAllWithStockByPortfolioId(portfolioId);
         if (!holdings.isEmpty()) {
@@ -34,9 +49,11 @@ public class HoldingSubscriberRegistry {
                     .map(holding -> holding.getStock().getSymbol())
                     .forEach(symbol -> {
                         Set<Long> portfolioIds = holdingSubscribersMap.get(symbol);
-                        portfolioIds.remove(portfolioId);
-                        if (portfolioIds.isEmpty()) {
-                            holdingSubscribersMap.remove(symbol);
+                        if (portfolioIds != null) {
+                            portfolioIds.remove(portfolioId);
+                            if (portfolioIds.isEmpty()) {
+                                holdingSubscribersMap.remove(symbol);
+                            }
                         }
                     });
         }

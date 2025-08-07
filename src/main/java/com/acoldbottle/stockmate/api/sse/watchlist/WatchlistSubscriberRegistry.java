@@ -34,18 +34,22 @@ public class WatchlistSubscriberRegistry {
 
     public void unregister(Long userId, String symbol) {
         Set<Long> users = watchlistSubscribersMap.get(symbol);
-        users.remove(userId);
-        if (users.isEmpty()) watchlistSubscribersMap.remove(symbol);
+        if (users != null) {
+            users.remove(userId);
+            if (users.isEmpty()) watchlistSubscribersMap.remove(symbol);
+        }
     }
 
     public void unregisterByUserId(Long userId) {
         List<String> symbols = watchItemRepository.findSymbolsByUserId(userId);
         if (!symbols.isEmpty()) {
             symbols.forEach(symbol -> {
-                Set<Long> userIds = watchlistSubscribersMap.get(symbol);
-                userIds.remove(userId);
-                if (userIds.isEmpty()) {
-                    watchlistSubscribersMap.remove(symbol);
+                Set<Long> users = watchlistSubscribersMap.get(symbol);
+                if (users != null) {
+                    users.remove(userId);
+                    if (users.isEmpty()) {
+                        watchlistSubscribersMap.remove(symbol);
+                    }
                 }
             });
         }

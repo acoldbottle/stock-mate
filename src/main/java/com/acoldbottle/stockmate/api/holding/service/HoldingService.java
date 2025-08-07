@@ -6,7 +6,7 @@ import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingWithProfitRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
 import com.acoldbottle.stockmate.api.profit.service.ProfitService;
-import com.acoldbottle.stockmate.api.sse.SubscriberRegistry;
+import com.acoldbottle.stockmate.api.sse.holding.HoldingSubscriberRegistry;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
@@ -39,7 +39,7 @@ public class HoldingService {
     private final UserRepository userRepository;
     private final TrackedSymbolService trackedSymbolService;
     private final ProfitService profitService;
-    private final SubscriberRegistry subscriberRegistry;
+    private final HoldingSubscriberRegistry subscriberRegistry;
 
     public List<HoldingWithProfitRes> getHoldingListWithProfit(Long userId, Long portfolioId) {
         User user = getUser(userId);
@@ -74,7 +74,7 @@ public class HoldingService {
                     return newHolding;
                 });
         trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
-        subscriberRegistry.save(userId, stock.getSymbol());
+        subscriberRegistry.register(stock.getSymbol(), portfolioId);
         return HoldingCreateRes.from(holding);
     }
 
@@ -95,7 +95,7 @@ public class HoldingService {
         Holding findHolding = getHolding(holdingId, portfolio);
         holdingRepository.delete(findHolding);
         trackedSymbolService.deleteTrackedSymbolIfNotUse(findHolding.getStock());
-        subscriberRegistry.delete(userId, findHolding.getStock().getSymbol());
+        subscriberRegistry.unregister(findHolding.getStock().getSymbol(), portfolioId);
     }
 
     private User getUser(Long userId) {
