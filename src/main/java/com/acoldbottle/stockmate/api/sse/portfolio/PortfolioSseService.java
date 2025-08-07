@@ -43,7 +43,6 @@ public class PortfolioSseService {
     }
 
     public void disconnect(Long userId) {
-        log.info("[PortfolioSseService] user={} --> logout", userId);
         subscriberRegistry.unregisterByUserId(userId);
         SseEmitter unregisteredEmitter = emitterRegistry.unregister(userId);
         if (unregisteredEmitter != null) {
