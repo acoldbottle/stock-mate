@@ -234,29 +234,23 @@
     }
 }
 </script>
-<!-- 포트폴리오 SSE 연결 -->
+<!-- 화면별 SSE 연결 -->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    document.addEventListener("DOMContentLoaded", function () {
-        const activePage = /*[[${activePage}]]*/ "none";
-
-        if (activePage === "portfolio") {
-            connectPortfolioSSE();
-        }
-    });
+    const activePage = /*[[${activePage}]]*/ 'none';
+    const portfolioId = /*[[${portfolioId} ?: 0]]*/ 0;
     /*]]>*/
 </script>
-<!-- 관심종목 SSE 연결 -->
-<script th:inline="javascript">
-    /*<![CDATA[*/
+<script>
     document.addEventListener("DOMContentLoaded", function () {
-        const activePage = /*[[${activePage}]]*/ "none";
-
-        if (activePage === "watchlist") {
+        if (activePage === "portfolio") {
+            connectPortfolioSSE();
+        } else if (activePage === "watchlist") {
             connectWatchlistSSE();
+        } else if (activePage === "holding") {
+            connectHoldingSSE(portfolioId);
         }
     });
-    /*]]>*/
 </script>
 <script src="/js/sse.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
