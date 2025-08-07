@@ -17,6 +17,10 @@ public class HoldingSubscriberRegistry {
     private final Map<String, Set<Long>> holdingSubscribersMap = new ConcurrentHashMap<>();
     private final HoldingRepository holdingRepository;
 
+    public Set<Long> getSubscribersBySymbol(String symbol) {
+        return holdingSubscribersMap.get(symbol);
+    }
+
     public void register(String symbol, Long portfolioId) {
         holdingSubscribersMap.computeIfAbsent(symbol, k -> ConcurrentHashMap.newKeySet())
                 .add(portfolioId);
