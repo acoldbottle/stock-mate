@@ -20,6 +20,7 @@ public class HoldingUpdateDto {
 
     public static HoldingUpdateDto from(Long portfolioId, String symbol, CurrentPriceDTO currentPriceDTO) {
         return HoldingUpdateDto.builder()
+                .portfolioId(portfolioId)
                 .symbol(symbol)
                 .price(currentPriceDTO.getLast())
                 .rate(currentPriceDTO.getRate())
