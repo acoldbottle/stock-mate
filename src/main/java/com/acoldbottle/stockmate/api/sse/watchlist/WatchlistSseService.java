@@ -44,7 +44,6 @@ public class WatchlistSseService {
     }
 
     public void disconnect(Long userId) {
-        log.info("[WatchlistSseService] user={} --> logout", userId);
         subscriberRegistry.unregisterByUserId(userId);
         SseEmitter unregisteredEmitter = emitterRegistry.unregister(userId);
         if (unregisteredEmitter != null) {
