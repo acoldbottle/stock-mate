@@ -74,7 +74,7 @@ public class HoldingService {
                     return newHolding;
                 });
         trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
-        subscriberRegistry.register(stock.getSymbol(), portfolioId);
+        subscriberRegistry.register(stock.getSymbol(), userId, portfolioId);
         return HoldingCreateRes.from(holding);
     }
 
@@ -95,7 +95,7 @@ public class HoldingService {
         Holding findHolding = getHolding(holdingId, portfolio);
         holdingRepository.delete(findHolding);
         trackedSymbolService.deleteTrackedSymbolIfNotUse(findHolding.getStock());
-        subscriberRegistry.unregister(findHolding.getStock().getSymbol(), portfolioId);
+        subscriberRegistry.unregister(findHolding.getStock().getSymbol(), userId, portfolioId);
     }
 
     private User getUser(Long userId) {
