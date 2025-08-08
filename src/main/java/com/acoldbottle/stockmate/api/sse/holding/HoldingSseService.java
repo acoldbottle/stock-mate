@@ -25,7 +25,9 @@ public class HoldingSseService {
     public SseEmitter connect(Long userId, Long portfolioId) {
         Optional<SseEmitter> isExistEmitter = emitterRegistry.getEmitterByUserId(userId);
         if (isExistEmitter.isPresent()) {
-            return isExistEmitter.get();
+            if (subscriberRegistry.isRegisteredPortfolioId(portfolioId)){
+                return isExistEmitter.get();
+            }
         }
         SseEmitter newEmitter = new SseEmitter(Long.MAX_VALUE);
         emitterRegistry.register(userId, newEmitter);

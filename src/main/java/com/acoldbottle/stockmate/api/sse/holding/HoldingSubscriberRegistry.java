@@ -5,6 +5,7 @@ import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,5 +62,11 @@ public class HoldingSubscriberRegistry {
                         }
                     });
         }
+    }
+
+    public boolean isRegisteredPortfolioId(Long portfolioId) {
+        return holdingSubscribersMap.values().stream()
+                .flatMap(Set::stream)
+                .anyMatch(subscriber -> subscriber.getPortfolioId().equals(portfolioId));
     }
 }
