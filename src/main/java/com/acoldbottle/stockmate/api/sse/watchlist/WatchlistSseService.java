@@ -53,7 +53,7 @@ public class WatchlistSseService {
 
     public void notifyUpdatedWatchItem(String symbol, CurrentPriceDTO currentPriceDTO) {
         Set<Long> subscribers = subscriberRegistry.getSubscribersBySymbol(symbol);
-        if (subscribers.isEmpty()) return;
+        if (subscribers==null || subscribers.isEmpty()) return;
 
         WatchItemUpdateDto updateData = WatchItemUpdateDto.from(symbol, currentPriceDTO);
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()){

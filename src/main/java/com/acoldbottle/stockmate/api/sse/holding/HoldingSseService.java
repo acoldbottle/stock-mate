@@ -56,7 +56,7 @@ public class HoldingSseService {
 
     public void notifyUpdateHolding(String symbol, CurrentPriceDTO currentPriceDTO) {
         Set<HoldingSubscriber> subscribers = subscriberRegistry.getSubscribersBySymbol(symbol);
-        if (subscribers.isEmpty()) return;
+        if (subscribers==null || subscribers.isEmpty()) return;
 
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             List<CompletableFuture<Void>> futures = subscribers.stream()

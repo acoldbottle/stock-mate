@@ -52,7 +52,7 @@ public class PortfolioSseService {
 
     public void notifyUpdatePortfolio(String symbol) {
         Set<Long> subscribers = subscriberRegistry.getSubscribersBySymbol(symbol);
-        if (subscribers.isEmpty()) return;
+        if (subscribers==null || subscribers.isEmpty()) return;
 
         subscribers.stream()
                 .map(subscriberRegistry::getHoldingsBySubscriber)
