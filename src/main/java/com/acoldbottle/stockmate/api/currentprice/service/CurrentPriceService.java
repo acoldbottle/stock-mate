@@ -1,6 +1,9 @@
 package com.acoldbottle.stockmate.api.currentprice.service;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.sse.holding.HoldingSseService;
+import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSseService;
+import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSseService;
 import com.acoldbottle.stockmate.exception.kis.KisRequestInterruptedException;
 import com.acoldbottle.stockmate.exception.kis.KisTooManyRequestException;
 import com.acoldbottle.stockmate.exception.kis.KisUpdateException;
@@ -26,6 +29,9 @@ public class CurrentPriceService {
     private final Bucket bucket;
     private final KisAPIClient kisAPIClient;
     private final CurrentPriceCacheService cacheService;
+    private final HoldingSseService holdingSseService;
+    private final PortfolioSseService portfolioSseService;
+    private final WatchlistSseService watchlistSseService;
 
 
     public CompletableFuture<Void> requestAndUpdateCurrentPrice(String symbol, String marketCode, ExecutorService executor) {
@@ -56,10 +62,20 @@ public class CurrentPriceService {
         }
         return CompletableFuture.supplyAsync(() ->
                         CurrentPriceDTO.from(kisCurrentPriceRes), executor)
-                .thenAccept(dto -> cacheService.updateCurrentPrice(symbol, dto))
+                .thenAccept(dto -> updateCurrentPriceAndNotifySubscribers(symbol, dto))
                 .exceptionally(ex -> {
-                    log.error("=== [CurrentPriceService] 현재가 업데이트 중 레디스에 저장 실패 ===");
+                    log.error("=== [CurrentPriceService] 현재가 업데이트 중 레디스에 저장 실패 ===", ex);
                     throw new CompletionException(new KisUpdateException(KIS_UPDATE_ERROR));
                 });
+    }
+
+    private CurrentPriceDTO updateCurrentPriceAndNotifySubscribers(String symbol, CurrentPriceDTO newPrice) {
+        boolean isUpdate = cacheService.updateCurrentPrice(symbol, newPrice);
+        if (isUpdate) {
+            holdingSseService.notifyUpdateHolding(symbol, newPrice);
+            portfolioSseService.notifyUpdatePortfolio(symbol);
+            watchlistSseService.notifyUpdatedWatchItem(symbol, newPrice);
+        }
+        return newPrice;
     }
 }
