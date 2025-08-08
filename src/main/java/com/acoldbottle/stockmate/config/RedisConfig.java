@@ -34,7 +34,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, CurrentPriceDTO> redisTemplateForCurrentPrice(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, CurrentPriceDTO> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, CurrentPriceDTO> redisTemplate = new RedisTemplate<>();
         Jackson2JsonRedisSerializer<CurrentPriceDTO> serializer = new Jackson2JsonRedisSerializer<>(CurrentPriceDTO.class);
         redisTemplate.setConnectionFactory(connectionFactory);
@@ -42,18 +42,5 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(serializer);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
-    }
-
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
-                .entryTtl(Duration.ofMinutes(10L));
-
-        return RedisCacheManager.RedisCacheManagerBuilder
-                .fromConnectionFactory(connectionFactory)
-                .cacheDefaults(redisCacheConfiguration)
-                .build();
     }
 }

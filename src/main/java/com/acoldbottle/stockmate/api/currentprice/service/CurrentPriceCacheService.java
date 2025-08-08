@@ -1,23 +1,34 @@
 package com.acoldbottle.stockmate.api.currentprice.service;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CurrentPriceCacheService {
 
-    @Cacheable(value = "currentPriceCache", key = "'stocks:' + #symbol")
+    private final RedisTemplate<String, CurrentPriceDTO> redisTemplate;
+
     public CurrentPriceDTO getCurrentPrice(String symbol) {
-        return null;
+        String key = "stocks:" + symbol;
+        return redisTemplate.opsForValue().get(key);
     }
 
-    @CachePut(value = "currentPriceCache", key = "'stocks:' + #symbol")
-    public CurrentPriceDTO updateCurrentPrice(String symbol, CurrentPriceDTO currentPriceDTO) {
-
-        return currentPriceDTO;
+    public boolean updateCurrentPrice(String symbol, CurrentPriceDTO newPrice) {
+        String key = "stocks:" + symbol;
+        CurrentPriceDTO oldPrice = redisTemplate.opsForValue().get(key);
+        if (oldPrice == null || !oldPrice.equals(newPrice)) {
+            redisTemplate.opsForValue().set(key, newPrice, Duration.ofDays(2));
+            return true;
+        }
+        return false;
     }
+
 }
