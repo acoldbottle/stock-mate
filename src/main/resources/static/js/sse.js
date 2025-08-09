@@ -63,6 +63,13 @@ function connectWatchlistSSE() {
     disconnectPortfolioSSE();
     disconnectHoldingSSE();
 
+    watchlistEventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (event.lastEventId === 'watchlist-price-update' || event.type === 'watchlist-price-update') {
+            updateWatchlistItem(data);
+        }
+    };
+
     watchlistEventSource.onerror = () => {
         watchlistEventSource.close();
         watchlistEventSource = null;
@@ -91,6 +98,33 @@ function disconnectSSEAndLogout(event) {
     if (watchlistEventSource) {
         disconnectWatchlistSSE();
     }
-
     event.target.form.submit();
+}
+
+function updateWatchlistItem(updateData) {
+    const card = document.querySelector(`[data-symbol="${updateData.symbol}"]`);
+    if (!card) return;
+
+    const priceSpan = card.querySelector(".price > span") || card.querySelector(".price");
+    if (priceSpan) {
+        priceSpan.textContent = updateData.price.toFixed(2);
+    }
+
+    const rateSpan = card.querySelector(".rate");
+    if (rateSpan) {
+        const rate = updateData.rate;
+        let html = "";
+
+        if (rate > 0) {
+            html = `<span class="text-danger fw-bold">(+
+                    ${rate.toFixed(2)}%)</span>`;
+        } else if (rate < 0) {
+            html = `<span class="text-primary fw-bold">(
+                    -${Math.abs(rate).toFixed(2)}%)</span>`;
+        } else {
+            html = `<span class="text-secondary fw-bold">(
+                    ${rate.toFixed(2)}%)</span>`;
+        }
+        rateSpan.innerHTML = html;
+    }
 }

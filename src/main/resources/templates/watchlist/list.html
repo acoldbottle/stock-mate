@@ -8,7 +8,7 @@
     <div th:fragment="content">
         <div class="row justify-content-center">
             <div class="watchlist">
-                <div class="card list-card" th:each="watchItem : ${watchlist}">
+                <div class="card list-card" th:each="watchItem : ${watchlist}" th:attr="data-symbol=${watchItem.symbol}">
                     <div class="card-body">
                         <h5 class="card-title text-dark fw-bold">
                             <span th:text="${watchItem.symbol}" style="color:navy;">주식 심볼</span>
