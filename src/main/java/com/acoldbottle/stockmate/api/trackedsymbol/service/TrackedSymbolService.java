@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,11 +36,13 @@ public class TrackedSymbolService {
         if (!trackedSymbolRepository.existsById(symbol)) {
             try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
                 trackedSymbolRepository.save(trackedSymbol);
-                currentPriceService.requestAndUpdateCurrentPrice(symbol, marketCode, executor)
+                CompletableFuture<Void> future = currentPriceService.requestAndUpdateCurrentPrice(symbol, marketCode, executor)
                         .exceptionally(e -> {
-                            emailService.sendEmailAlertError("[" + symbol + "] -> " + e.getCause().getMessage());
+                            emailService.sendEmailAlertError("[" + symbol + "] -> " + e);
                             return null;
                         });
+
+                future.join();
             } catch (DataIntegrityViolationException e) {
                 log.info("[TrackedSymbolService] 이미 존재하는 주식 종목");
             } catch (Exception e) {
