@@ -62,8 +62,8 @@ public class WatchlistService {
                 .stock(stock)
                 .build());
 
-        trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
         watchlistSubscriberRegistry.register(userId, stock.getSymbol());
+        trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
         return WatchItemCreateRes.from(savedWatchItem);
     }
 
