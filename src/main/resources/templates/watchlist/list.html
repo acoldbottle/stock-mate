@@ -23,18 +23,18 @@
                             <span class="text-muted fw-bold me-1" th:text="${watchItem.engName}">주식 영어이름</span>
                         </p>
                         <p class="mb-1">
-                            <span  class="text-success fw-bold">$<span th:text="${#numbers.formatDecimal(watchItem.currentPrice, 1, 'COMMA', 2, 'POINT')}">현재가</span></span>
+                            <span  class="text-success fw-bold price">$<span class="price" th:text="${#numbers.formatDecimal(watchItem.currentPrice, 1, 'COMMA', 2, 'POINT')}">현재가</span></span>
                             <!-- 수익 (양수) -->
                             <span th:if="${watchItem.rate > 0}" class="text-danger fw-bold">
-                            (+<span th:text="${#numbers.formatDecimal(watchItem.rate, 1, 'COMMA', 2, 'POINT')}">0.00</span>%)</span>
+                            (+<span class="rate" th:text="${#numbers.formatDecimal(watchItem.rate, 1, 'COMMA', 2, 'POINT')}">0.00</span>%)</span>
 
                             <!-- 손실 (음수) -->
                             <span th:if="${watchItem.rate < 0}" class="text-primary fw-bold">
-                            (-<span th:text="${#numbers.formatDecimal(watchItem.rate.abs(), 1, 'COMMA', 2, 'POINT')}">0.00</span>%)</span>
+                            (-<span class="rate" th:text="${#numbers.formatDecimal(watchItem.rate.abs(), 1, 'COMMA', 2, 'POINT')}">0.00</span>%)</span>
 
                             <!-- 0일 때 -->
                             <span th:if="${watchItem.rate == 0}" class="text-secondary fw-bold">
-                            (<span th:text="${#numbers.formatDecimal(watchItem.rate, 1, 'COMMA', 2, 'POINT')}">0.00</span>%)
+                            (<span class="rate" th:text="${#numbers.formatDecimal(watchItem.rate, 1, 'COMMA', 2, 'POINT')}">0.00</span>%)
                             </span>
                         </p>
 

@@ -38,6 +38,14 @@ function connectPortfolioSSE() {
     disconnectHoldingSSE();
     disconnectWatchlistSSE();
 
+//    portfolioEventSource.onmessage = (event) => {
+//        const data = JSON.parse(event.data);
+//        if (event.lastEventId === 'portfolio-price-update' || event.type === 'portfolio-price-update') {
+//            updatePortfolioProfit(data);
+//        }
+//    };
+
+
     portfolioEventSource.onerror = () => {
         portfolioEventSource.close();
         portfolioEventSource = null;
@@ -63,12 +71,10 @@ function connectWatchlistSSE() {
     disconnectPortfolioSSE();
     disconnectHoldingSSE();
 
-    watchlistEventSource.onmessage = (event) => {
+    watchlistEventSource.addEventListener('watchlist-price-update', event => {
         const data = JSON.parse(event.data);
-        if (event.lastEventId === 'watchlist-price-update' || event.type === 'watchlist-price-update') {
-            updateWatchlistItem(data);
-        }
-    };
+        updateWatchlistItem(data);
+    });
 
     watchlistEventSource.onerror = () => {
         watchlistEventSource.close();
@@ -101,30 +107,33 @@ function disconnectSSEAndLogout(event) {
     event.target.form.submit();
 }
 
+//function updatePortfolioProfit(updateData) {
+//    const card = document.querySelector(`[data-portfolioId="${updateData.portfolioId}"]`);
+//    if (!card) return;
+//
+//    const priceSpan =
+//}
+
 function updateWatchlistItem(updateData) {
     const card = document.querySelector(`[data-symbol="${updateData.symbol}"]`);
     if (!card) return;
 
-    const priceSpan = card.querySelector(".price > span") || card.querySelector(".price");
+    const priceSpan = card.querySelector(".price");
     if (priceSpan) {
         priceSpan.textContent = updateData.price.toFixed(2);
     }
 
     const rateSpan = card.querySelector(".rate");
     if (rateSpan) {
-        const rate = updateData.rate;
-        let html = "";
-
-        if (rate > 0) {
-            html = `<span class="text-danger fw-bold">(+
-                    ${rate.toFixed(2)}%)</span>`;
-        } else if (rate < 0) {
-            html = `<span class="text-primary fw-bold">(
-                    -${Math.abs(rate).toFixed(2)}%)</span>`;
+        if (updateData.rate > 0) {
+            rateSpan.parentElement.className = "text-danger fw-bold";
+            rateSpan.textContent = `${updateData.rate.toFixed(2)}`;
+        } else if (updateData.rate < 0) {
+            rateSpan.parentElement.className = "text-primary fw-bold";
+            rateSpan.textContent = `${Math.abs(updateData.rate).toFixed(2)}`;
         } else {
-            html = `<span class="text-secondary fw-bold">(
-                    ${rate.toFixed(2)}%)</span>`;
+            rateSpan.parentElement.className = "text-secondary fw-bold";
+            rateSpan.textContent = `0.00%`;
         }
-        rateSpan.innerHTML = html;
     }
 }
