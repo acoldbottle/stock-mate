@@ -18,11 +18,13 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
     void deleteAllByPortfolio(Portfolio portfolio);
     @Query("SELECT h FROM Holding h " +
             "JOIN FETCH h.stock " +
+            "JOIN FETCH h.portfolio " +
             "WHERE h.portfolio.id = :portfolioId " +
             "ORDER BY h.purchasePrice * h.quantity DESC")
     List<Holding> findAllWithStockByPortfolioId(Long portfolioId);
     @Query("SELECT h FROM Holding h " +
             "JOIN FETCH h.stock " +
+            "JOIN FETCH h.portfolio " +
             "WHERE h.portfolio IN :portfolios")
     List<Holding> findAllWithStockByPortfolioIn(List<Portfolio> portfolios);
 
