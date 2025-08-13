@@ -197,8 +197,6 @@ function updateHolding(updateData) {
             portfolioProfitRateSpan.textContent = `0.00`;
         }
     }
-
-
 }
 
 
