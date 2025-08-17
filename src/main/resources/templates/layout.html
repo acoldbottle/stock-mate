@@ -42,13 +42,13 @@
     </aside>
     <main class="main-content">
         <div th:if="${activePage == 'portfolio'}">
-            <div th:replace="portfolios/list :: content"></div>
+            <div th:replace="~{portfolios/list :: content}"></div>
         </div>
         <div th:if="${activePage == 'holding'}">
-            <div th:replace="holdings/list :: content"></div>
+            <div th:replace="~{holdings/list :: content}"></div>
         </div>
         <div th:if="${activePage == 'watchlist'}">
-            <div th:replace="watchlist/list :: content"></div>
+            <div th:replace="~{watchlist/list :: content}"></div>
         </div>
     </main>
 

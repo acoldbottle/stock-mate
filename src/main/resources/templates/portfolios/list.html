@@ -51,9 +51,9 @@
                     </div>
                 </div>
             </div>
-            <div th:replace="portfolios/modal-create :: createModal"></div>
-            <div th:replace="portfolios/modal-update :: updateModal"></div>
-            <div th:replace="portfolios/modal-delete :: deleteModal"></div>
+            <div th:replace="~{portfolios/modal-create :: createModal}"></div>
+            <div th:replace="~{portfolios/modal-update :: updateModal}"></div>
+            <div th:replace="~{portfolios/modal-delete :: deleteModal}"></div>
             <button class="fab" data-bs-toggle="modal" data-bs-target="#createPortfolioModal">+</button>
         </div>
     </div>

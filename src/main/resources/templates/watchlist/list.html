@@ -49,8 +49,8 @@
                     </div>
                 </div>
             </div>
-            <div th:replace="watchlist/modal-delete :: deleteModal"></div>
-            <div th:replace="watchlist/modal-search :: searchModal"></div>
+            <div th:replace="~{watchlist/modal-delete :: deleteModal}"></div>
+            <div th:replace="~{watchlist/modal-search :: searchModal}"></div>
             <button type="button" class="fab" data-bs-toggle="modal" data-bs-target="#watchlistSearchModal">+</button>
         </div>
     </div>
