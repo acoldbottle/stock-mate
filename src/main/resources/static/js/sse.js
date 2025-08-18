@@ -234,7 +234,7 @@ function updateWatchlistItem(updateData) {
 
     const priceSpan = card.querySelector(".price");
     if (priceSpan) {
-        priceSpan.textContent = updateData.price.toFixed(2);
+        priceSpan.textContent = "$" + updateData.price.toFixed(2);
     }
 
     const rateSpan = card.querySelector(".rate");
