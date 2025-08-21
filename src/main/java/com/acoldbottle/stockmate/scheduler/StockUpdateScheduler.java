@@ -25,7 +25,7 @@ public class StockUpdateScheduler {
         try {
             fileDownloader.downloadAll();
             List<StockDTO> stockDTOS = fileParser.parseAll();
-            stockService.saveStocks(stockDTOS);
+            stockService.updateStocks(stockDTOS);
         } catch (Exception e) {
             log.error("=== [스케줄러] 주식 종목 업데이트 실패 ===", e);
         }

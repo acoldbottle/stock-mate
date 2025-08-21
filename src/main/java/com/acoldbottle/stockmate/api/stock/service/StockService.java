@@ -2,33 +2,30 @@ package com.acoldbottle.stockmate.api.stock.service;
 
 import com.acoldbottle.stockmate.api.stock.dto.res.StockSearchRes;
 import com.acoldbottle.stockmate.domain.stock.Stock;
-import com.acoldbottle.stockmate.domain.stock.StockRepository;
 import com.acoldbottle.stockmate.external.kis.stockfile.StockDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StockService {
 
-    private final StockRepository stockRepository;
+    private final StockManager stockManager;
 
     public List<StockSearchRes> searchByKeyword(String keyword) {
-        List<Stock> searchedList = stockRepository.searchByKeyword(keyword);
-        return searchedList.stream()
+        List<Stock> searchResult = stockManager.search(keyword);
+        return searchResult.stream()
                 .map(StockSearchRes::from)
                 .toList();
     }
 
     @Transactional
-    public void saveStocks(List<StockDTO> stockDTOS) {
-        List<Stock> stockListNotDelist = stockDTOS.stream()
+    public void updateStocks(List<StockDTO> stockDTOS) {
+        List<Stock> stockList = stockDTOS.stream()
                 .map(stockDTO -> Stock.builder()
                         .symbol(stockDTO.getSymbol())
                         .marketCode(stockDTO.getMarketCode())
@@ -37,14 +34,7 @@ public class StockService {
                         .build())
                 .toList();
 
-        Set<String> symbolSetNotDelist = stockListNotDelist.stream()
-                .map(Stock::getSymbol)
-                .collect(Collectors.toSet());
-
-        stockRepository.findAll().stream()
-                .filter(stock -> !symbolSetNotDelist.contains(stock.getSymbol()))
-                .forEach(Stock::delistStock);
-
-        stockRepository.saveAll(stockListNotDelist);
+        stockManager.updateDelistedStock(stockList);
+        stockManager.updateStocks(stockList);
     }
 }
