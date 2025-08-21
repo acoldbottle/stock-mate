@@ -1,6 +1,6 @@
 package com.acoldbottle.stockmate.api.portfolio.dto.res;
 
-import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
+import com.acoldbottle.stockmate.api.profit.dto.PortfolioProfitDto;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,13 +19,13 @@ public class PortfolioWithProfitRes {
     private BigDecimal portfolioProfitRate;
 
 
-    public static PortfolioWithProfitRes from(Portfolio portfolio, ProfitDTO profitDTO) {
+    public static PortfolioWithProfitRes from(Portfolio portfolio, PortfolioProfitDto portfolioProfitDto) {
         return PortfolioWithProfitRes.builder()
                 .portfolioId(portfolio.getId())
                 .title(portfolio.getTitle())
-                .portfolioCurrentValue(profitDTO.getPortfolioCurrentValue().setScale(2, RoundingMode.HALF_UP))
-                .portfolioProfitAmount(profitDTO.getPortfolioProfitAmount().setScale(2, RoundingMode.HALF_UP))
-                .portfolioProfitRate(profitDTO.getPortfolioProfitRate())
+                .portfolioCurrentValue(portfolioProfitDto.getPortfolioCurrentValue().setScale(2, RoundingMode.HALF_UP))
+                .portfolioProfitAmount(portfolioProfitDto.getPortfolioProfitAmount().setScale(2, RoundingMode.HALF_UP))
+                .portfolioProfitRate(portfolioProfitDto.getPortfolioProfitRate())
                 .build();
     }
 }

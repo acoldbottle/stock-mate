@@ -5,98 +5,63 @@ import com.acoldbottle.stockmate.api.portfolio.dto.req.PortfolioUpdateReq;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioCreateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioUpdateRes;
 import com.acoldbottle.stockmate.api.portfolio.dto.res.PortfolioWithProfitRes;
-import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
-import com.acoldbottle.stockmate.api.profit.service.ProfitService;
-import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSubscriberRegistry;
-import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
-import com.acoldbottle.stockmate.domain.holding.Holding;
-import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
+import com.acoldbottle.stockmate.api.profit.dto.PortfolioProfitDto;
+import com.acoldbottle.stockmate.api.profit.service.ProfitCalculator;
+import com.acoldbottle.stockmate.api.user.service.UserManager;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
-import com.acoldbottle.stockmate.domain.portfolio.PortfolioRepository;
 import com.acoldbottle.stockmate.domain.user.User;
-import com.acoldbottle.stockmate.domain.user.UserRepository;
-import com.acoldbottle.stockmate.exception.ErrorCode;
-import com.acoldbottle.stockmate.exception.portfolio.PortfolioNotFoundException;
-import com.acoldbottle.stockmate.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PortfolioService {
 
-    private final PortfolioRepository portfolioRepository;
-    private final UserRepository userRepository;
-    private final HoldingRepository holdingRepository;
-    private final ProfitService profitService;
-    private final TrackedSymbolService trackedSymbolService;
-    private final PortfolioSubscriberRegistry subscriberRegistry;
+    private final UserManager userManager;
+    private final PortfolioManager portfolioManager;
+    private final ProfitCalculator profitCalculator;
 
     public List<PortfolioWithProfitRes> getPortfolioList(Long userId) {
-        User user = getUser(userId);
-        List<Portfolio> portfolios = portfolioRepository.findAllByUser(user);
-        Map<Long, List<Holding>> holdingsByPortfolioId = holdingRepository.findAllWithStockByPortfolioIn(portfolios)
-                .stream()
-                .collect(Collectors.groupingBy(h -> h.getPortfolio().getId()));
+        List<Portfolio> portfolioList = portfolioManager.getPortfolioList(userId);
+        Map<Long, PortfolioProfitDto> portfolioProfitMap = profitCalculator.portfolioProfit(portfolioList);
 
-        return portfolios.stream()
+        return portfolioList.stream()
                 .map(portfolio -> {
-                    List<Holding> holdings = holdingsByPortfolioId.getOrDefault(portfolio.getId(), Collections.emptyList());
-                    ProfitDTO profitDTO = profitService.calculateProfitInPortfolio(holdings);
-                    return PortfolioWithProfitRes.from(portfolio, profitDTO);
+                    PortfolioProfitDto portfolioProfit = portfolioProfitMap.get(portfolio.getId());
+                    return PortfolioWithProfitRes.from(portfolio, portfolioProfit);
                 })
-                .sorted(Comparator.comparing(PortfolioWithProfitRes::getPortfolioCurrentValue).reversed())
+                .sorted(Comparator.comparing(PortfolioWithProfitRes::getPortfolioCurrentValue))
                 .toList();
     }
 
     @Transactional
     public PortfolioCreateRes createPortfolio(Long userId, PortfolioCreateReq portfolioCreateReq) {
-        User user = getUser(userId);
-        String title = portfolioCreateReq.getTitle();
-        Portfolio portfolio = Portfolio.builder()
-                .user(user)
-                .title(title)
-                .build();
-        Portfolio savedPortfolio = portfolioRepository.save(portfolio);
+        User user = userManager.get(userId);
+
+        Portfolio savedPortfolio = portfolioManager.create(user, portfolioCreateReq.getTitle());
         return PortfolioCreateRes.from(savedPortfolio);
     }
 
     @Transactional
     public PortfolioUpdateRes updatePortfolio(Long userId, Long portfolioId, PortfolioUpdateReq portfolioUpdateReq) {
-        User user = getUser(userId);
-        Portfolio findPortfolio = getPortfolio(portfolioId, user);
+        User user = userManager.get(userId);
+
+        Portfolio findPortfolio = portfolioManager.get(portfolioId, user);
         findPortfolio.updatePortfolio(portfolioUpdateReq.getTitle());
         return PortfolioUpdateRes.from(portfolioId, portfolioUpdateReq.getTitle());
     }
 
     @Transactional
     public void deletePortfolio(Long userId, Long portfolioId) {
-        User user = getUser(userId);
-        Portfolio findPortfolio = getPortfolio(portfolioId, user);
-        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolioId(portfolioId);
-        holdingRepository.deleteAllByPortfolio(findPortfolio);
-        holdings.stream()
-                .map(Holding::getStock)
-                .forEach(trackedSymbolService::deleteTrackedSymbolIfNotUse);
-        portfolioRepository.delete(findPortfolio);
-        subscriberRegistry.unregister(portfolioId);
-    }
+        User user = userManager.get(userId);
 
-    private User getUser(Long userId){
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    private Portfolio getPortfolio(Long portfolioId, User user) {
-        return portfolioRepository.findByIdAndUser(portfolioId, user)
-                .orElseThrow(() -> new PortfolioNotFoundException(ErrorCode.PORTFOLIO_NOT_FOUND));
+        Portfolio findPortfolio = portfolioManager.get(portfolioId, user);
+        portfolioManager.delete(findPortfolio);
     }
 }
