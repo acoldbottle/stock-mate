@@ -1,9 +1,10 @@
 package com.acoldbottle.stockmate.api.user.controller;
 
 import com.acoldbottle.stockmate.api.user.dto.req.UserLoginReq;
-import com.acoldbottle.stockmate.api.user.dto.res.UserLoginRes;
 import com.acoldbottle.stockmate.api.user.dto.req.UserSignUpReq;
+import com.acoldbottle.stockmate.api.user.dto.res.UserLoginRes;
 import com.acoldbottle.stockmate.api.user.dto.res.UserSignUpRes;
+import com.acoldbottle.stockmate.api.user.service.AuthService;
 import com.acoldbottle.stockmate.api.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,12 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserRestController implements UserAPI{
 
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
+    private final AuthService authService;
 
     @PostMapping("/signup")
     public ResponseEntity<UserSignUpRes> signUp(@RequestBody @Valid UserSignUpReq userSignUpReq) {
@@ -39,22 +34,15 @@ public class UserRestController implements UserAPI{
     @PostMapping("/login")
     public ResponseEntity<UserLoginRes> login(@RequestBody UserLoginReq userLoginReq,
                                               HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken token = userService.createLoginToken(userLoginReq);
-        Authentication authentication = authenticationManager.authenticate(token);
-        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-        securityContext.setAuthentication(authentication);
-        request.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-        return ResponseEntity.status(HttpStatus.OK).body(new UserLoginRes(userLoginReq.getUsername()));
+        UserLoginRes userLoginRes = authService.login(userLoginReq, request);
+        return ResponseEntity.status(HttpStatus.OK).body(userLoginRes);
     }
 
 
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
-        }
+        authService.logout(request, response);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
