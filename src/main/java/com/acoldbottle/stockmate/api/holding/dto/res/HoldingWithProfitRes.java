@@ -1,6 +1,7 @@
 package com.acoldbottle.stockmate.api.holding.dto.res;
 
-import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
+import com.acoldbottle.stockmate.api.profit.dto.HoldingProfitDto;
+import com.acoldbottle.stockmate.domain.holding.Holding;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -22,18 +23,18 @@ public class HoldingWithProfitRes {
     private BigDecimal profitAmount; // 총 수익
     private BigDecimal profitRate; // 총 수익률
 
-    public static HoldingWithProfitRes from(ProfitDTO.HoldingProfitDTO holdingProfitDTO) {
+    public static HoldingWithProfitRes from(Holding holding, HoldingProfitDto holdingProfitDto) {
         return HoldingWithProfitRes.builder()
-                .holdingId(holdingProfitDTO.getHoldingId())
-                .symbol(holdingProfitDTO.getSymbol())
-                .marketCode(holdingProfitDTO.getMarketCode())
-                .avgPurchasePrice(holdingProfitDTO.getAvgPurchasePrice())
-                .quantity(holdingProfitDTO.getQuantity())
-                .totalAmount(holdingProfitDTO.getTotalAmount().setScale(2, RoundingMode.HALF_UP))
-                .currentPrice(holdingProfitDTO.getCurrentPrice().setScale(2, RoundingMode.HALF_UP))
-                .rate(holdingProfitDTO.getRate())
-                .profitAmount(holdingProfitDTO.getProfitAmount().setScale(2, RoundingMode.HALF_UP))
-                .profitRate(holdingProfitDTO.getProfitRate())
+                .holdingId(holding.getId())
+                .symbol(holding.getStock().getSymbol())
+                .marketCode(holding.getStock().getMarketCode())
+                .avgPurchasePrice(holding.getPurchasePrice())
+                .quantity(holding.getQuantity())
+                .totalAmount(holdingProfitDto.getTotalAmount().setScale(2, RoundingMode.HALF_UP))
+                .currentPrice(holdingProfitDto.getCurrentPrice().setScale(2, RoundingMode.HALF_UP))
+                .rate(holdingProfitDto.getRate())
+                .profitAmount(holdingProfitDto.getProfitAmount().setScale(2, RoundingMode.HALF_UP))
+                .profitRate(holdingProfitDto.getProfitRate())
                 .build();
     }
 }
