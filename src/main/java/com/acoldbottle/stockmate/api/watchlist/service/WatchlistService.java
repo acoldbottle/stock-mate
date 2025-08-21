@@ -2,48 +2,37 @@ package com.acoldbottle.stockmate.api.watchlist.service;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
 import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceCacheService;
-import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberRegistry;
-import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
+import com.acoldbottle.stockmate.api.stock.service.StockManager;
+import com.acoldbottle.stockmate.api.user.service.UserManager;
 import com.acoldbottle.stockmate.api.watchlist.dto.req.WatchItemCreateReq;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemCreateRes;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemGetRes;
 import com.acoldbottle.stockmate.domain.stock.Stock;
-import com.acoldbottle.stockmate.domain.stock.StockRepository;
 import com.acoldbottle.stockmate.domain.user.User;
-import com.acoldbottle.stockmate.domain.user.UserRepository;
 import com.acoldbottle.stockmate.domain.watchitem.WatchItem;
-import com.acoldbottle.stockmate.domain.watchitem.WatchItemRepository;
-import com.acoldbottle.stockmate.exception.stock.StockNotFoundException;
-import com.acoldbottle.stockmate.exception.user.UserNotFoundException;
-import com.acoldbottle.stockmate.exception.watchitem.WatchItemAlreadyExistsException;
-import com.acoldbottle.stockmate.exception.watchitem.WatchItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.acoldbottle.stockmate.exception.ErrorCode.*;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class WatchlistService {
 
-    private final UserRepository userRepository;
-    private final StockRepository stockRepository;
-    private final WatchItemRepository watchItemRepository;
-    private final TrackedSymbolService trackedSymbolService;
-    private final CurrentPriceCacheService currentPriceCacheService;
-    private final WatchlistSubscriberRegistry watchlistSubscriberRegistry;
+    private final WatchItemManager watchItemManager;
+    private final UserManager userManager;
+    private final StockManager stockManager;
+    private final CurrentPriceCacheService cacheService;
 
     public List<WatchItemGetRes> getWatchlist(Long userId) {
-        User user = getUser(userId);
-        List<WatchItem> watchlist = watchItemRepository.findAllWithStockByUser(user);
+        User user = userManager.get(userId);
 
+        List<WatchItem> watchlist = watchItemManager.getWatchlist(user);
         return watchlist.stream()
                 .map(watchItem -> {
-                    CurrentPriceDTO currentPrice = currentPriceCacheService.getCurrentPrice(watchItem.getStock().getSymbol());
+                    CurrentPriceDTO currentPrice = cacheService.getCurrentPrice(watchItem.getStock().getSymbol());
                     return WatchItemGetRes.from(watchItem, currentPrice);
                 })
                 .toList();
@@ -51,43 +40,16 @@ public class WatchlistService {
 
     @Transactional
     public WatchItemCreateRes createWatchItem(Long userId, WatchItemCreateReq watchItemCreateReq) {
-        User user = getUser(userId);
-        Stock stock = getStock(watchItemCreateReq.getSymbol());
-        boolean exists = watchItemRepository.existsByUserAndStock(user, stock);
-        if (exists) {
-            throw new WatchItemAlreadyExistsException(WATCH_ITEM_ALREADY_EXISTS);
-        }
-        WatchItem savedWatchItem = watchItemRepository.save(WatchItem.builder()
-                .user(user)
-                .stock(stock)
-                .build());
+        User user = userManager.get(userId);
+        Stock stock = stockManager.get(watchItemCreateReq.getSymbol());
 
-        watchlistSubscriberRegistry.register(userId, stock.getSymbol());
-        trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
+        WatchItem savedWatchItem = watchItemManager.create(user, stock);
         return WatchItemCreateRes.from(savedWatchItem);
     }
 
     @Transactional
     public void deleteWatchItem(Long userId, Long watchItemId) {
-        User user = getUser(userId);
-        WatchItem watchItem = getWatchItem(watchItemId, user);
-        watchItemRepository.delete(watchItem);
-        trackedSymbolService.deleteTrackedSymbolIfNotUse(watchItem.getStock());
-        watchlistSubscriberRegistry.unregister(userId, watchItem.getStock().getSymbol());
-    }
-
-    private User getUser(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-    }
-
-    private Stock getStock(String symbol) {
-        return stockRepository.findById(symbol)
-                .orElseThrow(() -> new StockNotFoundException(STOCK_NOT_FOUND));
-    }
-
-    private WatchItem getWatchItem(Long watchItemId, User user) {
-        return watchItemRepository.findByIdAndUser(watchItemId, user)
-                .orElseThrow(() -> new WatchItemNotFoundException(WATCH_ITEM_NOT_FOUND));
+        User user = userManager.get(userId);
+        watchItemManager.delete(watchItemId, user);
     }
 }
