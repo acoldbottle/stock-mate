@@ -15,6 +15,8 @@ public class HoldingWithProfitRes {
     private Long holdingId;
     private String symbol;
     private String marketCode;
+    private String korName;
+    private String engName;
     private BigDecimal avgPurchasePrice; // 평균 매수가
     private int quantity; // 수량
     private BigDecimal totalAmount; // 총 매수 금액
@@ -30,6 +32,8 @@ public class HoldingWithProfitRes {
                 .marketCode(holding.getStock().getMarketCode())
                 .avgPurchasePrice(holding.getPurchasePrice())
                 .quantity(holding.getQuantity())
+                .korName(holding.getStock().getKorName())
+                .engName(holding.getStock().getEngName())
                 .totalAmount(holdingProfitDto.getTotalAmount().setScale(2, RoundingMode.HALF_UP))
                 .currentPrice(holdingProfitDto.getCurrentPrice().setScale(2, RoundingMode.HALF_UP))
                 .rate(holdingProfitDto.getRate())

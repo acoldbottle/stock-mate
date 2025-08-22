@@ -1,11 +1,14 @@
 package com.acoldbottle.stockmate.api.holding.service;
 
+import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceCacheService;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingCreateReq;
 import com.acoldbottle.stockmate.api.holding.dto.req.HoldingUpdateReq;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingCreateRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingUpdateRes;
 import com.acoldbottle.stockmate.api.holding.dto.res.HoldingWithProfitRes;
 import com.acoldbottle.stockmate.api.portfolio.service.PortfolioManager;
+import com.acoldbottle.stockmate.api.profit.dto.HoldingCurrentInfoDto;
 import com.acoldbottle.stockmate.api.profit.dto.HoldingProfitDto;
 import com.acoldbottle.stockmate.api.profit.service.ProfitCalculator;
 import com.acoldbottle.stockmate.api.stock.service.StockManager;
@@ -30,6 +33,7 @@ public class HoldingService {
     private final PortfolioManager portfolioManager;
     private final HoldingManager holdingManager;
     private final StockManager stockManager;
+    private final CurrentPriceCacheService cacheService;
     private final ProfitCalculator profitCalculator;
 
     public List<HoldingWithProfitRes> getHoldingListWithProfit(Long userId, Long portfolioId) {
@@ -37,14 +41,7 @@ public class HoldingService {
         Portfolio portfolio = portfolioManager.get(portfolioId, user);
 
         List<Holding> holdingList = holdingManager.getHoldingListIn(portfolio);
-        Map<Long, HoldingProfitDto> holdingProfitMap = profitCalculator.holdingListProfit(holdingList);
-
-        return holdingList.stream()
-                .map(holding -> {
-                    HoldingProfitDto holdingProfit = holdingProfitMap.get(holding.getId());
-                    return HoldingWithProfitRes.from(holding, holdingProfit);
-                })
-                .toList();
+        return getHoldingListWithProfit(holdingList);
     }
 
     @Transactional
@@ -72,5 +69,22 @@ public class HoldingService {
         Portfolio portfolio = portfolioManager.get(portfolioId, user);
 
         holdingManager.delete(holdingId, portfolio, user);
+    }
+
+    private List<HoldingWithProfitRes> getHoldingListWithProfit(List<Holding> holdingList) {
+        List<HoldingCurrentInfoDto> holdingCurrentInfoList = holdingList.stream()
+                .map(holding -> {
+                    CurrentPriceDTO currentPrice = cacheService.getCurrentPrice(holding.getStock().getSymbol());
+                    return HoldingCurrentInfoDto.from(holding, currentPrice);
+                })
+                .toList();
+        Map<Long, HoldingProfitDto> holdingProfitMap = profitCalculator.holdingListProfit(holdingCurrentInfoList);
+
+        return holdingList.stream()
+                .map(holding -> {
+                    HoldingProfitDto holdingProfit = holdingProfitMap.get(holding.getId());
+                    return HoldingWithProfitRes.from(holding, holdingProfit);
+                })
+                .toList();
     }
 }

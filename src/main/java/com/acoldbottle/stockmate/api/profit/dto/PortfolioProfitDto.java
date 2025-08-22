@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 @Builder
 public class PortfolioProfitDto {
 
-    private Long portfolioId;
     private BigDecimal portfolioCurrentValue;
     private BigDecimal portfolioProfitAmount;
     private BigDecimal portfolioProfitRate;
