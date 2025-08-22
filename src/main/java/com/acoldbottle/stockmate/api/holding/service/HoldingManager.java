@@ -29,6 +29,10 @@ public class HoldingManager {
         return holdingRepository.findAllWithStockByPortfolioId(portfolio.getId());
     }
 
+    public List<Holding> getHoldingListByUserId(Long userId) {
+        return holdingRepository.findAllWithStockByUserId(userId);
+    }
+
     public Holding create(Long userId, Stock stock, Portfolio portfolio, BigDecimal purchasePrice, int quantity) {
         Optional<Holding> holdingOptional = holdingRepository.findByPortfolioAndStock(portfolio, stock);
         if (holdingOptional.isPresent()) {
