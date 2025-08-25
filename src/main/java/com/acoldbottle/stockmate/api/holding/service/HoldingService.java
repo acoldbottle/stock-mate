@@ -40,7 +40,7 @@ public class HoldingService {
         User user = userManager.get(userId);
         Portfolio portfolio = portfolioManager.get(portfolioId, user);
 
-        List<Holding> holdingList = holdingManager.getHoldingListIn(portfolio);
+        List<Holding> holdingList = holdingManager.getHoldingList(portfolio);
         return getHoldingListWithProfit(holdingList);
     }
 

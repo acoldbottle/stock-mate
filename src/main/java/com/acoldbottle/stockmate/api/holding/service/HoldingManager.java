@@ -25,12 +25,16 @@ public class HoldingManager {
     private final TrackedSymbolService trackedSymbolService;
     private final HoldingSubscriberRegistry subscriberRegistry;
 
-    public List<Holding> getHoldingListIn(Portfolio portfolio) {
+    public List<Holding> getHoldingList(Portfolio portfolio) {
         return holdingRepository.findAllWithStockByPortfolioId(portfolio.getId());
     }
 
     public List<Holding> getHoldingListByUserId(Long userId) {
         return holdingRepository.findAllWithStockByUserId(userId);
+    }
+
+    public List<Holding> getAllHoldingsByPortfolios(List<Portfolio> portfolios) {
+        return holdingRepository.findAllWithStockByPortfolioIn(portfolios);
     }
 
     public Holding create(Long userId, Stock stock, Portfolio portfolio, BigDecimal purchasePrice, int quantity) {
@@ -62,7 +66,7 @@ public class HoldingManager {
     }
 
     public void deleteHoldingList(Portfolio portfolio) {
-        List<Holding> holdingList = getHoldingListIn(portfolio);
+        List<Holding> holdingList = getHoldingList(portfolio);
         holdingRepository.deleteAllByPortfolio(portfolio);
 
         holdingList.stream()
