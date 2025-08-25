@@ -1,6 +1,6 @@
 package com.acoldbottle.stockmate.api.sse.portfolio;
 
-import com.acoldbottle.stockmate.api.profit.dto.ProfitDTO;
+import com.acoldbottle.stockmate.api.profit.dto.PortfolioProfitDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,7 +18,7 @@ public class PortfolioUpdateDto {
 
     private BigDecimal portfolioProfitRate;
 
-    public static PortfolioUpdateDto from(Long portfolioId, ProfitDTO profitDto) {
+    public static PortfolioUpdateDto from(Long portfolioId, PortfolioProfitDto profitDto) {
         return PortfolioUpdateDto.builder()
                 .portfolioId(portfolioId)
                 .portfolioCurrentValue(profitDto.getPortfolioCurrentValue())

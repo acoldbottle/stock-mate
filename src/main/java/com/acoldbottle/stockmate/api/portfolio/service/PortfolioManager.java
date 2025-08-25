@@ -1,18 +1,19 @@
 package com.acoldbottle.stockmate.api.portfolio.service;
 
 import com.acoldbottle.stockmate.api.holding.service.HoldingManager;
-import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSubscriberRegistry;
+import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSubscriberEvent;
+import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import com.acoldbottle.stockmate.domain.portfolio.PortfolioRepository;
 import com.acoldbottle.stockmate.domain.user.User;
-import com.acoldbottle.stockmate.exception.ErrorCode;
 import com.acoldbottle.stockmate.exception.portfolio.PortfolioNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.acoldbottle.stockmate.exception.ErrorCode.*;
+import static com.acoldbottle.stockmate.exception.ErrorCode.PORTFOLIO_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class PortfolioManager {
 
     private final PortfolioRepository portfolioRepository;
     private final HoldingManager holdingManager;
-    private final PortfolioSubscriberRegistry subscriberRegistry;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Portfolio get(Long portfolioId, User user) {
         return portfolioRepository.findByIdAndUser(portfolioId, user)
@@ -29,6 +30,10 @@ public class PortfolioManager {
 
     public List<Portfolio> getPortfolioList(Long userId) {
         return portfolioRepository.findAllByUserId(userId);
+    }
+
+    public List<Portfolio> getPortfolioListByPortfolioIds(List<Long> portfolioIds) {
+        return portfolioRepository.findAllWithUserByIds(portfolioIds);
     }
 
     public Portfolio create(User user, String title) {
@@ -41,9 +46,10 @@ public class PortfolioManager {
     }
 
     public void delete(Portfolio portfolio) {
-        holdingManager.deleteHoldingList(portfolio);
+        List<Holding> holdingList = holdingManager.getHoldingList(portfolio);
 
+        holdingManager.deleteHoldingList(portfolio);
         portfolioRepository.delete(portfolio);
-        subscriberRegistry.unregister(portfolio.getId());
+        eventPublisher.publishEvent(new PortfolioSubscriberEvent(portfolio, holdingList));
     }
 }
