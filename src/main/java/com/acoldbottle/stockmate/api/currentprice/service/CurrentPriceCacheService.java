@@ -24,11 +24,8 @@ public class CurrentPriceCacheService {
     public boolean updateCurrentPrice(String symbol, CurrentPriceDTO newPrice) {
         String key = "stocks:" + symbol;
         CurrentPriceDTO oldPrice = redisTemplate.opsForValue().get(key);
-        if (oldPrice == null || !oldPrice.equals(newPrice)) {
-            redisTemplate.opsForValue().set(key, newPrice, Duration.ofDays(2));
-            return true;
-        }
-        return false;
+        redisTemplate.opsForValue().set(key, newPrice, Duration.ofDays(2));
+        return oldPrice == null || !oldPrice.equals(newPrice);
     }
 
 }
