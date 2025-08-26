@@ -1,7 +1,7 @@
 package com.acoldbottle.stockmate.api.holding.service;
 
 import com.acoldbottle.stockmate.api.sse.holding.HoldingSubscriberEvent;
-import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
+import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolManager;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
@@ -24,7 +24,7 @@ import static com.acoldbottle.stockmate.exception.ErrorCode.HOLDING_NOT_FOUND;
 public class HoldingManager {
 
     private final HoldingRepository holdingRepository;
-    private final TrackedSymbolService trackedSymbolService;
+    private final TrackedSymbolManager trackedSymbolManager;
     private final ApplicationEventPublisher eventPublisher;
 
     public List<Holding> getHoldingList(Long portfolioId) {
@@ -47,7 +47,7 @@ public class HoldingManager {
             return existHolding;
         }
 
-        trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
+        trackedSymbolManager.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
         eventPublisher.publishEvent(new HoldingSubscriberEvent(userId, portfolio.getId(), stock.getSymbol(), CREATE));
 
         return holdingRepository.save(Holding.builder()
@@ -73,7 +73,7 @@ public class HoldingManager {
 
         holdingList.stream()
                 .map(Holding::getStock)
-                .forEach(trackedSymbolService::deleteTrackedSymbolIfNotUse);
+                .forEach(trackedSymbolManager::deleteTrackedSymbolIfNotUse);
     }
 
     public void delete(Long holdingId, Portfolio portfolio, User user) {
@@ -81,7 +81,7 @@ public class HoldingManager {
                 .orElseThrow(() -> new HoldingNotFoundException(HOLDING_NOT_FOUND));
 
         holdingRepository.delete(holding);
-        trackedSymbolService.deleteTrackedSymbolIfNotUse(holding.getStock());
+        trackedSymbolManager.deleteTrackedSymbolIfNotUse(holding.getStock());
         eventPublisher.publishEvent(new HoldingSubscriberEvent(user.getId(), portfolio.getId(), holding.getStock().getSymbol(), DELETE));
     }
 }
