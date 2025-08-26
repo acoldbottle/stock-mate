@@ -38,7 +38,7 @@ public class PortfolioHoldingProfitService {
     public PortfolioHoldingListDTO getPortfolioWithHoldingList(Long userId, Long portfolioId) {
         User user = userManager.get(userId);
         Portfolio portfolio = portfolioManager.get(portfolioId, user);
-        List<Holding> holdingList = holdingManager.getHoldingListIn(portfolio);
+        List<Holding> holdingList = holdingManager.getHoldingList(portfolio.getId());
 
         List<HoldingCurrentInfoDto> holdingCurrentInfoList = holdingList.stream()
                 .map(holding -> {

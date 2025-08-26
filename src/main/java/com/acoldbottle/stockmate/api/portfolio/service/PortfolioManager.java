@@ -46,7 +46,7 @@ public class PortfolioManager {
     }
 
     public void delete(Portfolio portfolio) {
-        List<Holding> holdingList = holdingManager.getHoldingList(portfolio);
+        List<Holding> holdingList = holdingManager.getHoldingList(portfolio.getId());
 
         holdingManager.deleteHoldingList(portfolio);
         portfolioRepository.delete(portfolio);
