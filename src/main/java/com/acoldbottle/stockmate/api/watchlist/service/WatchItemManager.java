@@ -1,6 +1,6 @@
 package com.acoldbottle.stockmate.api.watchlist.service;
 
-import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberRegistry;
+import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberEvent;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.user.User;
@@ -9,10 +9,12 @@ import com.acoldbottle.stockmate.domain.watchitem.WatchItemRepository;
 import com.acoldbottle.stockmate.exception.watchitem.WatchItemAlreadyExistsException;
 import com.acoldbottle.stockmate.exception.watchitem.WatchItemNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberEvent.WatchlistEventType.*;
 import static com.acoldbottle.stockmate.exception.ErrorCode.WATCH_ITEM_ALREADY_EXISTS;
 import static com.acoldbottle.stockmate.exception.ErrorCode.WATCH_ITEM_NOT_FOUND;
 
@@ -21,11 +23,11 @@ import static com.acoldbottle.stockmate.exception.ErrorCode.WATCH_ITEM_NOT_FOUND
 public class WatchItemManager {
 
     private final WatchItemRepository watchItemRepository;
-    private final WatchlistSubscriberRegistry subscriberRegistry;
     private final TrackedSymbolService trackedSymbolService;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public List<WatchItem> getWatchlist(User user) {
-        return watchItemRepository.findAllWithStockByUser(user);
+    public List<WatchItem> getWatchlist(Long userId) {
+        return watchItemRepository.findAllWithStockByUserId(userId);
     }
 
     public WatchItem create(User user, Stock stock) {
@@ -33,25 +35,24 @@ public class WatchItemManager {
         if (exists) {
             throw new WatchItemAlreadyExistsException(WATCH_ITEM_ALREADY_EXISTS);
         }
-
         WatchItem savedWatchItem = watchItemRepository.save(
                 WatchItem.builder()
                         .user(user)
                         .stock(stock)
                         .build());
 
-        subscriberRegistry.register(user.getId(), stock.getSymbol());
+        eventPublisher.publishEvent(new WatchlistSubscriberEvent(user.getId(), stock.getSymbol(), CREATE));
         trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
 
         return savedWatchItem;
     }
 
     public void delete(Long watchItemId, User user) {
-        WatchItem watchItem = watchItemRepository.findByIdAndUser(watchItemId, user)
+        WatchItem watchItem = watchItemRepository.findByIdAndUser(watchItemId, user.getId())
                 .orElseThrow(() -> new WatchItemNotFoundException(WATCH_ITEM_NOT_FOUND));
-
         watchItemRepository.delete(watchItem);
-        subscriberRegistry.unregister(user.getId(), watchItem.getStock().getSymbol());
+
+        eventPublisher.publishEvent(new WatchlistSubscriberEvent(user.getId(), watchItem.getStock().getSymbol(), DELETE));
         trackedSymbolService.saveTrackedSymbolIfNotExists(watchItem.getStock().getSymbol(), watchItem.getStock().getMarketCode());
     }
 }
