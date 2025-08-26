@@ -12,11 +12,16 @@ public interface WatchItemRepository extends JpaRepository<WatchItem, Long> {
 
     @Query("SELECT w FROM WatchItem w " +
             "JOIN FETCH w.stock " +
-            "WHERE w.user = :user " +
+            "WHERE w.user.id = :userId " +
             "ORDER BY w.id DESC")
-    List<WatchItem> findAllWithStockByUser(User user);
+    List<WatchItem> findAllWithStockByUserId(Long userId);
     boolean existsByUserAndStock(User user, Stock stock);
-    Optional<WatchItem> findByIdAndUser(Long id, User user);
+
+    @Query("SELECT w FROM WatchItem w " +
+            "JOIN FETCH w.stock " +
+            "WHERE w.user.id = :userId" +
+            "AND w,id = :id")
+    Optional<WatchItem> findByIdAndUser(Long id, Long userId);
 
     @Query("SELECT w.stock.symbol FROM WatchItem w " +
             "WHERE w.user.id = :userId")

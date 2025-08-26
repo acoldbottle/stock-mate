@@ -29,7 +29,7 @@ public class WatchlistService {
     public List<WatchItemGetRes> getWatchlist(Long userId) {
         User user = userManager.get(userId);
 
-        List<WatchItem> watchlist = watchItemManager.getWatchlist(user);
+        List<WatchItem> watchlist = watchItemManager.getWatchlist(user.getId());
         return watchlist.stream()
                 .map(watchItem -> {
                     CurrentPriceDTO currentPrice = cacheService.getCurrentPrice(watchItem.getStock().getSymbol());
