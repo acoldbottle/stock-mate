@@ -1,11 +1,9 @@
 package com.acoldbottle.stockmate.api.sse.holding;
 
 import com.acoldbottle.stockmate.domain.holding.Holding;
-import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,28 +14,27 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HoldingSubscriberRegistry {
 
     private final Map<String, Set<HoldingSubscriber>> holdingSubscribersMap = new ConcurrentHashMap<>();
-    private final HoldingRepository holdingRepository;
 
     public Set<HoldingSubscriber> getSubscribersBySymbol(String symbol) {
         return holdingSubscribersMap.get(symbol);
     }
 
-    public void register(String symbol, Long userId, Long portfolioId) {
+    public void register(Long userId, Long portfolioId, String symbol) {
         holdingSubscribersMap.computeIfAbsent(symbol, k -> ConcurrentHashMap.newKeySet())
                 .add(new HoldingSubscriber(userId, portfolioId));
     }
 
-    public void registerAllByPortfolioId(Long userId, Long portfolioId) {
-        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolioId(portfolioId);
-        if (!holdings.isEmpty()) {
-            holdings.stream()
-                    .map(holding -> holding.getStock().getSymbol())
-                    .forEach(symbol -> holdingSubscribersMap.computeIfAbsent(symbol, k -> ConcurrentHashMap.newKeySet())
-                            .add(new HoldingSubscriber(userId, portfolioId)));
-        }
+    public void registerAll(Long userId, Long portfolioId, List<Holding> holdingList) {
+        if (holdingList.isEmpty()) return;
+
+        HoldingSubscriber holdingSubscriber = new HoldingSubscriber(userId, portfolioId);
+        holdingList.stream()
+                .map(holding -> holding.getStock().getSymbol())
+                .forEach(symbol -> holdingSubscribersMap.computeIfAbsent(symbol, k -> ConcurrentHashMap.newKeySet())
+                        .add(holdingSubscriber));
     }
 
-    public void unregister(String symbol, Long userId, Long portfolioId) {
+    public void unregister(Long userId, Long portfolioId, String symbol) {
         Set<HoldingSubscriber> subscribers = holdingSubscribersMap.get(symbol);
         if (subscribers != null) {
             subscribers.remove(new HoldingSubscriber(userId, portfolioId));
@@ -47,21 +44,21 @@ public class HoldingSubscriberRegistry {
         }
     }
 
-    public void unregisterByPortfolioId(Long userId, Long portfolioId) {
-        List<Holding> holdings = holdingRepository.findAllWithStockByPortfolioId(portfolioId);
-        if (!holdings.isEmpty()) {
-            holdings.stream()
-                    .map(holding -> holding.getStock().getSymbol())
-                    .forEach(symbol -> {
-                        Set<HoldingSubscriber> portfolioIds = holdingSubscribersMap.get(symbol);
-                        if (portfolioIds != null) {
-                            portfolioIds.remove(new HoldingSubscriber(userId, portfolioId));
-                            if (portfolioIds.isEmpty()) {
-                                holdingSubscribersMap.remove(symbol);
-                            }
+    public void unregisterAll(Long userId, Long portfolioId, List<Holding> holdingList) {
+        if (holdingList.isEmpty()) return;
+
+        HoldingSubscriber holdingSubscriber = new HoldingSubscriber(userId, portfolioId);
+        holdingList.stream()
+                .map(holding -> holding.getStock().getSymbol())
+                .forEach(symbol -> {
+                    Set<HoldingSubscriber> holdingSubscribers = holdingSubscribersMap.get(symbol);
+                    if (holdingSubscribers != null) {
+                        holdingSubscribers.remove(holdingSubscriber);
+                        if (holdingSubscribers.isEmpty()) {
+                            holdingSubscribersMap.remove(symbol);
                         }
-                    });
-        }
+                    }
+                });
     }
 
     public boolean isRegisteredPortfolioId(Long portfolioId) {

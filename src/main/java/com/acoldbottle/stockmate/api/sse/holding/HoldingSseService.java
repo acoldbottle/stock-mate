@@ -1,6 +1,8 @@
 package com.acoldbottle.stockmate.api.sse.holding;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.holding.service.HoldingManager;
+import com.acoldbottle.stockmate.domain.holding.Holding;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class HoldingSseService {
 
     private final HoldingEmitterRegistry emitterRegistry;
     private final HoldingSubscriberRegistry subscriberRegistry;
+    private final HoldingManager holdingManager;
 
     public SseEmitter connect(Long userId, Long portfolioId) {
         Optional<SseEmitter> isExistEmitter = emitterRegistry.getEmitterByUserId(userId);
@@ -31,23 +34,24 @@ public class HoldingSseService {
         }
         SseEmitter newEmitter = new SseEmitter(Long.MAX_VALUE);
         emitterRegistry.register(userId, newEmitter);
-        subscriberRegistry.registerAllByPortfolioId(userId, portfolioId);
+        initializeUserSubscriptions(userId, portfolioId);
         log.info("[HoldingSseService] user={}, portfolioId={} --> connect", userId, portfolioId);
+
         newEmitter.onCompletion(() -> {
             emitterRegistry.unregister(userId);
-            subscriberRegistry.unregisterByPortfolioId(userId, portfolioId);
+            unregisterUserSubscriptions(userId, portfolioId);
             log.info("[HoldingSseService] user={}, portfolioId={} --> connection closed", userId, portfolioId);
         });
         newEmitter.onError((e) -> {
             emitterRegistry.unregister(userId);
-            subscriberRegistry.unregisterByPortfolioId(userId, portfolioId);
+            unregisterUserSubscriptions(userId, portfolioId);
             log.error("[HoldingSseService] user={}, portfolioId={} --> connection Error!!", userId, portfolioId, e);
         });
         return newEmitter;
     }
 
     public void disconnect(Long userId, Long portfolioId) {
-        subscriberRegistry.unregisterByPortfolioId(userId, portfolioId);
+        unregisterUserSubscriptions(userId, portfolioId);
         SseEmitter unregisteredEmitter = emitterRegistry.unregister(userId);
         if (unregisteredEmitter != null) {
             unregisteredEmitter.complete();
@@ -64,7 +68,7 @@ public class HoldingSseService {
                             CompletableFuture.runAsync(() ->
                                     emitterRegistry.getEmitterByUserId(s.getUserId())
                                             .ifPresent(emitter ->
-                                                    sendEvent(emitter,
+                                                    sendToClient(emitter,
                                                             HoldingUpdateDto.from(
                                                                     s.getPortfolioId(),
                                                                     symbol,
@@ -74,7 +78,17 @@ public class HoldingSseService {
         }
     }
 
-    private void sendEvent(SseEmitter emitter, HoldingUpdateDto updateData) {
+    private void initializeUserSubscriptions(Long userId, Long portfolioId) {
+        List<Holding> holdingList = holdingManager.getHoldingList(portfolioId);
+        subscriberRegistry.registerAll(userId, portfolioId, holdingList);
+    }
+
+    private void unregisterUserSubscriptions(Long userId, Long portfolioId) {
+        List<Holding> holdingList = holdingManager.getHoldingList(portfolioId);
+        subscriberRegistry.unregisterAll(userId, portfolioId, holdingList);
+    }
+
+    private void sendToClient(SseEmitter emitter, HoldingUpdateDto updateData) {
         try {
             emitter.send(SseEmitter.event()
                     .name("holding-price-update")

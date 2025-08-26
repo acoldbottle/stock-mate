@@ -1,6 +1,6 @@
 package com.acoldbottle.stockmate.api.holding.service;
 
-import com.acoldbottle.stockmate.api.sse.holding.HoldingSubscriberRegistry;
+import com.acoldbottle.stockmate.api.sse.holding.HoldingSubscriberEvent;
 import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
@@ -9,12 +9,14 @@ import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.user.User;
 import com.acoldbottle.stockmate.exception.holding.HoldingNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static com.acoldbottle.stockmate.api.sse.holding.HoldingSubscriberEvent.HoldingEventType.*;
 import static com.acoldbottle.stockmate.exception.ErrorCode.HOLDING_NOT_FOUND;
 
 @Component
@@ -23,7 +25,7 @@ public class HoldingManager {
 
     private final HoldingRepository holdingRepository;
     private final TrackedSymbolService trackedSymbolService;
-    private final HoldingSubscriberRegistry subscriberRegistry;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<Holding> getHoldingList(Long portfolioId) {
         return holdingRepository.findAllWithStockByPortfolioId(portfolioId);
@@ -46,7 +48,7 @@ public class HoldingManager {
         }
 
         trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
-        subscriberRegistry.register(stock.getSymbol(), userId, portfolio.getId());
+        eventPublisher.publishEvent(new HoldingSubscriberEvent(userId, portfolio.getId(), stock.getSymbol(), CREATE));
 
         return holdingRepository.save(Holding.builder()
                 .portfolio(portfolio)
@@ -75,11 +77,11 @@ public class HoldingManager {
     }
 
     public void delete(Long holdingId, Portfolio portfolio, User user) {
-        holdingRepository.findByIdAndPortfolio(holdingId, portfolio)
-                .ifPresent(holding -> {
-                    holdingRepository.delete(holding);
-                    trackedSymbolService.deleteTrackedSymbolIfNotUse(holding.getStock());
-                    subscriberRegistry.unregister(holding.getStock().getSymbol(), user.getId(), portfolio.getId());
-                });
+        Holding holding = holdingRepository.findByIdAndPortfolio(holdingId, portfolio)
+                .orElseThrow(() -> new HoldingNotFoundException(HOLDING_NOT_FOUND));
+
+        holdingRepository.delete(holding);
+        trackedSymbolService.deleteTrackedSymbolIfNotUse(holding.getStock());
+        eventPublisher.publishEvent(new HoldingSubscriberEvent(user.getId(), portfolio.getId(), holding.getStock().getSymbol(), DELETE));
     }
 }
