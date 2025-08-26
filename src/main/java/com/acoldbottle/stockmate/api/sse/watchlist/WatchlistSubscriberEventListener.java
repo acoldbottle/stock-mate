@@ -12,7 +12,7 @@ public class WatchlistSubscriberEventListener {
     private final WatchlistSubscriberRegistry subscriberRegistry;
 
     @EventListener
-    public void handlerSubscriberUnregisterEvent(WatchlistSubscriberEvent subscriberEvent) {
+    public void handlerSubscriberEvent(WatchlistSubscriberEvent subscriberEvent) {
         Long userId = subscriberEvent.getUserId();
         String symbol = subscriberEvent.getSymbol();
         WatchlistEventType eventType = subscriberEvent.getEventType();
