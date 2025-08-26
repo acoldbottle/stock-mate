@@ -1,7 +1,7 @@
 package com.acoldbottle.stockmate.api.watchlist.service;
 
 import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberEvent;
-import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolService;
+import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolManager;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.user.User;
 import com.acoldbottle.stockmate.domain.watchitem.WatchItem;
@@ -23,7 +23,7 @@ import static com.acoldbottle.stockmate.exception.ErrorCode.WATCH_ITEM_NOT_FOUND
 public class WatchItemManager {
 
     private final WatchItemRepository watchItemRepository;
-    private final TrackedSymbolService trackedSymbolService;
+    private final TrackedSymbolManager trackedSymbolManager;
     private final ApplicationEventPublisher eventPublisher;
 
     public List<WatchItem> getWatchlist(Long userId) {
@@ -42,7 +42,7 @@ public class WatchItemManager {
                         .build());
 
         eventPublisher.publishEvent(new WatchlistSubscriberEvent(user.getId(), stock.getSymbol(), CREATE));
-        trackedSymbolService.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
+        trackedSymbolManager.saveTrackedSymbolIfNotExists(stock.getSymbol(), stock.getMarketCode());
 
         return savedWatchItem;
     }
@@ -53,6 +53,6 @@ public class WatchItemManager {
         watchItemRepository.delete(watchItem);
 
         eventPublisher.publishEvent(new WatchlistSubscriberEvent(user.getId(), watchItem.getStock().getSymbol(), DELETE));
-        trackedSymbolService.saveTrackedSymbolIfNotExists(watchItem.getStock().getSymbol(), watchItem.getStock().getMarketCode());
+        trackedSymbolManager.saveTrackedSymbolIfNotExists(watchItem.getStock().getSymbol(), watchItem.getStock().getMarketCode());
     }
 }
