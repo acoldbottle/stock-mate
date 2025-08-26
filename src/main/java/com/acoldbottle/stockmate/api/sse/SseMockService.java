@@ -1,12 +1,16 @@
 package com.acoldbottle.stockmate.api.sse;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.sse.holding.HoldingSseNotifyEvent;
 import com.acoldbottle.stockmate.api.sse.holding.HoldingSseService;
+import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSseNotifyEvent;
 import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSseService;
+import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSseNotifyEvent;
 import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSseService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.swing.plaf.SpinnerUI;
@@ -23,10 +27,9 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class SseMockService {
 
-    private final PortfolioSseService portfolioSseService;
-    private final WatchlistSseService watchlistSseService;
-    private final HoldingSseService holdingSseService;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    private final ApplicationEventPublisher eventPublisher;
     private final Random random = new Random();
     private final List<String> symbols = List.of("AAPL", "TSLA", "NVDA");
 
@@ -43,15 +46,16 @@ public class SseMockService {
             BigDecimal rate = BigDecimal.valueOf(random.nextDouble() * 10 - 5)
                     .setScale(2, RoundingMode.HALF_UP);
 
-            CurrentPriceDTO priceDTO = CurrentPriceDTO.builder()
+            CurrentPriceDTO currentPriceDto = CurrentPriceDTO.builder()
                     .last(price)
                     .rate(rate)
                     .build();
 
             log.info("[SseMockService] symbol={} --> price={}, rate={}",symbol, price, rate);
-            holdingSseService.notifyUpdateHolding(symbol, priceDTO);
-            portfolioSseService.notifyUpdatePortfolio(symbol);
-            watchlistSseService.notifyUpdatedWatchItem(symbol, priceDTO);
+
+            eventPublisher.publishEvent(new PortfolioSseNotifyEvent(symbol, currentPriceDto));
+            eventPublisher.publishEvent(new HoldingSseNotifyEvent(symbol, currentPriceDto));
+            eventPublisher.publishEvent(new WatchlistSseNotifyEvent(symbol, currentPriceDto));
         }
     }
 }
