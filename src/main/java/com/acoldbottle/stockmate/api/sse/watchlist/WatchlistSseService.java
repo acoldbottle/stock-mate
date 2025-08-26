@@ -64,7 +64,7 @@ public class WatchlistSseService {
                     .map(userId ->
                             CompletableFuture.runAsync(() ->
                                     emitterRegistry.getEmitterByUserId(userId)
-                                            .ifPresent(emitter -> sendEvent(emitter, updateDto)), executor)
+                                            .ifPresent(emitter -> sendToClient(emitter, updateDto)), executor)
                     )
                     .toList();
 
@@ -82,7 +82,7 @@ public class WatchlistSseService {
         subscriberRegistry.unregisterAll(userId, watchlist);
     }
 
-    private void sendEvent(SseEmitter emitter, WatchItemUpdateDto updateData) {
+    private void sendToClient(SseEmitter emitter, WatchItemUpdateDto updateData) {
         try {
             emitter.send(SseEmitter.event()
                     .name("watchlist-price-update")
