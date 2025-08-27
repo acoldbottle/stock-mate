@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.trackedsymbol;
+package com.acoldbottle.stockmate.event.currentprice;
 
 import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceService;
 import com.acoldbottle.stockmate.email.EmailService;

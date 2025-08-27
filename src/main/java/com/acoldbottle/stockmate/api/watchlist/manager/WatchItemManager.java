@@ -1,7 +1,7 @@
-package com.acoldbottle.stockmate.api.watchlist.service;
+package com.acoldbottle.stockmate.api.watchlist.manager;
 
-import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberEvent;
-import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolManager;
+import com.acoldbottle.stockmate.event.watchlist.WatchlistSubscriberEvent;
+import com.acoldbottle.stockmate.api.trackedsymbol.manager.TrackedSymbolManager;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.user.User;
 import com.acoldbottle.stockmate.domain.watchitem.WatchItem;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberEvent.WatchlistEventType.*;
+import static com.acoldbottle.stockmate.event.watchlist.WatchlistSubscriberEvent.WatchlistEventType.*;
 import static com.acoldbottle.stockmate.exception.ErrorCode.WATCH_ITEM_ALREADY_EXISTS;
 import static com.acoldbottle.stockmate.exception.ErrorCode.WATCH_ITEM_NOT_FOUND;
 

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
@@ -17,4 +18,9 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
     @Query("SELECT p FROM Portfolio p WHERE p.user.id = :userId")
     List<Portfolio> findAllByUserId(Long userId);
+
+    @Query("SELECT p FROM Portfolio p " +
+            "JOIN FETCH p.user " +
+            "WHERE p.id IN :portfolioIds")
+    List<Portfolio> findAllWithUserByIds(List<Long> portfolioIds);
 }

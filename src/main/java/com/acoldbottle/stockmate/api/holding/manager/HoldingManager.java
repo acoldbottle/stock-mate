@@ -1,7 +1,7 @@
-package com.acoldbottle.stockmate.api.holding.service;
+package com.acoldbottle.stockmate.api.holding.manager;
 
-import com.acoldbottle.stockmate.api.sse.holding.HoldingSubscriberEvent;
-import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolManager;
+import com.acoldbottle.stockmate.event.holding.HoldingSubscriberEvent;
+import com.acoldbottle.stockmate.api.trackedsymbol.manager.TrackedSymbolManager;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.holding.HoldingRepository;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.acoldbottle.stockmate.api.sse.holding.HoldingSubscriberEvent.HoldingEventType.*;
+import static com.acoldbottle.stockmate.event.holding.HoldingSubscriberEvent.HoldingEventType.*;
 import static com.acoldbottle.stockmate.exception.ErrorCode.HOLDING_NOT_FOUND;
 
 @Component

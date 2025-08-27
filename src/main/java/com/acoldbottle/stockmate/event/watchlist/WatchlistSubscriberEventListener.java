@@ -1,6 +1,7 @@
-package com.acoldbottle.stockmate.api.sse.watchlist;
+package com.acoldbottle.stockmate.event.watchlist;
 
-import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberEvent.WatchlistEventType;
+import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSubscriberRegistry;
+import com.acoldbottle.stockmate.event.watchlist.WatchlistSubscriberEvent.WatchlistEventType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

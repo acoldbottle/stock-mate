@@ -1,6 +1,7 @@
-package com.acoldbottle.stockmate.api.sse.holding;
+package com.acoldbottle.stockmate.event.holding;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.sse.holding.HoldingSseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

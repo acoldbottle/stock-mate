@@ -1,6 +1,7 @@
 package com.acoldbottle.stockmate.api.stock.service;
 
 import com.acoldbottle.stockmate.api.stock.dto.res.StockSearchRes;
+import com.acoldbottle.stockmate.api.stock.manager.StockManager;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.external.kis.stockfile.StockDTO;
 import lombok.RequiredArgsConstructor;

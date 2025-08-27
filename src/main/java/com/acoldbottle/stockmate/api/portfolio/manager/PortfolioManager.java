@@ -1,7 +1,7 @@
-package com.acoldbottle.stockmate.api.portfolio.service;
+package com.acoldbottle.stockmate.api.portfolio.manager;
 
-import com.acoldbottle.stockmate.api.holding.service.HoldingManager;
-import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSubscriberEvent;
+import com.acoldbottle.stockmate.api.holding.manager.HoldingManager;
+import com.acoldbottle.stockmate.event.portfolio.PortfolioSubscriberEvent;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import com.acoldbottle.stockmate.domain.portfolio.PortfolioRepository;

@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.trackedsymbol;
+package com.acoldbottle.stockmate.event.currentprice;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

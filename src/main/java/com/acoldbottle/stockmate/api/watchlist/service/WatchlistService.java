@@ -2,11 +2,12 @@ package com.acoldbottle.stockmate.api.watchlist.service;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
 import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceCacheService;
-import com.acoldbottle.stockmate.api.stock.service.StockManager;
-import com.acoldbottle.stockmate.api.user.service.UserManager;
+import com.acoldbottle.stockmate.api.stock.manager.StockManager;
+import com.acoldbottle.stockmate.api.user.manager.UserManager;
 import com.acoldbottle.stockmate.api.watchlist.dto.req.WatchItemCreateReq;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemCreateRes;
 import com.acoldbottle.stockmate.api.watchlist.dto.res.WatchItemGetRes;
+import com.acoldbottle.stockmate.api.watchlist.manager.WatchItemManager;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.user.User;
 import com.acoldbottle.stockmate.domain.watchitem.WatchItem;

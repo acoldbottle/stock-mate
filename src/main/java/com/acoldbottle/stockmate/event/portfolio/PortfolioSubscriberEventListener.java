@@ -1,5 +1,6 @@
-package com.acoldbottle.stockmate.api.sse.portfolio;
+package com.acoldbottle.stockmate.event.portfolio;
 
+import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSubscriberRegistry;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import lombok.RequiredArgsConstructor;

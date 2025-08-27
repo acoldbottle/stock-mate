@@ -1,6 +1,6 @@
 package com.acoldbottle.stockmate.api.sse.watchlist;
 
-import com.acoldbottle.stockmate.api.watchlist.service.WatchItemManager;
+import com.acoldbottle.stockmate.api.watchlist.manager.WatchItemManager;
 import com.acoldbottle.stockmate.domain.watchitem.WatchItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

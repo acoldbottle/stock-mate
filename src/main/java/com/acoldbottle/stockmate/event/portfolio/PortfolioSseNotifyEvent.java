@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.sse.portfolio;
+package com.acoldbottle.stockmate.event.portfolio;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
 import lombok.Getter;

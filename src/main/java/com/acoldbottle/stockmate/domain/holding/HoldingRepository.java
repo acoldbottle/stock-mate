@@ -28,11 +28,9 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
             "WHERE h.portfolio IN :portfolios")
     List<Holding> findAllWithStockByPortfolioIn(List<Portfolio> portfolios);
 
-    @Query("SELECT h.stock.symbol FROM Holding h WHERE h.portfolio.user.id = :userId")
-    List<String> findSymbolsByUserId(Long userId);
-
-    @Query("SELECT COUNT(h) > 0 FROM Holding h " +
-            "WHERE h.portfolio.user.id = :userId " +
-            "AND h.stock.symbol = :symbol")
-    boolean existsByUserIdAndSymbol(Long userId, String symbol);
+    @Query("SELECT h FROM Holding h " +
+            "JOIN FETCH h.stock " +
+            "JOIN FETCH h.portfolio " +
+            "WHERE h.portfolio.user.id = :userId")
+    List<Holding> findAllWithStockByUserId(Long userId);
 }

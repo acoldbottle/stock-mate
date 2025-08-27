@@ -1,7 +1,7 @@
 package com.acoldbottle.stockmate.api.sse.holding;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
-import com.acoldbottle.stockmate.api.holding.service.HoldingManager;
+import com.acoldbottle.stockmate.api.holding.manager.HoldingManager;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

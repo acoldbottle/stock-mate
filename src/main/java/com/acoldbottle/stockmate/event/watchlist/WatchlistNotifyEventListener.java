@@ -1,6 +1,8 @@
-package com.acoldbottle.stockmate.api.sse.watchlist;
+package com.acoldbottle.stockmate.event.watchlist;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.sse.watchlist.WatchItemUpdateDto;
+import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

@@ -1,10 +1,11 @@
-package com.acoldbottle.stockmate.api.sse.holding;
+package com.acoldbottle.stockmate.event.holding;
 
+import com.acoldbottle.stockmate.api.sse.holding.HoldingSubscriberRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import static com.acoldbottle.stockmate.api.sse.holding.HoldingSubscriberEvent.*;
+import static com.acoldbottle.stockmate.event.holding.HoldingSubscriberEvent.*;
 
 @Component
 @RequiredArgsConstructor

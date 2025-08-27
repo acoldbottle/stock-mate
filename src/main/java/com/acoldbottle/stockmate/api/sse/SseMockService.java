@@ -1,19 +1,14 @@
 package com.acoldbottle.stockmate.api.sse;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
-import com.acoldbottle.stockmate.api.sse.holding.HoldingSseNotifyEvent;
-import com.acoldbottle.stockmate.api.sse.holding.HoldingSseService;
-import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSseNotifyEvent;
-import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSseService;
-import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSseNotifyEvent;
-import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSseService;
-import jakarta.annotation.PostConstruct;
+import com.acoldbottle.stockmate.event.holding.HoldingSseNotifyEvent;
+import com.acoldbottle.stockmate.event.portfolio.PortfolioSseNotifyEvent;
+import com.acoldbottle.stockmate.event.watchlist.WatchlistSseNotifyEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import javax.swing.plaf.SpinnerUI;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;

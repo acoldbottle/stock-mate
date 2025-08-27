@@ -1,7 +1,7 @@
 package com.acoldbottle.stockmate.scheduler;
 
 import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceService;
-import com.acoldbottle.stockmate.api.trackedsymbol.service.TrackedSymbolManager;
+import com.acoldbottle.stockmate.api.trackedsymbol.manager.TrackedSymbolManager;
 import com.acoldbottle.stockmate.domain.trackedsymbol.TrackedSymbol;
 import com.acoldbottle.stockmate.email.EmailService;
 import lombok.RequiredArgsConstructor;

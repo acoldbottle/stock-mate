@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.sse.watchlist;
+package com.acoldbottle.stockmate.event.watchlist;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

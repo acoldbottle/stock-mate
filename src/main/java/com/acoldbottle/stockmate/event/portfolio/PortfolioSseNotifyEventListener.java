@@ -1,11 +1,14 @@
-package com.acoldbottle.stockmate.api.sse.portfolio;
+package com.acoldbottle.stockmate.event.portfolio;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
-import com.acoldbottle.stockmate.api.holding.service.HoldingManager;
-import com.acoldbottle.stockmate.api.portfolio.service.PortfolioManager;
+import com.acoldbottle.stockmate.api.holding.manager.HoldingManager;
+import com.acoldbottle.stockmate.api.portfolio.manager.PortfolioManager;
 import com.acoldbottle.stockmate.api.profit.dto.HoldingCurrentInfoDto;
 import com.acoldbottle.stockmate.api.profit.dto.PortfolioProfitDto;
 import com.acoldbottle.stockmate.api.profit.service.ProfitCalculator;
+import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSseService;
+import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSubscriberRegistry;
+import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioUpdateDto;
 import com.acoldbottle.stockmate.domain.holding.Holding;
 import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import lombok.RequiredArgsConstructor;

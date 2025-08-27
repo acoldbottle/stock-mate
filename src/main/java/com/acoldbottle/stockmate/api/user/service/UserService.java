@@ -2,6 +2,7 @@ package com.acoldbottle.stockmate.api.user.service;
 
 import com.acoldbottle.stockmate.api.user.dto.req.UserSignUpReq;
 import com.acoldbottle.stockmate.api.user.dto.res.UserSignUpRes;
+import com.acoldbottle.stockmate.api.user.manager.UserManager;
 import com.acoldbottle.stockmate.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

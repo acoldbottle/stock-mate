@@ -1,9 +1,9 @@
 package com.acoldbottle.stockmate.api.currentprice.service;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
-import com.acoldbottle.stockmate.api.sse.holding.HoldingSseNotifyEvent;
-import com.acoldbottle.stockmate.api.sse.portfolio.PortfolioSseNotifyEvent;
-import com.acoldbottle.stockmate.api.sse.watchlist.WatchlistSseNotifyEvent;
+import com.acoldbottle.stockmate.event.holding.HoldingSseNotifyEvent;
+import com.acoldbottle.stockmate.event.portfolio.PortfolioSseNotifyEvent;
+import com.acoldbottle.stockmate.event.watchlist.WatchlistSseNotifyEvent;
 import com.acoldbottle.stockmate.exception.kis.KisTooManyRequestException;
 import com.acoldbottle.stockmate.external.kis.KisAPIClient;
 import com.acoldbottle.stockmate.external.kis.KisCurrentPriceRes;

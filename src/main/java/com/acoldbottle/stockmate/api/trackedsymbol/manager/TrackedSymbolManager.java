@@ -1,6 +1,6 @@
-package com.acoldbottle.stockmate.api.trackedsymbol.service;
+package com.acoldbottle.stockmate.api.trackedsymbol.manager;
 
-import com.acoldbottle.stockmate.api.trackedsymbol.RequestCurrentPriceEvent;
+import com.acoldbottle.stockmate.event.currentprice.RequestCurrentPriceEvent;
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.trackedsymbol.TrackedSymbol;
 import com.acoldbottle.stockmate.domain.trackedsymbol.TrackedSymbolRepository;

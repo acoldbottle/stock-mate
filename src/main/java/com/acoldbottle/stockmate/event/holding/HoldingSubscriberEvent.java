@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.sse.holding;
+package com.acoldbottle.stockmate.event.holding;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

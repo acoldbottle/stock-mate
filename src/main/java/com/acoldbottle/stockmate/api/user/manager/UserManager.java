@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.user.service;
+package com.acoldbottle.stockmate.api.user.manager;
 
 import com.acoldbottle.stockmate.api.user.dto.req.UserSignUpReq;
 import com.acoldbottle.stockmate.domain.user.User;

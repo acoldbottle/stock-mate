@@ -1,4 +1,4 @@
-package com.acoldbottle.stockmate.api.stock.service;
+package com.acoldbottle.stockmate.api.stock.manager;
 
 import com.acoldbottle.stockmate.domain.stock.Stock;
 import com.acoldbottle.stockmate.domain.stock.StockRepository;
