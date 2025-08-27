@@ -48,7 +48,7 @@ public class WatchItemManager {
     }
 
     public void delete(Long watchItemId, User user) {
-        WatchItem watchItem = watchItemRepository.findByIdAndUser(watchItemId, user.getId())
+        WatchItem watchItem = watchItemRepository.findByIdAndUserId(watchItemId, user.getId())
                 .orElseThrow(() -> new WatchItemNotFoundException(WATCH_ITEM_NOT_FOUND));
         watchItemRepository.delete(watchItem);
 
