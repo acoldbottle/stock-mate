@@ -4,6 +4,7 @@ import com.acoldbottle.stockmate.domain.holding.Holding;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +17,7 @@ public class HoldingSubscriberRegistry {
     private final Map<String, Set<HoldingSubscriber>> holdingSubscribersMap = new ConcurrentHashMap<>();
 
     public Set<HoldingSubscriber> getSubscribersBySymbol(String symbol) {
-        return holdingSubscribersMap.get(symbol);
+        return holdingSubscribersMap.getOrDefault(symbol, Collections.emptySet());
     }
 
     public void register(Long userId, Long portfolioId, String symbol) {

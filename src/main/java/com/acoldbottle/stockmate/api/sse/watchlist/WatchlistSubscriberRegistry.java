@@ -4,6 +4,7 @@ import com.acoldbottle.stockmate.domain.watchitem.WatchItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +17,7 @@ public class WatchlistSubscriberRegistry {
     private final Map<String, Set<Long>> watchlistSubscribersMap = new ConcurrentHashMap<>();
 
     public Set<Long> getSubscribersBySymbol(String symbol) {
-        return watchlistSubscribersMap.get(symbol);
+        return watchlistSubscribersMap.getOrDefault(symbol, Collections.emptySet());
     }
 
     public void register(Long userId, String symbol) {

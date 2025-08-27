@@ -5,6 +5,7 @@ import com.acoldbottle.stockmate.domain.portfolio.Portfolio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +19,7 @@ public class PortfolioSubscriberRegistry {
     private final Map<String, Set<Long>> portfolioSubscribersMap = new ConcurrentHashMap<>();
 
     public List<Long> getSubscribersBySymbol(String symbol) {
-        return portfolioSubscribersMap.get(symbol).stream().toList();
+        return portfolioSubscribersMap.getOrDefault(symbol, Collections.emptySet()).stream().toList();
     }
 
     public void registerAll(List<Holding> holdings) {
