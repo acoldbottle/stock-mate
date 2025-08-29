@@ -1,6 +1,7 @@
 package com.acoldbottle.stockmate.event.portfolio;
 
 import com.acoldbottle.stockmate.api.currentprice.dto.CurrentPriceDTO;
+import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceCacheService;
 import com.acoldbottle.stockmate.api.holding.manager.HoldingManager;
 import com.acoldbottle.stockmate.api.portfolio.manager.PortfolioManager;
 import com.acoldbottle.stockmate.api.profit.dto.HoldingCurrentInfoDto;
@@ -30,11 +31,11 @@ public class PortfolioSseNotifyEventListener {
     private final PortfolioSubscriberRegistry subscriberRegistry;
     private final PortfolioManager portfolioManager;
     private final HoldingManager holdingManager;
+    private final CurrentPriceCacheService cacheService;
 
     @EventListener
     public void handlePriceUpdate(PortfolioSseNotifyEvent event) {
         String symbol = event.getSymbol();
-        CurrentPriceDTO currentPriceDto = event.getCurrentPriceDTO();
         List<Long> subscribers = subscriberRegistry.getSubscribersBySymbol(symbol);
         if (subscribers.isEmpty()) {
             return;
@@ -48,7 +49,7 @@ public class PortfolioSseNotifyEventListener {
         // 주식종목 + 현재시세 리스트
         List<Holding> holdings = holdingManager.getAllHoldingsByPortfolios(portfolioList);
         List<HoldingCurrentInfoDto> holdingCurrentInfoList = holdings.stream()
-                .map(holding -> HoldingCurrentInfoDto.from(holding, currentPriceDto))
+                .map(holding -> HoldingCurrentInfoDto.from(holding, cacheService.getCurrentPrice(holding.getStock().getSymbol())))
                 .toList();
 
         // 포트폴리오 아이디로 그룹화

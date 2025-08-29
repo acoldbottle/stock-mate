@@ -48,7 +48,7 @@ public class SseMockService {
 
             log.info("[SseMockService] symbol={} --> price={}, rate={}",symbol, price, rate);
 
-            eventPublisher.publishEvent(new PortfolioSseNotifyEvent(symbol, currentPriceDto));
+            eventPublisher.publishEvent(new PortfolioSseNotifyEvent(symbol));
             eventPublisher.publishEvent(new HoldingSseNotifyEvent(symbol, currentPriceDto));
             eventPublisher.publishEvent(new WatchlistSseNotifyEvent(symbol, currentPriceDto));
         }

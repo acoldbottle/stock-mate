@@ -92,7 +92,7 @@ public class CurrentPriceService {
         CurrentPriceDTO currentPriceDto = CurrentPriceDTO.from(kisCurrentPriceRes);
         boolean isUpdated = cacheService.updateCurrentPrice(symbol, currentPriceDto);
         if (isUpdated) {
-            eventPublisher.publishEvent(new PortfolioSseNotifyEvent(symbol, currentPriceDto));
+            eventPublisher.publishEvent(new PortfolioSseNotifyEvent(symbol));
             eventPublisher.publishEvent(new HoldingSseNotifyEvent(symbol, currentPriceDto));
             eventPublisher.publishEvent(new WatchlistSseNotifyEvent(symbol, currentPriceDto));
         }
