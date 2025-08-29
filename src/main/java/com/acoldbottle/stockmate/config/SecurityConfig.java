@@ -58,9 +58,10 @@ public class SecurityConfig {
                         .permitAll())
                 .exceptionHandling((exception) -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .maximumSessions(1))
+//                .sessionManagement((session) -> session
+//                        .maximumSessions(1)
+//                        .maxSessionsPreventsLogin(false)
+//                        .expiredUrl("/stockmate/logout"))
                 .build();
     }
 
