@@ -1,31 +1,23 @@
 package com.acoldbottle.stockmate.scheduler;
 
 import com.acoldbottle.stockmate.api.currentprice.service.CurrentPriceService;
-import com.acoldbottle.stockmate.api.trackedsymbol.manager.TrackedSymbolManager;
-import com.acoldbottle.stockmate.domain.trackedsymbol.TrackedSymbol;
-import com.acoldbottle.stockmate.email.EmailService;
+import com.acoldbottle.stockmate.event.email.EmailAlertEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class CurrentPriceScheduler {
 
-    private final TrackedSymbolManager trackedSymbolManager;
     private final CurrentPriceService currentPriceService;
-    private final EmailService emailService;
+    private final ApplicationEventPublisher eventPublisher;
     private final static int MONDAY = 1;
     private final static int TUESDAY = 2;
     private final static int FRIDAY = 5;
@@ -38,28 +30,12 @@ public class CurrentPriceScheduler {
     @Scheduled(fixedRate = 60000L)
     public void requestCurrentPriceAndCache() {
         if (!isMarketTime()) return;
-        
-        List<TrackedSymbol> trackedSymbolList = trackedSymbolManager.getTrackedSymbolAll();
-        if (trackedSymbolList.isEmpty()) return;
-        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            Map<String, String> failedMap = new ConcurrentHashMap<>();
-            List<CompletableFuture<Void>> futures = trackedSymbolList.stream()
-                    .map(t -> CompletableFuture.runAsync(() ->
-                                    currentPriceService.requestAndUpdateCurrentPrice(t.getSymbol(), t.getMarketCode()), executor)
-                            .exceptionally(e -> {
-                                failedMap.put(t.getSymbol(), e.getCause().getMessage());
-                                return null;
-                            })
-                    )
-                    .toList();
 
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-            if (!failedMap.isEmpty()) {
-                emailService.sendEmailAlertErrorByMap(failedMap);
-            }
+        try {
+            currentPriceService.requestAndUpdateStocks();
         } catch (Exception e) {
-            log.error("=== [스케줄러] 정의하지 않은 예외 발생 ! ===", e);
-            emailService.sendEmailAlertError("정의하지 않은 예외 발생 -> " + e.getMessage());
+            log.error("=== [CurrentPriceScheduler] 예외 발생 ! ===", e);
+            eventPublisher.publishEvent(new EmailAlertEvent("[CurrentPriceScheduler] 예외 발생 --> " + e.getMessage()));
         }
     }
 
