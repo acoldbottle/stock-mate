@@ -22,6 +22,7 @@ public class SecurityConfig {
 
     private static final String[] WHITE_LIST = {
             "/",
+            "/.well-known/**",
             "/api/login",
             "/api/signup",
             "/api/logout",
