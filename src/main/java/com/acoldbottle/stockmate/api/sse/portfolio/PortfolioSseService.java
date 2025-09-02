@@ -33,7 +33,7 @@ public class PortfolioSseService {
             return isExistEmitter.get();
         }
 
-        SseEmitter newEmitter = new SseEmitter(Long.MAX_VALUE);
+        SseEmitter newEmitter = new SseEmitter(2 * 60 * 60 * 1000L);
         emitterRegistry.register(userId, newEmitter);
         initializeUserSubscriptions(userId);
         log.info("[PortfolioSseService] user={} --> connect", userId);

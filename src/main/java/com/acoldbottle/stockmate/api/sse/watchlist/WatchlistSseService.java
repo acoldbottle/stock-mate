@@ -29,7 +29,7 @@ public class WatchlistSseService {
         if (isExistEmitter.isPresent()) {
             return isExistEmitter.get();
         }
-        SseEmitter newEmitter = new SseEmitter(Long.MAX_VALUE);
+        SseEmitter newEmitter = new SseEmitter(2 * 60 * 60 * 1000L);
         emitterRegistry.register(userId, newEmitter);
         initializeUserSubscriptions(userId);
         log.info("[WatchlistSseService] user={} --> connect", userId);

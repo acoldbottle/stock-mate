@@ -32,7 +32,7 @@ public class HoldingSseService {
                 return isExistEmitter.get();
             }
         }
-        SseEmitter newEmitter = new SseEmitter(Long.MAX_VALUE);
+        SseEmitter newEmitter = new SseEmitter(2 * 60 * 60 * 1000L);
         emitterRegistry.register(userId, newEmitter);
         initializeUserSubscriptions(userId, portfolioId);
         log.info("[HoldingSseService] user={}, portfolioId={} --> connect", userId, portfolioId);
