@@ -11,6 +11,7 @@ import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -30,12 +31,12 @@ public class KisTokenService {
     public synchronized String getValidToken() {
         String token = redisTemplate.opsForValue().get(REDIS_TOKEN_KEY);
         if (token == null) {
-            return "Bearer " + reissueToken();
+            reissueToken();
         }
         return "Bearer " + token;
     }
 
-    private String reissueToken() {
+    public void reissueToken() {
         KisTokenReissueReq request = KisTokenReissueReq.builder()
                 .grant_type("client_credentials")
                 .appkey(key)
@@ -51,9 +52,11 @@ public class KisTokenService {
         if (response == null || response.getToken() == null) {
             throw new KisTokenReissueException(ErrorCode.KIS_TOKEN_REISSUE_FAILED);
         }
-        String token = response.getToken();
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         LocalDateTime tokenExpired = LocalDateTime.parse(response.getTokenExpired(), FORMATTER);
-        long ttl = Duration.between(LocalDateTime.now(), tokenExpired).getSeconds() - 600;
+        long ttl = Duration.between(now, tokenExpired).getSeconds() - 600;
+
+        String token = response.getToken();
         redisTemplate.opsForValue().set(REDIS_TOKEN_KEY, token, Duration.ofSeconds(ttl));
 
         log.info("===== token reissue =====");
@@ -61,7 +64,5 @@ public class KisTokenService {
         log.info("token expired = {}", response.getTokenExpired());
         log.info("ttl -> seconds : {}", ttl);
         log.info("===== token reissue =====");
-
-        return token;
     }
 }
