@@ -30,7 +30,7 @@ public class StockUpdateScheduler {
             List<StockDTO> stockDTOS = fileParser.parseAll();
             stockService.updateStocks(stockDTOS);
         } catch (Exception e) {
-            log.error("=== [스케줄러] 주식 종목 업데이트 실패 ===", e);
+            log.error("=== [StockUpdateScheduler] 주식 종목 업데이트 실패 ===", e);
             eventPublisher.publishEvent(new EmailAlertEvent("[StockUpdateScheduler] 예외 발생 --> " + e.getMessage()));
         }
     }
