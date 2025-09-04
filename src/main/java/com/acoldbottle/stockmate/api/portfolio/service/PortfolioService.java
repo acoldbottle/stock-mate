@@ -86,7 +86,7 @@ public class PortfolioService {
                     PortfolioProfitDto portfolioProfit = profitCalculator.portfolioProfit(holdingList);
                     return PortfolioWithProfitRes.from(portfolio, portfolioProfit);
                 })
-                .sorted(Comparator.comparing(PortfolioWithProfitRes::getPortfolioCurrentValue))
+                .sorted(Comparator.comparing(PortfolioWithProfitRes::getPortfolioCurrentValue).reversed())
                 .toList();
     }
 }
