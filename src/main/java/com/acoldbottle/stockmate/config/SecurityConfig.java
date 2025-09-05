@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/stockmate/login")
-                        .loginProcessingUrl("/stockmate/login")
+                        .loginProcessingUrl("/stockmate/loginProc")
                         .defaultSuccessUrl("/stockmate/portfolios")
                         .permitAll())
                 .logout(logout -> logout

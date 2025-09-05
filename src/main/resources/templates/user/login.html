@@ -40,7 +40,7 @@
             <p class="text-primary-light mt-2 mb-4">서비스를 사용하려면 로그인을 해주세요!</p>
 
             <div class="mb-2">
-                <form th:action="@{/stockmate/login}" method="POST">
+                <form th:action="@{/stockmate/loginProc}" method="POST">
                 <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
                 <div class="mb-4 text-start">
                     <label class="form-label text-black fw-bold">ID</label>
