@@ -135,7 +135,7 @@ function updateHolding(updateData) {
     const totalAmount = Number(updateData.price) * quantity;
     const totalAmountSpan = holdingTarget.querySelector(".totalAmount");
     if(totalAmountSpan){
-        totalAmountSpan.textContent = totalAmount.toFixed(2);
+        totalAmountSpan.textContent = "$" + totalAmount.toFixed(2);
     }
 
     const purchasePriceSpan = holdingTarget.querySelector('[data-purchase-price]');
