@@ -189,8 +189,8 @@ function updateHolding(updateData) {
             portfolioProfitRateSpan.textContent = "+" + portfolioProfitRate.toFixed(2);
         } else if (portfolioProfitAmount < 0) {
             portfolioProfitAmountSpan.parentElement.className = "text-primary fw-bold";
-            portfolioProfitAmountSpan.textContent = "-$" + Math.abs(portfolioProfitAmount).toFixed(2);
-            portfolioProfitRateSpan.textContent = portfolioProfitRate.toFixed(2);
+            portfolioProfitAmountSpan.textContent = Math.abs(portfolioProfitAmount).toFixed(2);
+            portfolioProfitRateSpan.textContent = Math.abs(portfolioProfitRate).toFixed(2);
         } else {
             portfolioProfitAmountSpan.parentElement.className = "text-secondary fw-bold";
             portfolioProfitAmountSpan.textContent = "+$" + `0.00`;
