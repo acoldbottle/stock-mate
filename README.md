@@ -50,7 +50,14 @@
 - SSE 채널 분리(포트폴리오 목록, 포트폴리오 상세, 관심종목)로 사용자가 보고 있는 화면만 시세 + 수익률 업데이트
 - OSIV(false) 설정: 사용자가 SSE에 연결될 시 DB 커넥션을 반납하지 않기 때문에 false 설정
 
-  
+<table>
+  <tr>
+    <td><strong>포트폴리오 목록</strong></td>
+  </tr>
+  <tr>
+    <td><img src="./docs/portfolios.gif" alt="포트폴리오 목록" width="600"/></td>
+  </tr>
+</table>
 
 
 
