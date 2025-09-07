@@ -55,7 +55,8 @@
     <td><strong>포트폴리오 목록</strong></td>
   </tr>
   <tr>
-    <td><img src="./docs/portfolios.gif" alt="포트폴리오 목록" width="600"/></td>
+    <td><img src="https://github.com/user-attachments/assets/cd8234e8-e2a7-41b1-a6fc-ced5f7b984cd" 
+     alt="포트폴리오 목록" width="600"/></td>
   </tr>
 </table>
 
