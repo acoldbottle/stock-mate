@@ -52,11 +52,11 @@
 
 <table>
   <tr>
-    <td><strong>포트폴리오 목록</strong></td>
+    <td align="center" ><strong>포트폴리오 목록</strong></td>
   </tr>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/cd8234e8-e2a7-41b1-a6fc-ced5f7b984cd" 
-     alt="포트폴리오 목록" width="600"/></td>
+     alt="포트폴리오 목록" width="1000"/></td>
   </tr>
 </table>
 
