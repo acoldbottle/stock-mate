@@ -58,6 +58,22 @@
     <td><img src="https://github.com/user-attachments/assets/cd8234e8-e2a7-41b1-a6fc-ced5f7b984cd" 
      alt="포트폴리오 목록"/></td>
   </tr>
+
+  <tr>
+    <td align="center" ><strong>포트폴리오 상세</strong></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/e40335ed-479a-4806-b62d-cb829b9e655a" 
+     alt="포트폴리오 상세"/></td>
+  </tr>
+
+  <tr>
+    <td align="center" ><strong>관심종목</strong></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/cd9ffc64-1e1a-4c42-a52f-8c788e2603fe" 
+     alt="관심종목"/></td>
+  </tr>
 </table>
 
 
