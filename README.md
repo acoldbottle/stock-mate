@@ -84,21 +84,23 @@
 
 
 
-| 구분 | 기술 |
-|------|------|
-| **백엔드** | ☕ Java 21 |
-|  | 🟦 Spring Boot |
-|  | 🔒 Spring Security |
-|  | ⚙️ JPA (Hibernate) |
-|  | 🪣 Bucket4j |
-|  | 🧵 Virtual Threads |
-| **데이터베이스 / 캐싱** | 🗄 MySQL (RDS) |
-|  | 🟢 Redis (ElastiCache) |
-| **프론트엔드** | 🌐 Thymeleaf |
-|  | 🖌 HTML / CSS / JS |
-| **API** | 📡 한국투자증권 Open API |
-| **배포 / 인프라** | ☁️ AWS EC2 |
-|  | 🐳 Docker |
+| 구분              | 기술                     |
+|-----------------|------------------------|
+| **백엔드**         | ☕ Java 21              |
+|                 | 🟦 Spring Boot         |
+|                 | 🔒 Spring Security     |
+|                 | ⚙️ JPA (Hibernate)     |
+|                 | 🪣 Bucket4j            |
+|                 | 🧵 Virtual Threads     |
+| **데이터베이스 / 캐싱** | 🗄 MySQL (RDS)         |
+|                 | 🟢 Redis (ElastiCache) |
+| **프론트엔드**       | 🌐 Thymeleaf           |
+|                 | 🖌 HTML / CSS / JS     |
+| **API**         | 📡 한국투자증권 Open API     |
+| **배포 / 인프라**    | ☁️ AWS EC2             |
+|                 | 🐳 Docker              |
+| **문서화**         | 📑 Swagger             |
+
 
 <br>
 
