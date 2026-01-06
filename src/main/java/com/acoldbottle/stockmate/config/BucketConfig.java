@@ -13,8 +13,8 @@ public class BucketConfig {
 
     @Bean
     public Bucket bucket() {
-        Refill refill = Refill.greedy(12, Duration.ofMillis(1000));
-        Bandwidth limit = Bandwidth.classic(12, refill);
+        Refill refill = Refill.greedy(1, Duration.ofMillis(60));
+        Bandwidth limit = Bandwidth.classic(1, refill);
 
         return Bucket.builder()
                 .addLimit(limit)
