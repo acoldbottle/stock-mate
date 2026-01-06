@@ -30,8 +30,11 @@ public class CurrentPriceDTO {
     }
 
     private static BigDecimal parseBigDecimal(String value) {
+        String normalized = value.replaceAll("[^0-9.\\-]", "");
+
+        if (normalized.isEmpty()) return BigDecimal.ZERO;
         try {
-            return new BigDecimal(value.trim());
+            return new BigDecimal(normalized);
         } catch (NumberFormatException e) {
             log.warn("=== 한국투자증권 OPEN API 요청 응답을 파싱 실패 ===");
             log.warn("=== 기본값 0 반환, 응답받은 값 : {} ===", value);
