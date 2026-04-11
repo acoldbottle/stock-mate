@@ -1,5 +1,5 @@
 # 📈 **StockMate**
-### 🔗 https://stockmate.kro.kr/stockmate/ 
+
 
 
 
